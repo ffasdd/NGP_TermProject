@@ -1,29 +1,29 @@
-#include"stdafx.h"
 #include"Player.h"
 #include"Bullet.h"
+#include"stdafx.h"
 #include"Item.h"
 // 패킷 정리
 constexpr int PORT_NUM = 9000;
 constexpr int BUF_SIZE = 512;
 constexpr int NAME_SIZE = 20;
-
+constexpr int MAX_ITEM = 30;
 // Client to Server Packet type
-constexpr char CS_LOGIN = 0;
-constexpr char CS_MOVE = 0;
-constexpr char CS_ROTATE = 0;
-constexpr char CS_FIREBULLET = 0;
-constexpr char CS_REMOVE = 0;
+constexpr char CS_LOGIN_PLAYER = 0;
+constexpr char CS_MOVE_PLAYER = 1;
+constexpr char CS_ROTATE_PLAYER = 2;
+constexpr char CS_FIREBULLET_PLAYER = 3;
+constexpr char CS_REMOVE = 4;
 
 // Server to Client Packet type
 
-constexpr char SC_LOGIN = 1;
-constexpr char SC_MOVE = 2;
-constexpr char SC_ROTATE = 3;
-constexpr char SC_FIREBULLET = 4;
+constexpr char SC_LOGIN_PLAYER = 1;
+constexpr char SC_MOVE_PLAYER = 2;
+constexpr char SC_ROTATE_PLAYER = 3;
+constexpr char SC_FIREBULLET_PLAYER = 4;
 constexpr char SC_COLLIDER = 5;
 constexpr char SC_REMOVE = 6;
 constexpr char SC_END = 7;
-constexpr char SC_UPDATE_PACKET = 8;
+constexpr char SC_UPDATE = 8;
 
 enum COLLIDERTYPE
 {
@@ -51,7 +51,7 @@ struct CS_ROTATE_PACKET
 {
 	unsigned char size;
 	char type;
-	char rotdir
+	char rotdir;
 	// 각도 좌표 
 };
 struct CS_FIREBULLET_PACKET
@@ -125,3 +125,43 @@ struct SC_UPDATE_PACKET_PACKET
 	int hp;
 	int speed;
 };
+
+//Debug
+void err_quit(const char* msg)
+{
+	LPVOID lpMsgBuf;
+	FormatMessageA(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+		NULL, WSAGetLastError(),
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		(char*)&lpMsgBuf, 0, NULL);
+	MessageBoxA(NULL, (const char*)lpMsgBuf, msg, MB_ICONERROR);
+	LocalFree(lpMsgBuf);
+	exit(1);
+}
+
+// 소켓 함수 오류 출력
+void err_display(const char* msg)
+{
+	LPVOID lpMsgBuf;
+	FormatMessageA(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+		NULL, WSAGetLastError(),
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		(char*)&lpMsgBuf, 0, NULL);
+	printf("[%s] %s\n", msg, (char*)lpMsgBuf);
+	LocalFree(lpMsgBuf);
+}
+
+// 소켓 함수 오류 출력
+void err_display(int errcode)
+{
+	LPVOID lpMsgBuf;
+	FormatMessageA(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+		NULL, errcode,
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		(char*)&lpMsgBuf, 0, NULL);
+	printf("[오류] %s\n", (char*)lpMsgBuf);
+	LocalFree(lpMsgBuf);
+}
