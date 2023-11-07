@@ -25,3 +25,5 @@ using namespace DirectX::PackedVector;
 
 #include<thread>
 #include<array>
+#include<map>
+#include<vector>

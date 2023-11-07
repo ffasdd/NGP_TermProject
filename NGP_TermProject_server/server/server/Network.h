@@ -12,13 +12,18 @@ public:
 	SOCKET clientsocket;
 
 	char buf[BUF_SIZE];
+	int c_id = 0;
+
 public:
 	Network();
 	~Network();
 
 	void Init();
 	void Start();
-	DWORD WINAPI ProcessThread(LPVOID arg);
+	void Accept();
+	static DWORD WINAPI ProcessThread(LPVOID arg);
+	static void Process(int c_id, SOCKET socket);
+
 
 };
 
