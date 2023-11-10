@@ -7,6 +7,8 @@
 #include "Player.h"
 #include "Scene.h"
 
+class UILayer;
+
 class CGameFramework
 {
 public:
@@ -36,6 +38,8 @@ public:
 
 	void WaitForGpuComplete();
 	void MoveToNextFrame();
+
+	void UpdateUI();
 
 	void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	void OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
@@ -85,6 +89,8 @@ private:
 	CScene						*m_pScene = NULL;
 	CPlayer						*m_pPlayer = NULL;
 	CCamera						*m_pCamera = NULL;
+
+	UILayer* m_pUILayer = NULL;
 
 	POINT						m_ptOldCursorPos;
 

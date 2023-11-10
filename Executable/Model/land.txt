@@ -1,7 +1,0 @@
-<Hierarchy>:
-	<Frame>: 0 Terrain
-		<Transform>: 0 0 0 0 0 0 1 1 1 0 0 0 1  
-		<TransformMatrix>: 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1  
-		<Children>: 0
-	</Frame>
-</Hierarchy>

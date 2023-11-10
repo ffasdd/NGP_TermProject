@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "GameFramework.h"
+#include "UILayer.h"
 
 CGameFramework::CGameFramework()
 {
@@ -404,6 +405,22 @@ void CGameFramework::OnDestroy()
 
 void CGameFramework::BuildObjects()
 {
+	m_pUILayer = new UILayer(m_nSwapChainBuffers, 2, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
+	
+	ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
+	IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"맑은 고딕", m_nWndClientHeight / 25.0f);
+	D2D1_RECT_F d2dRect = D2D1::RectF((float)m_nWndClientWidth - 230.0f, m_nWndClientHeight - 75.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
+	
+	WCHAR pstrOutputText[256];
+	wcscpy_s(pstrOutputText, 256, L"게임 시작\n");
+	m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
+	
+	pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
+	pdwTextFormat = m_pUILayer->CreateTextFormat(L"맑은 고딕", m_nWndClientHeight / 25.0f);
+	d2dRect = D2D1::RectF((float)m_nWndClientWidth - 250.0f, 15.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
+	
+	m_pUILayer->UpdateTextOutputs(1, NULL, &d2dRect, pdwTextFormat, pd2dBrush);
+	////////////////////////////////////////////////////////////////////////////////////////
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
 	m_pScene = new CScene();
@@ -431,6 +448,9 @@ void CGameFramework::BuildObjects()
 
 void CGameFramework::ReleaseObjects()
 {
+	if (m_pUILayer) m_pUILayer->ReleaseResources();
+	if (m_pUILayer) delete m_pUILayer;
+
 	if (m_pPlayer) m_pPlayer->Release();
 
 	if (m_pScene) m_pScene->ReleaseObjects();
@@ -511,6 +531,25 @@ void CGameFramework::MoveToNextFrame()
 	}
 }
 
+void CGameFramework::UpdateUI()
+{
+	float fTimeElapsed = m_GameTimer.GetTimeElapsed();
+	wchar_t time = wchar_t(fTimeElapsed);
+	m_pUILayer->UpdateTextOutputs(1, L"여기 시간이 들어갈거에요", NULL, NULL, NULL);
+
+	// ID2D1SolidColorBrush* pTextBrush = NULL;
+	// m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black), pTextBrush);
+	// 
+	// // 예시: 게임 시간을 표시하는 텍스트를 그립니다.
+	// WCHAR timeText[256];
+	// SYSTEMTIME ttime;
+	// GetLocalTime(&ttime);
+	// swprintf_s(timeText, L"Game Time: %02d:%02d:%02d", ttime.wHour, ttime.wMinute, ttime.wSecond);
+	// 
+	// m_pUILayer->m_pd2dDeviceContext->DrawText(timeText, wcslen(timeText), NULL, D2D1::RectF(10, 10, 200, 50), pTextBrush);
+}
+
+
 //#define _WITH_PLAYER_TOP
 
 void CGameFramework::FrameAdvance()
@@ -520,6 +559,8 @@ void CGameFramework::FrameAdvance()
 	ProcessInput();
 
     AnimateObjects();
+
+	UpdateUI();
 
 	HRESULT hResult = m_pd3dCommandAllocator->Reset();
 	hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
@@ -564,6 +605,8 @@ void CGameFramework::FrameAdvance()
 
 	WaitForGpuComplete();
 
+	m_pUILayer->Render(m_nSwapChainBufferIndex);
+	
 #ifdef _WITH_PRESENT_PARAMETERS
 	DXGI_PRESENT_PARAMETERS dxgiPresentParameters;
 	dxgiPresentParameters.DirtyRectsCount = 0;

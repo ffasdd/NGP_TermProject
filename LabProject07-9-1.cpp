@@ -1,6 +1,3 @@
-// LabProject07-9-1.cpp : 응용 프로그램에 대한 진입점을 정의합니다.
-//
-
 #include "stdafx.h"
 #include "LabProject07-9-1.h"
 #include "GameFramework.h"
@@ -32,7 +29,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 
 	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
 
-	hAccelTable = ::LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_LABPROJECT0791));
+	hAccelTable = ::LoadAccelerators(hInstance, MAKEINTRESOURCE(IDI_LABPROJECT0791));
 
 	while (1)
 	{
@@ -67,9 +64,9 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	wcex.cbWndExtra = 0;
 	wcex.hInstance = hInstance;
 	wcex.hIcon = ::LoadIcon(hInstance, MAKEINTRESOURCE(IDI_LABPROJECT0791));
-	wcex.hCursor = ::LoadCursor(NULL, IDC_ARROW);
+	wcex.hCursor = ::LoadCursor(NULL, IDC_CROSS);
 	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-	wcex.lpszMenuName = NULL;//MAKEINTRESOURCE(IDC_LABPROJECT0791);
+	wcex.lpszMenuName = NULL;//MAKEINTRESOURCE(IDC_PROTOTYPEUI);
 	wcex.lpszClassName = szWindowClass;
 	wcex.hIconSm = ::LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
@@ -80,7 +77,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
 	ghAppInstance = hInstance;
 
-	RECT rc ={ 0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT };
+	RECT rc = { 0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT };
 	DWORD dwStyle = WS_OVERLAPPED | WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU | WS_BORDER;
 	AdjustWindowRect(&rc, dwStyle, FALSE);
 	HWND hMainWnd = CreateWindow(szWindowClass, szTitle, dwStyle, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, hInstance, NULL);
@@ -97,10 +94,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	int wmId, wmEvent;
-	PAINTSTRUCT ps;
-	HDC hdc;
-
 	switch (message)
 	{
 	case WM_SIZE:
@@ -111,26 +104,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEMOVE:
 	case WM_KEYDOWN:
 	case WM_KEYUP:
-		gGameFramework.OnProcessingWindowMessage(hWnd, message, wParam, lParam);
-		break;
+	case WM_TIMER:
 	case WM_COMMAND:
-		wmId = LOWORD(wParam);
-		wmEvent = HIWORD(wParam);
-		switch (wmId)
-		{
-		case IDM_ABOUT:
-			::DialogBox(ghAppInstance, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-			break;
-		case IDM_EXIT:
-			::DestroyWindow(hWnd);
-			break;
-		default:
-			return(::DefWindowProc(hWnd, message, wParam, lParam));
-		}
-		break;
-	case WM_PAINT:
-		hdc = ::BeginPaint(hWnd, &ps);
-		EndPaint(hWnd, &ps);
+		gGameFramework.OnProcessingWindowMessage(hWnd, message, wParam, lParam);
 		break;
 	case WM_DESTROY:
 		::PostQuitMessage(0);
