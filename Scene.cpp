@@ -311,9 +311,12 @@ void CScene::IsCollision(float time) {
 		if (m_ppGameObjects[i]->isCollision) {
 			if (m_ppGameObjects[i]->type) {
 				// ÃÑ¾Ë Å©±â
-				m_pPlayer->m_BulletSizeX += 0.008f;
-				m_pPlayer->m_BulletSizeY += 0.008f;
-				m_pPlayer->m_BulletSizeZ += 0.008f;
+				m_pPlayer->m_BulletSizeX += 0.05f;
+				m_pPlayer->m_BulletSizeY += 0.05f;
+				m_pPlayer->m_BulletSizeZ += 0.05f;
+				m_ppGameObjects[i]->isCollision = false;
+				m_ppGameObjects[i]->draw = false;
+				m_ppGameObjects[i] = NULL;
 			}
 			else {
 				m_pPlayer->m_vel += 10.0;
