@@ -316,7 +316,7 @@ void CMyTankPlayer::FireBullet()
 		xmf3Direction.y += 0.01f;
 		pBulletObject->SetFirePosition(xmf3FirePosition);
 		pBulletObject->SetMovingDirection(xmf3Direction);
-		pBulletObject->SetScale(5.0,5.0,5.0);
+		pBulletObject->SetScale(m_BulletSizeX, m_BulletSizeY, m_BulletSizeZ);
 		pBulletObject->SetActive(true);
 	}
 }
