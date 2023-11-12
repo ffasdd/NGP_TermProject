@@ -13,6 +13,7 @@ UILayer::UILayer(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDevice, ID3D1
 
     m_nTextBlocks = nTextBlocks;
     m_pTextBlocks = new TextBlock[nTextBlocks];
+    
 
     InitializeDevice(pd3dDevice, pd3dCommandQueue, ppd3dRenderTargets);
 }
@@ -107,11 +108,13 @@ IDWriteTextFormat* UILayer::CreateTextFormat(WCHAR* pszFontName, float fFontSize
 
 void UILayer::UpdateTextOutputs(UINT nIndex, WCHAR* pstrUIText, D2D1_RECT_F* pd2dLayoutRect, IDWriteTextFormat* pdwFormat, ID2D1SolidColorBrush* pd2dTextBrush)
 {
+    m_pTextBlocks[nIndex].m_pdwFormat = NULL;
     if (pstrUIText) wcscpy_s(m_pTextBlocks[nIndex].m_pstrText, 256, pstrUIText);
     if (pd2dLayoutRect) m_pTextBlocks[nIndex].m_d2dLayoutRect = *pd2dLayoutRect;
     if (pdwFormat) m_pTextBlocks[nIndex].m_pdwFormat = pdwFormat;
     if (pd2dTextBrush) m_pTextBlocks[nIndex].m_pd2dTextBrush = pd2dTextBrush;
 }
+
 
 void UILayer::Render(UINT nFrame)
 {
@@ -129,7 +132,10 @@ void UILayer::Render(UINT nFrame)
     m_pd2dDeviceContext->BeginDraw();
     for (UINT i = 0; i < m_nTextBlocks; i++)
     {
-        m_pd2dDeviceContext->DrawText(m_pTextBlocks[i].m_pstrText, (UINT)wcslen(m_pTextBlocks[i].m_pstrText), m_pTextBlocks[i].m_pdwFormat, m_pTextBlocks[i].m_d2dLayoutRect, m_pTextBlocks[i].m_pd2dTextBrush);
+        if(m_pTextBlocks[i].m_pdwFormat == NULL)
+            m_pd2dDeviceContext->FillRectangle(m_pTextBlocks[i].m_d2dLayoutRect, m_pTextBlocks[i].m_pd2dTextBrush);
+        else
+            m_pd2dDeviceContext->DrawText(m_pTextBlocks[i].m_pstrText, (UINT)wcslen(m_pTextBlocks[i].m_pstrText), m_pTextBlocks[i].m_pdwFormat, m_pTextBlocks[i].m_d2dLayoutRect, m_pTextBlocks[i].m_pd2dTextBrush);
     }
     m_pd2dDeviceContext->DrawEllipse(d2dElipse, pd2dBrush, 15.0f, NULL);
 
@@ -143,8 +149,10 @@ void UILayer::ReleaseResources()
 {
     for (UINT i = 0; i < m_nTextBlocks; i++)
     {
-        m_pTextBlocks[i].m_pdwFormat->Release();
-        m_pTextBlocks[i].m_pd2dTextBrush->Release();
+        if(m_pTextBlocks[i].m_pdwFormat)
+            m_pTextBlocks[i].m_pdwFormat->Release();
+        if(m_pTextBlocks[i].m_pd2dTextBrush)
+            m_pTextBlocks[i].m_pd2dTextBrush->Release();
     }
 
     for (UINT i = 0; i < m_nRenderTargets; i++)

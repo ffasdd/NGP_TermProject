@@ -29,6 +29,7 @@ CPlayer::CPlayer()
 	m_fYaw = 0.0f;
 
 	m_vel = 0.0f;
+	m_hp = 100;
 
 	m_pPlayerUpdatedContext = NULL;
 	m_pCameraUpdatedContext = NULL;

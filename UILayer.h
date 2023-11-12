@@ -14,6 +14,8 @@ public:
     UILayer(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDevice, ID3D12CommandQueue* pd3dCommandQueue, ID3D12Resource** ppd3dRenderTargets, UINT nWidth, UINT nHeight);
 
     void UpdateTextOutputs(UINT nIndex, WCHAR* pstrUIText, D2D1_RECT_F* pd2dLayoutRect, IDWriteTextFormat* pdwFormat, ID2D1SolidColorBrush* pd2dTextBrush);
+    void DrawRect(UINT nIndex, D2D1_RECT_F* pd2dLayoutRect);
+    // void DrawRect(UINT nIndex, float percentage);
     void Render(UINT nFrame);
     void ReleaseResources();
 

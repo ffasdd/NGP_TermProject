@@ -330,6 +330,9 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				case 'W':
 					((CMyTankPlayer*)m_pPlayer)->RotateTop(+5.0f);
 					break;
+				case 'M':
+					((CMyTankPlayer*)m_pPlayer)->m_hp -= 5;
+					break;
 				case VK_CONTROL:
 					((CMyTankPlayer*)m_pPlayer)->FireBullet();
 					break;
@@ -415,11 +418,11 @@ void CGameFramework::BuildObjects()
 	wcscpy_s(pstrOutputText, 256, L"게임 시작\n");
 	m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
 	
-	pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
-	pdwTextFormat = m_pUILayer->CreateTextFormat(L"맑은 고딕", m_nWndClientHeight / 25.0f);
-	d2dRect = D2D1::RectF((float)m_nWndClientWidth - 250.0f, 15.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
-	
-	m_pUILayer->UpdateTextOutputs(1, NULL, &d2dRect, pdwTextFormat, pd2dBrush);
+	// pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
+	// pdwTextFormat = m_pUILayer->CreateTextFormat(L"맑은 고딕", m_nWndClientHeight / 25.0f);
+	// d2dRect = D2D1::RectF((float)m_nWndClientWidth - 250.0f, 15.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
+	// 
+	// m_pUILayer->UpdateTextOutputs(1, NULL, &d2dRect, pdwTextFormat, pd2dBrush);
 	////////////////////////////////////////////////////////////////////////////////////////
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
@@ -533,20 +536,15 @@ void CGameFramework::MoveToNextFrame()
 
 void CGameFramework::UpdateUI()
 {
-	float fTimeElapsed = m_GameTimer.GetTimeElapsed();
-	wchar_t time = wchar_t(fTimeElapsed);
-	m_pUILayer->UpdateTextOutputs(1, L"여기 시간이 들어갈거에요", NULL, NULL, NULL);
+	// Calculate the width of the rectangle based on the percentage
+	float rectWidth = (m_pPlayer->m_hp / 100.0f) * 2.0f * 15.0f; // Double the radius to get the diameter
 
-	// ID2D1SolidColorBrush* pTextBrush = NULL;
-	// m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black), pTextBrush);
-	// 
-	// // 예시: 게임 시간을 표시하는 텍스트를 그립니다.
-	// WCHAR timeText[256];
-	// SYSTEMTIME ttime;
-	// GetLocalTime(&ttime);
-	// swprintf_s(timeText, L"Game Time: %02d:%02d:%02d", ttime.wHour, ttime.wMinute, ttime.wSecond);
-	// 
-	// m_pUILayer->m_pd2dDeviceContext->DrawText(timeText, wcslen(timeText), NULL, D2D1::RectF(10, 10, 200, 50), pTextBrush);
+	// Set up the layout rectangle for the rectangle
+	D2D1_RECT_F rect = { 0, 470, 640/30 * rectWidth, 450 };
+	ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Red,4.0f));
+	//IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"맑은 고딕", m_nWndClientHeight / 25.0f);
+	//m_pUILayer->DrawRect(2, &rect);
+	m_pUILayer->UpdateTextOutputs(1, NULL, &rect, NULL, pd2dBrush);
 }
 
 

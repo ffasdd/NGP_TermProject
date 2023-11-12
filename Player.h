@@ -28,13 +28,15 @@ protected:
 	float           			m_fMaxVelocityY;
 	float           			m_fFriction;
 
+	
+
 	LPVOID						m_pPlayerUpdatedContext;
 	LPVOID						m_pCameraUpdatedContext;
 
 	CCamera						*m_pCamera = NULL;
 
 public:
-
+	int							m_hp;
 	float						m_vel;
 	CPlayer();
 	virtual ~CPlayer();
