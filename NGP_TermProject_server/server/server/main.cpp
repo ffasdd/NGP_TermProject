@@ -1,14 +1,9 @@
 // 서버 실행 메인부분, 
 
 #include"stdafx.h"
-//#include"Bullet.h"
-#include"Player.h"
-//#include"Item.h"
-#include"protocl.h"
-
-
 array<Player, 3>clients;
-array<Item, MAX_ITEM>items;
+array<Item, MAX_ITEM>items;	
+array<SOCKET, 3> connectclients;
 
 int client_id = 0;
 //Debug
@@ -51,32 +46,17 @@ void err_display(int errcode)
 	LocalFree(lpMsgBuf);
 }
 
-void process(int c_id) {
-	Player* player = new Player;
-	strcpy_s(player->buf, clients[c_id].buf);
-
-}
-
 DWORD WINAPI ProcessClient(LPVOID arg)
 {
+	// 클라한테 전송받은 로그인 패킷 저장 
+	
 	int ret;
 	SOCKET clientsocket = (SOCKET)arg;
 	sockaddr_in clientaddr;
 	int addrlen = sizeof(clientaddr);
 	int size;
 	char buf[BUF_SIZE];
-	if (recv(clientsocket, (char*)&size, sizeof(int), 0) == SOCKET_ERROR)
-		err_quit("recv size");
-	if (recv(clientsocket, buf, size, 0) != SOCKET_ERROR)
-	{
-		CS_LOGIN_PACKET* p = reinterpret_cast<CS_LOGIN_PACKET*>(&buf);
-		strcpy_s(clients[client_id].name, p->name);
-		clients[client_id].pos{ 0,0,0 };
-		clients[client_id].hp = 100;
-		clients[client_id].rot{ 0,0,0 };
-		clients[client_id].speed = 10;
-	}
-
+	return 0;
 }
 
 int main()
@@ -103,16 +83,20 @@ int main()
 	sockaddr_in clientaddr;
 	int addrlen;
 	HANDLE hThread;
+	int client_id = 0;
 	while (true)
 	{
 		addrlen = sizeof(clientaddr);
 		clientsocket = accept(listensocket, (sockaddr*)&clientaddr, &addrlen);
 		if (clientsocket == INVALID_SOCKET)
 			err_quit("accept()");
+		cout << "Client ACCEPT" << endl;
+		connectclients[client_id] = clientsocket;
 		hThread = CreateThread(NULL, 0, ProcessClient, (LPVOID)clientsocket, 0, NULL);
+
 		if (hThread == NULL) { closesocket(clientsocket); }
 		else { CloseHandle(hThread); }
-
+		client_id++;
 	}
 	closesocket(listensocket);
 

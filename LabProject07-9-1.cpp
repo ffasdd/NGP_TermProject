@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "LabProject07-9-1.h"
 #include "GameFramework.h"
+#include"Network.h"
 
 #define MAX_LOADSTRING 100
 
@@ -12,6 +13,8 @@ TCHAR							szTitle[MAX_LOADSTRING];
 TCHAR							szWindowClass[MAX_LOADSTRING];
 
 CGameFramework					gGameFramework;
+
+Network network;
 
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
@@ -47,6 +50,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		}
 		else
 		{
+			network.Init();
+
 			gGameFramework.FrameAdvance();
 		}
 	}

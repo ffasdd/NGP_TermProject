@@ -9,6 +9,10 @@
 // Windows 헤더 파일:
 #include <windows.h>
 
+#include <winsock2.h> // 윈속2 메인 헤더
+#include <ws2tcpip.h> // 윈속2 확장 헤더
+#pragma comment(lib, "ws2_32") // ws2_32.lib 링크
+
 // C의 런타임 헤더 파일입니다.
 #include <stdlib.h>
 #include <malloc.h>
