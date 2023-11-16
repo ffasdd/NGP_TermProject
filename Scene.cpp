@@ -74,31 +74,60 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 
 	BuildDefaultLightsAndMaterials();
 
-	XMFLOAT3 xmf3Scale(10.0f, 2.0f, 10.0f);
+	XMFLOAT3 xmf3Scale(100.0f, 2.0f, 100.0f);
 	XMFLOAT4 xmf4Color(0.0f, 1.0f, 0.0f, 1.0f);
 
 	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, _T("terrain.raw"), 257, 257, 257, 257, xmf3Scale, xmf4Color);
 	m_pTerrain->SetPosition(XMFLOAT3(0.0, 0.0, 0.0));
 	m_pTerrain->SetObjectID(0);
 
-	m_nGameObjects = 30;
+	m_nGameObjects = 32;
 	m_ppGameObjects = new CGameObject * [m_nGameObjects];
+	//%// m_ppGameObjects[0]~m_ppGameObjects[29]는 아이템 객체입니다.
 	for (int i = 0; i < m_nGameObjects; i++)
 	{
 		m_ppGameObjects[i] = CGameObject::LoadGeometryFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/bullet.bin");
 		m_ppGameObjects[i]->SetScale(7.5f,15.0f,15.0f);
+		//%// objecID 0번과 1번은 각각 터레인과 플레이어에게 할당되어있습니다 -> Shaders.hlsl에서 확인 가능
+		//%// 각 아이템의 색을 ObjectID의 홀짝 여부에 따라 나누어주기 때문에 2를 더해서 영향이 안가게 처리해두었습니다.
 		m_ppGameObjects[i]->SetObjectID(i+2);
 
+		//%// i의 값이 짝수면 type을 false로, 홀수일땐 true로 설정했습니다.
+		//%// m_ppGameObjects[i]->type이 false -> 속도 증가 / true -> 총알 커지는 아이템 입니다.
+		//%// 속도 증가 아이템은 빨간색
+		//%// 총알 크기 커지는 아이템은 파란색입니다
 		if (i % 2 == 0)
 			m_ppGameObjects[i]->type = false;
 		else
 			m_ppGameObjects[i]->type = true;
 
+		//%// 색을 진하게 보이게 하려고 Rimpower를 조절해뒀습니다
 		m_ppGameObjects[i]->SetRimpower(0.1); 
 		
+		//%// 랜덤한 위치에 뿌려지도록 값을 수정했습니다. 추후 맵 크기가 정해지면 다시 수정할 예정입니다
 		XMFLOAT3 xmf3SponPosition = XMFLOAT3(0.0f + rand() % 2500, 0.0f, 0.0f + rand() % 2500);
 		m_ppGameObjects[i]->SetPosition(xmf3SponPosition.x, 0.0, xmf3SponPosition.z);
 	}
+
+	//%// 적을 그리는 부분입니다. 플레이어와 마찬가지로 SetPosition 함수로 위치를 지정합니다.
+	CGameObject* pEnemy1 = CGameObject::LoadGeometryFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/tank.bin");
+	pEnemy1->SetScale(1.0f, 1.0f, 1.0f);
+	pEnemy1->SetPosition(1000.0f, 0.0f, 300.0f);
+	pEnemy1->SetContext(m_pTerrain);
+	m_ppGameObjects[30] = pEnemy1;
+	m_ppGameObjects[30]->SetObjectID(0);
+	m_ppGameObjects[30]->SetRimpower(5);
+	m_ppGameObjects[30]->Enemy[0] = pEnemy1;
+
+	CGameObject* pEnemy2 = CGameObject::LoadGeometryFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/tank.bin");
+	pEnemy2->SetScale(1.0f, 1.0f, 1.0f);
+	pEnemy2->SetPosition(800.0f, 0.0f, 300.0f);
+	pEnemy2->SetContext(m_pTerrain);
+	m_ppGameObjects[31] = pEnemy2;
+	m_ppGameObjects[31]->SetObjectID(1);
+	m_ppGameObjects[31]->SetRimpower(5);
+	m_ppGameObjects[31]->Enemy[1] = pEnemy2;
+
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);	
 }
 
@@ -250,6 +279,7 @@ bool CScene::TCheckIntersectRect(XMFLOAT2 OtherLT, XMFLOAT2 OtherRB, XMFLOAT2 Ob
 }
 
 void CScene::CheckPlayerByEnemy() {
+	//%// 현재 사용 안함
 	for (int i = 0; i < m_nGameObjects; ++i)
 	{
 		XMFLOAT3 e_pos = m_ppGameObjects[i]->GetPosition();
@@ -282,6 +312,7 @@ void CScene::CheckPlayerByEnemy() {
 }
 
 void CScene::CheckEnemyByBullet(float time) {
+	//%// 현재 사용 안함
 	CGameObject** ppBullets = ((CMyTankPlayer*)m_pPlayer)->m_ppBullets;
 	for (int i = 0; i < Enemy_NUM; ++i)
 	{
@@ -304,6 +335,7 @@ void CScene::CheckEnemyByBullet(float time) {
 }
 
 void CScene::IsCollision(float time) {
+	//%// 아이템과 플레이어 충돌을 확인합니다
 	static float fTimeElapsed = 0.0f;  
 
 	for (int i = 0; i < m_nGameObjects; ++i) {
@@ -326,6 +358,7 @@ float getdistance(XMFLOAT3& a, XMFLOAT3& b) {
 
 void CScene::OnPlayerUpdateCallback(float fTimeElapsed)
 {
+	//%// 터레인 위치에 맞게 각 객체의 y값 수정 함수
 	CHeightMapTerrain* pTerrain = (CHeightMapTerrain*)m_pPlayerUpdatedContext;
 	for (int i = 0; i < m_nGameObjects; ++i)
 	{
@@ -358,6 +391,7 @@ void CScene::Move(const XMFLOAT3& xmf3Shift, bool bUpdateVelocity)
 
 void CScene::CheckPlayerByObjectLen() {
 	// 플레이어와 오브젝트들의 거리를 체크해서 이동에 대한 bool 값 전달
+	//%// 현재 사용 안함
 	for (int i = 0; i < m_nGameObjects; ++i) {
 		float dis = getdistance(m_ppGameObjects[i]->GetPosition(), ((CMyTankPlayer*)m_pPlayer)->GetPosition());
 
