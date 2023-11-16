@@ -1,9 +1,14 @@
 // 서버 실행 메인부분, 
 
 #include"stdafx.h"
+#include<random>
 vector<Player> clients(3);
 array<Item, MAX_ITEM>items;	
 array<SOCKET, 3> connectclients;
+
+random_device rd;
+default_random_engine dre{ rd() };
+uniform_int_distribution<float> uid{ 1,100 };
 
 int client_id = 0;
 HANDLE hEvent;
@@ -65,15 +70,32 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	{
 		if (clients[i].socket == 0)
 		{
+			// 여기서 패킷에 담아야함, 
+
 			clients[i].socket = clientsocket;
 			clients[i].cl_addr = clientaddr;
-
+			clients[i].c_id = client_id;
+			clients[i].pos.x = uid(dre);
+			clients[i].pos.y = 0.0f;
+			clients[i].pos.z = uid(dre);
+			
+			client_id++;
 			cout << " Client " << i << " connect" << endl;
 			break;
 		}
 	}
+	if (recv(clientsocket, buf, sizeof(buf), 0) == SOCKET_ERROR)
+		err_display("recv name ");
+	cout << buf << endl;
+
+	if(send(clientsocket,))
 
 	SetEvent(hEvent);
+	
+	// 클라에서 받은 name을 리시브해줘야함 
+
+	// 서버에서 클라에게 좌표정보를 전송해줘야 함 
+
 
 
 	return 0;

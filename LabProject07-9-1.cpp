@@ -5,6 +5,10 @@
 #include "LabProject07-9-1.h"
 #include "GameFramework.h"
 #include"Network.h"
+#include"iostream"
+
+using namespace std;
+
 
 #define MAX_LOADSTRING 100
 
@@ -36,6 +40,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
 
 	hAccelTable = ::LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_LABPROJECT0791));
+	network.Init();
+	char tempbuf[200] = " SDY ";
+	send(network.clientsocket, tempbuf, sizeof(tempbuf), 0);
 
 	while (1)
 	{
@@ -50,7 +57,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		}
 		else
 		{
-			network.Init();
+			
 
 			gGameFramework.FrameAdvance();
 		}
