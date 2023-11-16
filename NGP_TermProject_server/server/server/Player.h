@@ -24,7 +24,7 @@ public:
 	int sendlen;
 	int recvlen;
 	SOCKET socket;
-
+	sockaddr_in cl_addr;
 	char* recvbuf;
 
 	int prev_remain;

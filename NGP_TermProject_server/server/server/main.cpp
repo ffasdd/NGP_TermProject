@@ -1,11 +1,12 @@
 // 서버 실행 메인부분, 
 
 #include"stdafx.h"
-array<Player, 3>clients;
+vector<Player> clients(3);
 array<Item, MAX_ITEM>items;	
 array<SOCKET, 3> connectclients;
 
 int client_id = 0;
+HANDLE hEvent;
 //Debug
 void err_quit(const char* msg)
 {
@@ -51,11 +52,30 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	// 클라한테 전송받은 로그인 패킷 저장 
 	
 	int ret;
-	SOCKET clientsocket = (SOCKET)arg;
+	SOCKET clientsocket = reinterpret_cast<SOCKET>(arg);
 	sockaddr_in clientaddr;
 	int addrlen = sizeof(clientaddr);
 	int size;
 	char buf[BUF_SIZE];
+
+	getpeername(clientsocket, (sockaddr*)(&clientaddr), &addrlen);
+	WaitForSingleObject(hEvent, INFINITE);
+	// Player 컨테이너 안에 클라이언트 정보들을 저장 동시에 접근할 수 있기 때문에 임계영역이나 Event로 관리해줘야함 
+	for (int i = 0; i < clients.size(); ++i)
+	{
+		if (clients[i].socket == 0)
+		{
+			clients[i].socket = clientsocket;
+			clients[i].cl_addr = clientaddr;
+
+			cout << " Client " << i << " connect" << endl;
+			break;
+		}
+	}
+
+	SetEvent(hEvent);
+
+
 	return 0;
 }
 
@@ -84,6 +104,9 @@ int main()
 	int addrlen;
 	HANDLE hThread;
 	int client_id = 0;
+
+	hEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
+
 	while (true)
 	{
 		addrlen = sizeof(clientaddr);
@@ -91,14 +114,16 @@ int main()
 		if (clientsocket == INVALID_SOCKET)
 			err_quit("accept()");
 		cout << "Client ACCEPT" << endl;
-		connectclients[client_id] = clientsocket;
+		
 		hThread = CreateThread(NULL, 0, ProcessClient, (LPVOID)clientsocket, 0, NULL);
 
 		if (hThread == NULL) { closesocket(clientsocket); }
 		else { CloseHandle(hThread); }
-		client_id++;
+		
 	}
 	closesocket(listensocket);
+
+	CloseHandle(hEvent);
 
 	WSACleanup();
 }
