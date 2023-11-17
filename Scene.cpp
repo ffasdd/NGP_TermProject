@@ -278,8 +278,8 @@ bool CScene::TCheckIntersectRect(XMFLOAT2 OtherLT, XMFLOAT2 OtherRB, XMFLOAT2 Ob
 	return false;
 }
 
-void CScene::CheckPlayerByEnemy() {
-	//%// 현재 사용 안함
+void CScene::CheckPlayerByItem() {
+	//%// 객체와 아이템 총돌체크 검사중
 	for (int i = 0; i < m_nGameObjects; ++i)
 	{
 		XMFLOAT3 e_pos = m_ppGameObjects[i]->GetPosition();
@@ -293,19 +293,23 @@ void CScene::CheckPlayerByEnemy() {
 		XMFLOAT2 LenXY = CheckIntersectRect(OtherLT, OtherRB, ObjectLT, ObjectRB);
 		if (LenXY.x || LenXY.y)
 		{
+			if (m_ppGameObjects[i]->isCollision == false) {
+				if (LenXY.x < LenXY.y) {
+					if (p_pos.x > m_ppGameObjects[i]->GetPosition().x)
+						p_pos.x += LenXY.x;
+					else
+						p_pos.x -= LenXY.x;
+				}
+				else {
+					if (p_pos.z > m_ppGameObjects[i]->GetPosition().z)
+						p_pos.z += LenXY.y;
+					else
+						p_pos.z -= LenXY.y;
+				}
+			}
 			m_ppGameObjects[i]->isCollision = true;
-			if (LenXY.x < LenXY.y) {
-				if (p_pos.x > m_ppGameObjects[i]->GetPosition().x)
-					p_pos.x += LenXY.x;
-				else
-					p_pos.x -= LenXY.x;
-			}
-			else {
-				if (p_pos.z > m_ppGameObjects[i]->GetPosition().z)
-					p_pos.z += LenXY.y;
-				else
-					p_pos.z -= LenXY.y;
-			}
+			
+			
 		}
 		m_pPlayer->SetPosition(p_pos);
 	}
@@ -348,7 +352,7 @@ void CScene::IsCollision(float time) {
 				m_pPlayer->m_BulletSizeZ += 0.05f;
 				m_ppGameObjects[i]->isCollision = false;
 				m_ppGameObjects[i]->draw = false;
-				m_ppGameObjects[i] = NULL;
+				//m_ppGameObjects[i] = NULL;
 			}
 			else {
 				m_pPlayer->m_vel += 10.0;
@@ -426,9 +430,9 @@ void CScene::AnimateObjects(float fTimeElapsed)
 		m_pLights[1].m_xmf3Position = m_pPlayer->GetPosition();
 		m_pLights[1].m_xmf3Direction = m_pPlayer->GetLookVector();
 	}
-	CheckPlayerByEnemy();
-	CheckEnemyByBullet(fTimeElapsed);
-	CheckPlayerByObjectLen();
+	CheckPlayerByItem();
+	//CheckEnemyByBullet(fTimeElapsed);
+	//CheckPlayerByObjectLen();
 	IsCollision(fTimeElapsed);
 
 	OnPlayerUpdateCallback(fTimeElapsed);
