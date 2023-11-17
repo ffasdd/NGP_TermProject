@@ -334,6 +334,7 @@ void CScene::CheckEnemyByBullet(float time) {
 	}
 }
 
+// 플레이어와 아이템 충돌 체크
 void CScene::IsCollision(float time) {
 	//%// 아이템과 플레이어 충돌을 확인합니다
 	static float fTimeElapsed = 0.0f;  
@@ -342,6 +343,12 @@ void CScene::IsCollision(float time) {
 		if (m_ppGameObjects[i]->isCollision) {
 			if (m_ppGameObjects[i]->type) {
 				// 총알 크기
+				m_pPlayer->m_BulletSizeX += 0.05f;
+				m_pPlayer->m_BulletSizeY += 0.05f;
+				m_pPlayer->m_BulletSizeZ += 0.05f;
+				m_ppGameObjects[i]->isCollision = false;
+				m_ppGameObjects[i]->draw = false;
+				m_ppGameObjects[i] = NULL;
 			}
 			else {
 				m_pPlayer->m_vel += 10.0;

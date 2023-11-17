@@ -36,7 +36,12 @@ protected:
 	CCamera						*m_pCamera = NULL;
 
 public:
+
 	int							m_hp;
+	float m_BulletSizeX = 5.0;
+	float m_BulletSizeY = 5.0;
+	float m_BulletSizeZ = 5.0;
+
 	float						m_vel;
 	CPlayer();
 	virtual ~CPlayer();
