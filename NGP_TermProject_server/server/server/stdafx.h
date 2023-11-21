@@ -1,9 +1,10 @@
 #include<iostream>
 #include <string.h> // strncpy(), ...
-
 #include <winsock2.h> // 윈속2 메인 헤더
 #include <ws2tcpip.h> // 윈속2 확장 헤더
 #pragma comment(lib, "ws2_32") // ws2_32.lib 링크
+#include <cstddef>  // uintptr_t를 사용하기 위한 헤더
+#include <Windows.h>  // LPVOID 및 DWORD_PTR를 사용하기 위한 헤더
 using namespace std;
 
 #include <d3d12.h>
@@ -52,6 +53,8 @@ constexpr char SC_COLLIDER = 5;
 constexpr char SC_REMOVE = 6;
 constexpr char SC_END = 7;
 constexpr char SC_UPDATE = 8;
+constexpr char SC_ADD_PLAYER = 9;
+
 
 enum COLLIDERTYPE
 {
@@ -107,6 +110,17 @@ struct SC_LOGIN_PACKET
 	char name[NAME_SIZE];
 
 
+};
+struct SC_ADD_PLAYER_PACKET
+{
+	unsigned char size;
+	char type;
+	XMFLOAT3 pos;
+	XMFLOAT3 rot;
+	int id;
+	int hp;
+	int speed;
+	char name[NAME_SIZE];
 };
 struct SC_MOVE_PACKET
 {

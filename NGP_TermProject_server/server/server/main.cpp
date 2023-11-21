@@ -1,14 +1,11 @@
 // 서버 실행 메인부분, 
 
 #include"stdafx.h"
-#include<random>
+
 vector<Player> clients(3);
-array<Item, MAX_ITEM>items;	
+array<Item, MAX_ITEM>items;
 array<SOCKET, 3> connectclients;
 
-random_device rd;
-default_random_engine dre{ rd() };
-uniform_int_distribution<float> uid{ 1,100 };
 
 int client_id = 0;
 HANDLE hEvent;
@@ -52,55 +49,79 @@ void err_display(int errcode)
 	LocalFree(lpMsgBuf);
 }
 
+void process(int client_id)
+{
+	clients[client_id].do_recv();
+	char* buf = clients[client_id].recvbuf;
+
+	switch (buf[1])
+	{
+	CS_LOGIN_PLAYER:
+		{
+			CS_LOGIN_PACKET* p = reinterpret_cast<CS_LOGIN_PACKET*>(&buf);
+			strcpy_s(clients[client_id].name, sizeof(clients[client_id].name), p->name);
+			clients[client_id].send_login_packet();
+			for (auto& pl : clients)
+			{
+				if (clients.size() == 3)
+				{
+					if (pl.c_id == client_id)continue;
+					pl.send_add_packet(client_id);
+					clients[client_id].send_add_packet(pl.c_id);
+				}
+			}
+
+			SetEvent(hEvent);
+			break;
+		}
+	CS_MOVE_PLAYER:
+		{
+			break;
+		}
+	}
+
+}
+
 DWORD WINAPI ProcessClient(LPVOID arg)
 {
 	// 클라한테 전송받은 로그인 패킷 저장 
-	
+
 	int ret;
+	int c_id = (int)arg;
 	SOCKET clientsocket = reinterpret_cast<SOCKET>(arg);
 	sockaddr_in clientaddr;
 	int addrlen = sizeof(clientaddr);
 	int size;
 	char buf[BUF_SIZE];
 
-	getpeername(clientsocket, (sockaddr*)(&clientaddr), &addrlen);
-	WaitForSingleObject(hEvent, INFINITE);
-	// Player 컨테이너 안에 클라이언트 정보들을 저장 동시에 접근할 수 있기 때문에 임계영역이나 Event로 관리해줘야함 
-	for (int i = 0; i < clients.size(); ++i)
-	{
-		if (clients[i].socket == 0)
-		{
-			// 여기서 패킷에 담아야함, 
-
-			clients[i].socket = clientsocket;
-			clients[i].cl_addr = clientaddr;
-			clients[i].c_id = client_id;
-			clients[i].pos.x = uid(dre);
-			clients[i].pos.y = 0.0f;
-			clients[i].pos.z = uid(dre);
-			
-			client_id++;
-			cout << " Client " << i << " connect" << endl;
-			break;
-		}
-	}
-	if (recv(clientsocket, buf, sizeof(buf), 0) == SOCKET_ERROR)
-		err_display("recv name ");
-	cout << buf << endl;
-
-	if(send(clientsocket,))
-
-	SetEvent(hEvent);
 	
-	// 클라에서 받은 name을 리시브해줘야함 
 
-	// 서버에서 클라에게 좌표정보를 전송해줘야 함 
+	WaitForSingleObject(hEvent, INFINITE);
 
+	while (true)
+	{
+		process(c_id);
 
+	}
+	// Player 컨테이너 안에 클라이언트 정보들을 저장 동시에 접근할 수 있기 때문에 임계영역이나 Event로 관리해줘야함 
+	
 
 	return 0;
 }
+void init(int client_id, SOCKET socket)
+{
+	sockaddr_in clientaddr;
+	int addrlen = sizeof(clientaddr);
+	getpeername(socket, (sockaddr*)(&clientaddr), &addrlen);
+	clients[client_id].c_id = client_id;
+	clients[client_id].socket = socket;
+	clients[client_id].cl_addr = clientaddr;
+	clients[client_id].pos.x = 0;
+	clients[client_id].pos.y = 0;
+	clients[client_id].pos.z = 0;
+	clients[client_id].name[0] = 0;
 
+}
 int main()
 {
 	// 윈속 초기화
@@ -136,12 +157,16 @@ int main()
 		if (clientsocket == INVALID_SOCKET)
 			err_quit("accept()");
 		cout << "Client ACCEPT" << endl;
-		
-		hThread = CreateThread(NULL, 0, ProcessClient, (LPVOID)clientsocket, 0, NULL);
+
+		init(client_id, clientsocket);
+
+		hThread = CreateThread(NULL, 0, ProcessClient, (LPVOID)(uintptr_t)client_id, 0, NULL);
+
+		client_id++;
 
 		if (hThread == NULL) { closesocket(clientsocket); }
 		else { CloseHandle(hThread); }
-		
+
 	}
 	closesocket(listensocket);
 
