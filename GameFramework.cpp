@@ -4,6 +4,7 @@
 
 #include "stdafx.h"
 #include "GameFramework.h"
+#include "UILayer.h"
 
 CGameFramework::CGameFramework()
 {
@@ -329,6 +330,9 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 				case 'W':
 					((CMyTankPlayer*)m_pPlayer)->RotateTop(+5.0f);
 					break;
+				case 'M':
+					((CMyTankPlayer*)m_pPlayer)->m_hp -= 5;
+					break;
 				case VK_CONTROL:
 					((CMyTankPlayer*)m_pPlayer)->FireBullet();
 					break;
@@ -404,12 +408,29 @@ void CGameFramework::OnDestroy()
 
 void CGameFramework::BuildObjects()
 {
+	m_pUILayer = new UILayer(m_nSwapChainBuffers, 2, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
+	
+	ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
+	IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"맑은 고딕", m_nWndClientHeight / 25.0f);
+	D2D1_RECT_F d2dRect = D2D1::RectF((float)m_nWndClientWidth - 230.0f, m_nWndClientHeight - 75.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
+	
+	WCHAR pstrOutputText[256];
+	wcscpy_s(pstrOutputText, 256, L"게임 시작\n");
+	m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
+	
+	// pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
+	// pdwTextFormat = m_pUILayer->CreateTextFormat(L"맑은 고딕", m_nWndClientHeight / 25.0f);
+	// d2dRect = D2D1::RectF((float)m_nWndClientWidth - 250.0f, 15.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
+	// 
+	// m_pUILayer->UpdateTextOutputs(1, NULL, &d2dRect, pdwTextFormat, pd2dBrush);
+	////////////////////////////////////////////////////////////////////////////////////////
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
 	m_pScene = new CScene();
 	if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 
 	CMyTankPlayer *pAirplanePlayer = new CMyTankPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature());
+	// 플레이어 위치를 정해주는 함수입니다. SetPosition에 들어가는 XMFLOAT3값을 수정하면 플레이어 시작 위치가 바뀝니다.
 	pAirplanePlayer->SetPosition(XMFLOAT3(100.0f, 0.0f, 200.0f));
 	pAirplanePlayer->SetPlayerUpdatedContext(m_pScene->GetTerrain());
 	m_pScene->m_pPlayer = m_pPlayer = pAirplanePlayer;
@@ -431,6 +452,9 @@ void CGameFramework::BuildObjects()
 
 void CGameFramework::ReleaseObjects()
 {
+	if (m_pUILayer) m_pUILayer->ReleaseResources();
+	if (m_pUILayer) delete m_pUILayer;
+
 	if (m_pPlayer) m_pPlayer->Release();
 
 	if (m_pScene) m_pScene->ReleaseObjects();
@@ -511,6 +535,20 @@ void CGameFramework::MoveToNextFrame()
 	}
 }
 
+void CGameFramework::UpdateUI()
+{
+	// Calculate the width of the rectangle based on the percentage
+	float rectWidth = (m_pPlayer->m_hp / 100.0f) * 2.0f * 15.0f; // Double the radius to get the diameter
+
+	// Set up the layout rectangle for the rectangle
+	D2D1_RECT_F rect = { 0, 470, 640/30 * rectWidth, 450 };
+	ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Red,4.0f));
+	//IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"맑은 고딕", m_nWndClientHeight / 25.0f);
+	//m_pUILayer->DrawRect(2, &rect);
+	m_pUILayer->UpdateTextOutputs(1, NULL, &rect, NULL, pd2dBrush);
+}
+
+
 //#define _WITH_PLAYER_TOP
 
 void CGameFramework::FrameAdvance()
@@ -520,6 +558,8 @@ void CGameFramework::FrameAdvance()
 	ProcessInput();
 
     AnimateObjects();
+
+	UpdateUI();
 
 	HRESULT hResult = m_pd3dCommandAllocator->Reset();
 	hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
@@ -564,6 +604,8 @@ void CGameFramework::FrameAdvance()
 
 	WaitForGpuComplete();
 
+	m_pUILayer->Render(m_nSwapChainBufferIndex);
+	
 #ifdef _WITH_PRESENT_PARAMETERS
 	DXGI_PRESENT_PARAMETERS dxgiPresentParameters;
 	dxgiPresentParameters.DirtyRectsCount = 0;

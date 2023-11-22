@@ -29,6 +29,7 @@ CPlayer::CPlayer()
 	m_fYaw = 0.0f;
 
 	m_vel = 0.0f;
+	m_hp = 100;
 
 	m_pPlayerUpdatedContext = NULL;
 	m_pCameraUpdatedContext = NULL;
@@ -316,7 +317,7 @@ void CMyTankPlayer::FireBullet()
 		xmf3Direction.y += 0.01f;
 		pBulletObject->SetFirePosition(xmf3FirePosition);
 		pBulletObject->SetMovingDirection(xmf3Direction);
-		pBulletObject->SetScale(5.0,5.0,5.0);
+		pBulletObject->SetScale(m_BulletSizeX, m_BulletSizeY, m_BulletSizeZ);
 		pBulletObject->SetActive(true);
 	}
 }
