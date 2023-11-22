@@ -25,7 +25,7 @@ public:
 	int recvlen;
 	SOCKET socket;
 	sockaddr_in cl_addr;
-	char* recvbuf;
+	char recvbuf[1000];
 
 	int prev_remain;
 

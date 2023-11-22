@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "LabProject07-9-1.h"
 #include "GameFramework.h"
+#include"Network.h"
+#include"protocol.h"
 
 #define MAX_LOADSTRING 100
 
@@ -30,6 +32,20 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	if (!InitInstance(hInstance, nCmdShow)) return(FALSE);
 
 	hAccelTable = ::LoadAccelerators(hInstance, MAKEINTRESOURCE(IDI_LABPROJECT0791));
+
+	Network network;
+
+	network.Init();
+
+	CS_LOGIN_PACKET* p = new CS_LOGIN_PACKET;
+	p->type = CS_LOGIN_PLAYER;
+	p->size = sizeof(CS_LOGIN_PACKET);
+	strcpy_s(p->name, "sdy");
+	int sendlen = sizeof(*p);
+	send(network.clientsocket, (char*)&sendlen, sizeof(int), 0);
+	
+	send(network.clientsocket, (char*)p, p->size, 0);
+
 
 	while (1)
 	{

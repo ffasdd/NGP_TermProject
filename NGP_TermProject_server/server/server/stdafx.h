@@ -33,7 +33,7 @@ using namespace DirectX::PackedVector;
 #include"Item.h"
 // 패킷 정리
 constexpr int PORT_NUM = 9000;
-constexpr int BUF_SIZE = 512;
+constexpr int BUF_SIZE = 1000;
 constexpr int NAME_SIZE = 20;
 constexpr int MAX_ITEM = 30;
 // Client to Server Packet type

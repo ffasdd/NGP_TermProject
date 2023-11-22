@@ -9,6 +9,7 @@ array<SOCKET, 3> connectclients;
 
 int client_id = 0;
 HANDLE hEvent;
+
 //Debug
 void err_quit(const char* msg)
 {
@@ -51,16 +52,20 @@ void err_display(int errcode)
 
 void process(int client_id)
 {
+	int recvlen;
 	clients[client_id].do_recv();
-	char* buf = clients[client_id].recvbuf;
 
-	switch (buf[1])
+	switch (clients[client_id].recvbuf[1])
 	{
-	CS_LOGIN_PLAYER:
+	case CS_LOGIN_PLAYER:
 		{
-			CS_LOGIN_PACKET* p = reinterpret_cast<CS_LOGIN_PACKET*>(&buf);
+			cout << " LOGIN " << endl;
+			CS_LOGIN_PACKET* p = reinterpret_cast<CS_LOGIN_PACKET*>(clients[client_id].recvbuf[1]);
+
 			strcpy_s(clients[client_id].name, sizeof(clients[client_id].name), p->name);
+
 			clients[client_id].send_login_packet();
+
 			for (auto& pl : clients)
 			{
 				if (clients.size() == 3)
@@ -74,38 +79,41 @@ void process(int client_id)
 			SetEvent(hEvent);
 			break;
 		}
-	CS_MOVE_PLAYER:
+	case CS_MOVE_PLAYER:
 		{
 			break;
 		}
 	}
 
 }
+void Player::send_add_packet(int c_id)
+{
+	SC_ADD_PLAYER_PACKET p;
+	p.id = c_id;
+	strcpy_s(p.name, clients[c_id].name);
+	p.size = sizeof(SC_ADD_PLAYER_PACKET);
+	p.type = SC_ADD_PLAYER;
+	p.pos.x = clients[c_id].pos.x;
+	p.pos.y = clients[c_id].pos.y;
+	p.pos.z = clients[c_id].pos.z;
+	p.rot.x = clients[c_id].rot.x;
+	p.rot.y = clients[c_id].rot.y;
+	p.rot.z = clients[c_id].rot.z;
+	p.speed = clients[c_id].speed;
 
+	do_send(&p);
+
+}
 DWORD WINAPI ProcessClient(LPVOID arg)
 {
 	// 클라한테 전송받은 로그인 패킷 저장 
-
-	int ret;
 	int c_id = (int)arg;
-	SOCKET clientsocket = reinterpret_cast<SOCKET>(arg);
-	sockaddr_in clientaddr;
-	int addrlen = sizeof(clientaddr);
-	int size;
-	char buf[BUF_SIZE];
-
-	
-
 	WaitForSingleObject(hEvent, INFINITE);
-
 	while (true)
 	{
 		process(c_id);
-
 	}
 	// Player 컨테이너 안에 클라이언트 정보들을 저장 동시에 접근할 수 있기 때문에 임계영역이나 Event로 관리해줘야함 
-	
-
 	return 0;
 }
 void init(int client_id, SOCKET socket)
@@ -116,6 +124,7 @@ void init(int client_id, SOCKET socket)
 	clients[client_id].c_id = client_id;
 	clients[client_id].socket = socket;
 	clients[client_id].cl_addr = clientaddr;
+	clients[client_id].hp = 100;
 	clients[client_id].pos.x = 0;
 	clients[client_id].pos.y = 0;
 	clients[client_id].pos.z = 0;
@@ -153,7 +162,6 @@ int main()
 	int client_id = 0;
 
 	hEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
-
 	while (true)
 	{
 		addrlen = sizeof(clientaddr);
