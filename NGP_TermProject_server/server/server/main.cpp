@@ -119,6 +119,10 @@ void init(int client_id, SOCKET socket)
 	clients[client_id].pos.x = 0;
 	clients[client_id].pos.y = 0;
 	clients[client_id].pos.z = 0;
+	clients[client_id].rot.x = 0;
+	clients[client_id].rot.y = 0;
+	clients[client_id].rot.z = 0;
+	clients[client_id].speed = 0;
 	clients[client_id].name[0] = 0;
 
 }
