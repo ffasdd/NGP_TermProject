@@ -6,6 +6,7 @@
 #include "Timer.h"
 #include "Player.h"
 #include "Scene.h"
+#include "Network.h"
 
 class UILayer;
 
@@ -89,8 +90,9 @@ private:
 	CScene						*m_pScene = NULL;
 	CPlayer						*m_pPlayer = NULL;
 	CCamera						*m_pCamera = NULL;
+	Network						network;
 
-	UILayer* m_pUILayer = NULL;
+	UILayer						*m_pUILayer = NULL;
 
 	POINT						m_ptOldCursorPos;
 

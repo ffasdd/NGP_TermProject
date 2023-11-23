@@ -3,6 +3,7 @@
 #include "GameFramework.h"
 #include"Network.h"
 #include"protocol.h"
+#include<iostream>
 
 #define MAX_LOADSTRING 100
 
@@ -40,12 +41,17 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	CS_LOGIN_PACKET* p = new CS_LOGIN_PACKET;
 	p->type = CS_LOGIN_PLAYER;
 	p->size = sizeof(CS_LOGIN_PACKET);
-	strcpy_s(p->name, "sdy");
-	int sendlen = sizeof(*p);
-	send(network.clientsocket, (char*)&sendlen, sizeof(int), 0);
+
+	cout << "사용하실 이름을 입력하시오" << endl;
+	cin >> p->name;
+
+	send(network.clientsocket, (char*)&p->size, sizeof(int), 0);
 	
 	send(network.clientsocket, (char*)p, p->size, 0);
 
+	//recv(network.clientsocket, (char*)&network.recvlen,sizeof(int),0);
+
+	//recv(network.clientsocket, network.recvbuf, network.recvlen,0);
 
 	while (1)
 	{
