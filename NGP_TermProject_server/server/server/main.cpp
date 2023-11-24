@@ -2,11 +2,79 @@
 
 #include"stdafx.h"
 
-vector<Player> clients(3);
+
 array<Item, MAX_ITEM>items;
 array<SOCKET, 3> connectclients;
 
 
+enum { ST_EMPTY, ST_RUNNING};
+
+
+class CLIENT
+{
+private: 
+	int m_id = 0;
+	SOCKET m_sock;
+	char	m_state;
+	char	recv_buf[BUF_SIZE];
+	
+	
+	m_Pos m_pos;
+	float m_yaw, m_pitch, m_roll;
+	char name[NAME_SIZE];
+	int m_hp;
+	float m_speed;
+
+
+
+public:
+	CRITICAL_SECTION m_cs;
+
+	CLIENT()
+	{
+		m_id = -1;
+		m_sock = 0;
+		m_state = ST_EMPTY;
+		m_pos = { 0.0f,0.0f,0.0f };
+		m_yaw = m_pitch = m_roll = 0.0f;
+		m_speed = 0;
+		m_hp = 0;
+		name[0] = 0;
+		InitializeCriticalSection(&m_cs);
+
+	}
+	~CLIENT() {}
+
+public:
+	SOCKET getSock() { return m_sock; }
+	int getID() { return m_id; }
+	m_Pos getPos() { return m_pos; }
+	float getYaw() { return m_yaw;}
+	float getPitch() { return m_pitch;}
+	float getRoll() { return m_roll;}
+	float getSpeed() { return m_speed; }
+	char getState() { return m_state; }
+	int getHp() { return m_hp; }
+
+	void setSocket(SOCKET socket) { m_sock = socket; }
+	void setID(int c_id) { m_id = c_id; }
+	void setPos(m_Pos pos) { m_pos = pos; }
+	void setYaw(float yaw) { m_yaw = yaw; }
+	void setPitch(float pitch) { m_pitch = pitch; }
+	void setRoll(float roll) { m_roll = roll; }
+	void setSpeed(float Speed) { m_speed = Speed; }
+	void setState(char state) { m_state = state; }
+	void setHp(int hp) { m_hp = hp; }
+	void setName(char* _name) { strcpy_s(name, _name); }
+public:
+	// Network
+	
+	
+
+
+};
+
+array<CLIENT, MAX_USER> clients;
 int client_id = 0;
 HANDLE hEvent;
 
@@ -50,91 +118,58 @@ void err_display(int errcode)
 	LocalFree(lpMsgBuf);
 }
 
-void process(int client_id)
-{
-	int recvlen;
-	clients[client_id].do_recv();
 
-	switch (clients[client_id].recvbuf[1])
-	{
-	case CS_LOGIN_PLAYER:
-		{
-			cout << " LOGIN " << endl;
-			CS_LOGIN_PACKET* p = reinterpret_cast<CS_LOGIN_PACKET*>(clients[client_id].recvbuf[1]);
-
-			strcpy_s(clients[client_id].name, sizeof(clients[client_id].name), p->name);
-
-			clients[client_id].send_login_packet();
-
-			for (auto& pl : clients)
-			{
-				if (clients.size() == 3)
-				{
-					if (pl.c_id == client_id)continue;
-					pl.send_add_packet(client_id);
-					clients[client_id].send_add_packet(pl.c_id);
-				}
-			}
-
-			SetEvent(hEvent);
-			break;
-		}
-	case CS_MOVE_PLAYER:
-		{
-			break;
-		}
-	}
-
-}
-void Player::send_add_packet(int c_id)
-{
-	SC_ADD_PLAYER_PACKET p;
-	p.id = c_id;
-	strcpy_s(p.name, clients[c_id].name);
-	p.size = sizeof(SC_ADD_PLAYER_PACKET);
-	p.type = SC_ADD_PLAYER;
-	p.pos.x = clients[c_id].pos.x;
-	p.pos.y = clients[c_id].pos.y;
-	p.pos.z = clients[c_id].pos.z;
-	p.rot.x = clients[c_id].rot.x;
-	p.rot.y = clients[c_id].rot.y;
-	p.rot.z = clients[c_id].rot.z;
-	p.speed = clients[c_id].speed;
-
-	do_send(&p);
-
-}
 DWORD WINAPI ProcessClient(LPVOID arg)
 {
-	// 클라한테 전송받은 로그인 패킷 저장 
-	int c_id = (int)arg;
-	WaitForSingleObject(hEvent, INFINITE);
-	while (true)
+	int retval;
+	SOCKET client_sock = (SOCKET)arg;
+	struct sockaddr_in clientaddr;
+	char addr[INET_ADDRSTRLEN];
+	int addrlen;
+
+	addrlen = sizeof(clientaddr);
+	getpeername(client_sock, (sockaddr*)&clientaddr, &addrlen);
+	inet_ntop(AF_INET, &clientaddr.sin_addr, addr, sizeof(addr));
+
+	int client_id = 0;
+	for (int i = 0; i < MAX_USER; ++i)
 	{
-		process(c_id);
+		if (clients[i].getState() == ST_EMPTY)
+		{
+			client_id = i;
+			EnterCriticalSection(&clients[client_id].m_cs);
+			clients[client_id].setID(client_id);
+			clients[client_id].setSocket(client_sock);
+			clients[client_id].setState(ST_RUNNING);/*
+			recv(clients[client_id].socket, clients[client_id].recv_buf, NAME_SIZE, 0);
+			clients[client_id].setName(clients[client_id].recv_buf);*/
+			LeaveCriticalSection(&clients[client_id].m_cs);
+
+			break;
+		}
 	}
-	// Player 컨테이너 안에 클라이언트 정보들을 저장 동시에 접근할 수 있기 때문에 임계영역이나 Event로 관리해줘야함 
+	EnterCriticalSection(&clients[client_id].m_cs);
+	clients[client_id].setID(client_id);
+	m_Pos clientPos{ 100.f * client_id,0.0f,10.0f * client_id };
+	clients[client_id].setPos(clientPos);
+	clients[client_id].setHp(100);
+	clients[client_id].setSpeed(10.0f);
+
+	LeaveCriticalSection(&clients[client_id].m_cs);
+
+	SC_LOGIN_PACKET packet;
+	packet.type = SC_LOGIN_PLAYER;
+	packet.size = sizeof(SC_LOGIN_PACKET);
+	packet.id = clients[client_id].getID();
+	packet.pos = clients[client_id].getPos();
+	packet.speed = clients[client_id].getSpeed();
+	packet.hp = clients[client_id].getHp();
+
+
 	return 0;
-}
-void init(int client_id, SOCKET socket)
-{
-	sockaddr_in clientaddr;
-	int addrlen = sizeof(clientaddr);
-	getpeername(socket, (sockaddr*)(&clientaddr), &addrlen);
-	clients[client_id].c_id = client_id;
-	clients[client_id].socket = socket;
-	clients[client_id].cl_addr = clientaddr;
-	clients[client_id].hp = 100;
-	clients[client_id].pos.x = 0;
-	clients[client_id].pos.y = 0;
-	clients[client_id].pos.z = 0;
-	clients[client_id].rot.x = 0;
-	clients[client_id].rot.y = 0;
-	clients[client_id].rot.z = 0;
-	clients[client_id].speed = 0;
-	clients[client_id].name[0] = 0;
 
 }
+
 int main()
 {
 	// 윈속 초기화
@@ -170,15 +205,10 @@ int main()
 			err_quit("accept()");
 		cout << "Client ACCEPT" << endl;
 
-		init(client_id, clientsocket);
-
-		hThread = CreateThread(NULL, 0, ProcessClient, (LPVOID)(uintptr_t)client_id, 0, NULL);
-
-		client_id++;
+		hThread = CreateThread(NULL, 0, ProcessClient, (LPVOID)clientsocket, 0, NULL);
 
 		if (hThread == NULL) { closesocket(clientsocket); }
 		else { CloseHandle(hThread); }
-
 	}
 	closesocket(listensocket);
 

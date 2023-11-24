@@ -20,26 +20,6 @@ void Player::do_recv()
 	recv(socket, recvbuf, recvlen, 0);
 }
 
-void Player::send_login_packet()
-{
-	SC_LOGIN_PACKET p;
-	p.type = SC_LOGIN_PLAYER;
-	p.id = c_id;
-	p.hp = hp;
-	p.speed = speed;
-	p.pos.x = pos.x;
-	p.pos.y = pos.y;
-	p.pos.z = pos.z;
-	p.rot.x = rot.x;
-	p.rot.y = rot.y;
-	p.rot.z = rot.z;
-	
-	do_send(&p);
-}
-
-
-
-
 
 void Player::hitmissile()
 {

@@ -7,6 +7,8 @@
 #include <Windows.h>  // LPVOID 및 DWORD_PTR를 사용하기 위한 헤더
 using namespace std;
 
+#define MAX_USER 3
+
 #include <d3d12.h>
 #include <dxgi1_4.h>
 #include <D3Dcompiler.h>
@@ -55,6 +57,12 @@ constexpr char SC_END = 7;
 constexpr char SC_UPDATE = 8;
 constexpr char SC_ADD_PLAYER = 9;
 
+struct m_Pos
+{
+	float x;
+	float y;
+	float z;
+};
 
 enum COLLIDERTYPE
 {
@@ -102,8 +110,7 @@ struct SC_LOGIN_PACKET
 {
 	unsigned char size;
 	char type;
-	XMFLOAT3 pos;
-	XMFLOAT3 rot;
+	m_Pos pos;
 	int id;
 	int hp;
 	int speed;
@@ -115,8 +122,7 @@ struct SC_ADD_PLAYER_PACKET
 {
 	unsigned char size;
 	char type;
-	XMFLOAT3 pos;
-	XMFLOAT3 rot;
+	m_Pos pos;
 	int id;
 	int hp;
 	int speed;
@@ -126,7 +132,7 @@ struct SC_MOVE_PACKET
 {
 	unsigned char size;
 	char type;
-	XMFLOAT3 pos;
+	m_Pos pos;
 	XMFLOAT3 look;
 	XMFLOAT3 up;
 	int id;
