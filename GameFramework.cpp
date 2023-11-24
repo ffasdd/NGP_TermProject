@@ -431,7 +431,8 @@ void CGameFramework::BuildObjects()
 
 	CMyTankPlayer *pAirplanePlayer = new CMyTankPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature());
 	// 플레이어 위치를 정해주는 함수입니다. SetPosition에 들어가는 XMFLOAT3값을 수정하면 플레이어 시작 위치가 바뀝니다.
-	pAirplanePlayer->SetPosition(XMFLOAT3(100.0f, 0.0f, 200.0f));
+	//pAirplanePlayer->SetPosition(XMFLOAT3(100.0f, 0.0f, 200.0f));
+	pAirplanePlayer->SetPosition(pAirplanePlayer->m_pos);
 	pAirplanePlayer->SetPlayerUpdatedContext(m_pScene->GetTerrain());
 	m_pScene->m_pPlayer = m_pPlayer = pAirplanePlayer;
 	m_pCamera = m_pPlayer->GetCamera();

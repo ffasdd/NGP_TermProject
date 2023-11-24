@@ -208,6 +208,7 @@ CMyTankPlayer::CMyTankPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList
 	pGameObject->SetObjectID(1);
 	SetChild(pGameObject, true);
 
+	Setplaypos(100.f, 0.f, 100.f);
 	for (int i = 0; i < BULLETS; i++)
 	{
 		CGameObject* pBulletModel= CGameObject::LoadGeometryFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/bullet.bin");
@@ -253,6 +254,13 @@ void CMyTankPlayer::OnPlayerUpdateCallback(float fTimeElapsed)
 		xmf3PlayerPosition.y = fHeight;
 		SetPosition(xmf3PlayerPosition);
 	}
+}
+
+void CMyTankPlayer::Setplaypos(float x, float y, float z)
+{
+	m_pos.x = x;
+	m_pos.y = y;
+	m_pos.z = z;
 }
 
 
