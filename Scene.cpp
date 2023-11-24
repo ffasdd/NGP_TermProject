@@ -115,7 +115,7 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	pEnemy1->SetPosition(1000.0f, 0.0f, 300.0f);
 	pEnemy1->SetContext(m_pTerrain);
 	m_ppGameObjects[30] = pEnemy1;
-	m_ppGameObjects[30]->SetObjectID(0);
+	m_ppGameObjects[30]->SetObjectID(1);
 	m_ppGameObjects[30]->SetRimpower(5);
 	m_ppGameObjects[30]->Enemy[0] = pEnemy1;
 
@@ -280,7 +280,7 @@ bool CScene::TCheckIntersectRect(XMFLOAT2 OtherLT, XMFLOAT2 OtherRB, XMFLOAT2 Ob
 
 void CScene::CheckPlayerByItem() {
 	//%// 객체와 아이템 총돌체크 검사중
-	for (int i = 0; i < m_nGameObjects; ++i)
+	for (int i = 0; i < 30; ++i)
 	{
 		XMFLOAT3 e_pos = m_ppGameObjects[i]->GetPosition();
 		XMFLOAT3 p_pos = m_pPlayer->GetPosition();
@@ -310,6 +310,42 @@ void CScene::CheckPlayerByItem() {
 			m_ppGameObjects[i]->isCollision = true;
 			
 			
+		}
+		m_pPlayer->SetPosition(p_pos);
+	}
+}
+
+void CScene::CheckPlayerByEnemy() {
+	//%// 객체와 적 총돌체크 검사중
+	for (int i = 30; i < 32; ++i)
+	{
+		XMFLOAT3 e_pos = m_ppGameObjects[i]->GetPosition();
+		XMFLOAT3 p_pos = m_pPlayer->GetPosition();
+
+		XMFLOAT2 OtherLT = XMFLOAT2(e_pos.x - 20, e_pos.z - 30);
+		XMFLOAT2 OtherRB = XMFLOAT2(e_pos.x + 20, e_pos.z + 30);
+		XMFLOAT2 ObjectLT = XMFLOAT2(p_pos.x - 20, p_pos.z - 30);
+		XMFLOAT2 ObjectRB = XMFLOAT2(p_pos.x + 20, p_pos.z + 30);
+
+		XMFLOAT2 LenXY = CheckIntersectRect(OtherLT, OtherRB, ObjectLT, ObjectRB);
+		if (LenXY.x || LenXY.y)
+		{
+			if (m_ppGameObjects[i]->isCollision == false) {
+				if (LenXY.x < LenXY.y) {
+					if (p_pos.x > m_ppGameObjects[i]->GetPosition().x)
+						p_pos.x += LenXY.x;
+					else
+						p_pos.x -= LenXY.x;
+				}
+				else {
+					if (p_pos.z > m_ppGameObjects[i]->GetPosition().z)
+						p_pos.z += LenXY.y;
+					else
+						p_pos.z -= LenXY.y;
+				}
+			}
+
+
 		}
 		m_pPlayer->SetPosition(p_pos);
 	}
@@ -431,6 +467,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 		m_pLights[1].m_xmf3Direction = m_pPlayer->GetLookVector();
 	}
 	CheckPlayerByItem();
+	CheckPlayerByEnemy();
 	//CheckEnemyByBullet(fTimeElapsed);
 	//CheckPlayerByObjectLen();
 	IsCollision(fTimeElapsed);
