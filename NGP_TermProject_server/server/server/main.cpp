@@ -68,7 +68,10 @@ public:
 	void setName(char* _name) { strcpy_s(name, _name); }
 public:
 	// Network
-	
+	void sendLoginPacket(SC_LOGIN_PACKET packet)
+	{
+		send(m_sock, (char*)&packet, sizeof(SC_LOGIN_PACKET), 0);
+	}
 	
 
 
@@ -165,9 +168,9 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	packet.speed = clients[client_id].getSpeed();
 	packet.hp = clients[client_id].getHp();
 
+	clients[client_id].sendLoginPacket(packet);
 
 	return 0;
-
 }
 
 int main()
