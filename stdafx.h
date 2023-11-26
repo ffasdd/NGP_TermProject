@@ -25,6 +25,7 @@
 #include <shellapi.h>
 
 #include <fstream>
+#include<array>
 #include <vector>
 
 using namespace std;

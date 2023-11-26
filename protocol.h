@@ -22,13 +22,22 @@ constexpr char SC_END = 7;
 constexpr char SC_UPDATE = 8;
 constexpr char SC_ADD_PLAYER = 9;
 
-
+	
 enum COLLIDERTYPE
 {
 	ITEM,
 	BULLET,
 	PLAYER
 };
+
+
+struct m_Pos
+{
+	float x;
+	float y;
+	float z;
+};
+
 
 #pragma pack(push,1)
 struct CS_LOGIN_PACKET
@@ -69,8 +78,7 @@ struct SC_LOGIN_PACKET
 {
 	unsigned char size;
 	char type;
-	XMFLOAT3 pos;
-	XMFLOAT3 rot;
+	m_Pos pos;
 	int id;
 	int hp;
 	int speed;
@@ -82,8 +90,7 @@ struct SC_ADD_PLAYER_PACKET
 {
 	unsigned char size;
 	char type;
-	XMFLOAT3 pos;
-	XMFLOAT3 rot;
+	m_Pos pos;
 	int id;
 	int hp;
 	int speed;
@@ -93,7 +100,7 @@ struct SC_MOVE_PACKET
 {
 	unsigned char size;
 	char type;
-	XMFLOAT3 pos;
+	m_Pos pos;
 	XMFLOAT3 look;
 	XMFLOAT3 up;
 	int id;

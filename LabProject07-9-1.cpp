@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "LabProject07-9-1.h"
 #include "GameFramework.h"
-#include"Network.h"
 #include"protocol.h"
+#include"INFO.h"
 #include<iostream>
 
 #define MAX_LOADSTRING 100
@@ -13,10 +13,16 @@ TCHAR							szWindowClass[MAX_LOADSTRING];
 
 CGameFramework					gGameFramework;
 
+DWORD WINAPI ConnecttoServer(LPVOID arg);
+
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
+
+array<CLIENT, 3>Clients;
+
+HANDLE conevent = CreateEvent(NULL, FALSE, FALSE, NULL);
 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
@@ -34,24 +40,18 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 
 	hAccelTable = ::LoadAccelerators(hInstance, MAKEINTRESOURCE(IDI_LABPROJECT0791));
 
-	Network network;
+	int ret;
 
-	network.Init();
+	WSADATA wsa;
+	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
+		return -1;
+	}
 
-	CS_LOGIN_PACKET* p = new CS_LOGIN_PACKET;
-	p->type = CS_LOGIN_PLAYER;
-	p->size = sizeof(CS_LOGIN_PACKET);
+	HANDLE network_th;
+	network_th = CreateThread(NULL, 0, ConnecttoServer, NULL, 0, NULL);
 
-	cout << "사용하실 이름을 입력하시오" << endl;
-	cin >> p->name;
-
-	send(network.clientsocket, (char*)&p->size, sizeof(int), 0);
-	
-	send(network.clientsocket, (char*)p, p->size, 0);
-
-	//recv(network.clientsocket, (char*)&network.recvlen,sizeof(int),0);
-
-	//recv(network.clientsocket, network.recvbuf, network.recvlen,0);
+	WaitForSingleObject(conevent, INFINITE);
+	cout << " CONNECT " << endl;
 
 	while (1)
 	{
@@ -69,10 +69,50 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			gGameFramework.FrameAdvance();
 		}
 	}
+
 	gGameFramework.OnDestroy();
 
 	return((int)msg.wParam);
 }
+
+DWORD WINAPI ConnecttoServer(LPVOID arg)
+{
+	int retval;
+	int my_id;
+	SOCKET clientsocket = socket(AF_INET, SOCK_STREAM, 0);
+	char recvbuf[BUF_SIZE];
+	if (clientsocket == INVALID_SOCKET)
+	{
+		return 0;
+	}
+	sockaddr_in clientaddr;
+	clientaddr.sin_family = AF_INET;
+	clientaddr.sin_port = htons(9000);
+	inet_pton(AF_INET, "127.0.0.1", &clientaddr.sin_addr);
+	connect(clientsocket, (sockaddr*)&clientaddr, sizeof(clientaddr));
+
+	while (true)
+	{
+		recv(clientsocket, recvbuf, BUF_SIZE, 0);
+		switch (recvbuf[1])
+		{
+		case SC_LOGIN_PLAYER:
+			SC_LOGIN_PACKET* p = reinterpret_cast<SC_LOGIN_PACKET*>(&recvbuf);
+			my_id = p->id;
+			Clients[my_id].c_id = my_id;
+			Clients[my_id].c_pos.x = p->pos.x;
+			Clients[my_id].c_pos.y = p->pos.y;
+			Clients[my_id].c_pos.z = p->pos.z;
+			Clients[my_id].m_state = ST_RUNNING;
+			strcpy_s(Clients[my_id].name, p->name);
+			Clients[my_id]._hp = p->hp;
+			Clients[my_id]._speed = p->speed;
+			SetEvent(conevent);
+			break;
+		}
+	}
+	return 0;
+};
 
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {

@@ -137,8 +137,9 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	int client_id = 0;
 	for (int i = 0; i < MAX_USER; ++i)
 	{
-		if (clients[i].getState() == ST_EMPTY)
+		if (clients[i].getState() == ST_EMPTY) //체크를 어떻게?  
 		{
+			//0 
 			client_id = i;
 			EnterCriticalSection(&clients[client_id].m_cs);
 			clients[client_id].setID(client_id);
@@ -152,7 +153,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 		}
 	}
 	EnterCriticalSection(&clients[client_id].m_cs);
-	clients[client_id].setID(client_id);
+	clients[client_id].setID(client_id); // 0 
 	m_Pos clientPos{ 100.f * client_id,0.0f,10.0f * client_id };
 	clients[client_id].setPos(clientPos);
 	clients[client_id].setHp(100);
@@ -167,8 +168,17 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	packet.pos = clients[client_id].getPos();
 	packet.speed = clients[client_id].getSpeed();
 	packet.hp = clients[client_id].getHp();
+	if (client_id == 0)
+		strcpy_s(packet.name, "SDY");
+	if (client_id == 1)
+		strcpy_s(packet.name, "Test");
+	if (client_id == 2)
+		strcpy_s(packet.name, "Server");
+
 
 	clients[client_id].sendLoginPacket(packet);
+	
+	// 일단 로그인 되는지 확인부터 
 
 	return 0;
 }
@@ -177,6 +187,7 @@ int main()
 {
 	// 윈속 초기화
 	WSADATA wsa;
+
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 		return 1;
 	SOCKET listensocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -200,12 +211,14 @@ int main()
 	int client_id = 0;
 
 	hEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
+
 	while (true)
 	{
 		addrlen = sizeof(clientaddr);
 		clientsocket = accept(listensocket, (sockaddr*)&clientaddr, &addrlen);
 		if (clientsocket == INVALID_SOCKET)
 			err_quit("accept()");
+
 		cout << "Client ACCEPT" << endl;
 
 		hThread = CreateThread(NULL, 0, ProcessClient, (LPVOID)clientsocket, 0, NULL);

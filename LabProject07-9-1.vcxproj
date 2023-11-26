@@ -140,6 +140,7 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="GameFramework.h" />
+    <ClInclude Include="INFO.h" />
     <ClInclude Include="LabProject07-9-1.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Network.h" />
