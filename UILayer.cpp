@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "UILayer.h"
-
+// 예나언니 여기는 UI때문에 추가된 cpp라 여기 할거 많을듯,,
 using namespace std;
 
 UILayer::UILayer(UINT nFrames, UINT nTextBlocks, ID3D12Device* pd3dDevice, ID3D12CommandQueue* pd3dCommandQueue, ID3D12Resource** ppd3dRenderTargets, UINT nWidth, UINT nHeight)

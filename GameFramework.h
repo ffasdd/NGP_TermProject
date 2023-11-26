@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "Scene.h"
 
+// 예나언니 여기도 UI
 class UILayer;
 
 class CGameFramework

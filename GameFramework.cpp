@@ -408,6 +408,7 @@ void CGameFramework::OnDestroy()
 
 void CGameFramework::BuildObjects()
 {
+	// 예나언니
 	m_pUILayer = new UILayer(m_nSwapChainBuffers, 2, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
 	
 	ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
@@ -432,6 +433,7 @@ void CGameFramework::BuildObjects()
 	CMyTankPlayer *pAirplanePlayer = new CMyTankPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature());
 	// 플레이어 위치를 정해주는 함수입니다. SetPosition에 들어가는 XMFLOAT3값을 수정하면 플레이어 시작 위치가 바뀝니다.
 	//pAirplanePlayer->SetPosition(XMFLOAT3(100.0f, 0.0f, 200.0f));
+	// 예나언니 여기는 서버에서 받아온 정보로 SetPosition 하려고 변경한 부분이야
 	pAirplanePlayer->SetPosition(pAirplanePlayer->m_pos);
 	pAirplanePlayer->SetPlayerUpdatedContext(m_pScene->GetTerrain());
 	m_pScene->m_pPlayer = m_pPlayer = pAirplanePlayer;
@@ -536,6 +538,7 @@ void CGameFramework::MoveToNextFrame()
 	}
 }
 
+// 예나언니 여기는 UI 업데이트 하는 함수양
 void CGameFramework::UpdateUI()
 {
 	// Calculate the width of the rectangle based on the percentage

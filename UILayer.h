@@ -1,5 +1,7 @@
 #pragma once
 
+// 예나언니 여기도 UI
+
 struct TextBlock
 {
     WCHAR                           m_pstrText[256];
