@@ -74,7 +74,7 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 
 	BuildDefaultLightsAndMaterials();
 
-	XMFLOAT3 xmf3Scale(100.0f, 2.0f, 100.0f);
+	XMFLOAT3 xmf3Scale(20.f, 0.0f, 20.f);
 	XMFLOAT4 xmf4Color(0.0f, 1.0f, 0.0f, 1.0f);
 
 	m_pTerrain = new CHeightMapTerrain(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, _T("terrain.raw"), 257, 257, 257, 257, xmf3Scale, xmf4Color);
@@ -105,7 +105,7 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 		m_ppGameObjects[i]->SetRimpower(0.1); 
 		
 		//%// 랜덤한 위치에 뿌려지도록 값을 수정했습니다. 추후 맵 크기가 정해지면 다시 수정할 예정입니다
-		XMFLOAT3 xmf3SponPosition = XMFLOAT3(0.0f + rand() % 2500, 0.0f, 0.0f + rand() % 2500);
+		XMFLOAT3 xmf3SponPosition = XMFLOAT3(0.0f + rand() % 5000, 0.0f, 0.0f + rand() % 5000);
 		m_ppGameObjects[i]->SetPosition(xmf3SponPosition.x, 0.0, xmf3SponPosition.z);
 	}
 
