@@ -88,6 +88,8 @@ public:
 	void SetPosition(const XMFLOAT3& xmf3Position) { Move(XMFLOAT3(xmf3Position.x - m_xmf3Position.x, xmf3Position.y - m_xmf3Position.y, xmf3Position.z - m_xmf3Position.z), false); }
 	void Move(const XMFLOAT3& xmf3Shift, bool bVelocity = false);
 
+	void CheckPlayerByTerrian();
+
 
 public:
 	ID3D12RootSignature			*m_pd3dGraphicsRootSignature = NULL;

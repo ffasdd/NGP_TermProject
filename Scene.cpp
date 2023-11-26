@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "Scene.h"
 #include <iostream>
+#include <algorithm>
 
 CScene::CScene()
 {
@@ -434,7 +435,41 @@ void CScene::Move(const XMFLOAT3& xmf3Shift, bool bUpdateVelocity)
 	}
 }
 
+void CScene::CheckPlayerByTerrian() {
+	//%// 객체가 터레인 밖을 벗어나지 못하게 해용
+	// 플레이어의 현재 위치를 얻어옵니다.
+	XMFLOAT3 p_pos = m_pPlayer->GetPosition();
 
+	// 플레이어가 바라보는 방향 벡터를 얻어옵니다.
+	XMFLOAT3 lookVector = m_pPlayer->GetLookVector();
+
+	// X 좌표가 정해진 범위를 벗어나면 수정
+	if (p_pos.x < 0 || p_pos.x > 5140) {
+		// 플레이어가 바라보는 반대 방향으로 10 단위만큼 이동
+		XMFLOAT3 oppositeDirectionX = XMFLOAT3(-lookVector.x, 0.0f, 0.0f);
+		XMVECTOR oppositeDirectionVectorX = XMVector3Normalize(XMLoadFloat3(&oppositeDirectionX));
+		XMVECTOR playerPosVectorX = XMLoadFloat3(&p_pos);
+		playerPosVectorX -= 10.0f * oppositeDirectionVectorX;
+
+		// X 좌표를 5140의 범위 내로 클램핑합니다.
+		playerPosVectorX = XMVectorClamp(playerPosVectorX, XMVectorSet(0, 0, 0, 0), XMVectorSet(5140, 0, 5140, 0));
+		XMStoreFloat3(&p_pos, playerPosVectorX);
+	}
+
+	// Z 좌표가 정해진 범위를 벗어나면 수정
+	if (p_pos.z < 0 || p_pos.z > 5140) {
+		// 플레이어가 바라보는 반대 방향으로 10 단위만큼 이동
+		XMFLOAT3 oppositeDirectionZ = XMFLOAT3(0.0f, 0.0f, -lookVector.z);
+		XMVECTOR oppositeDirectionVectorZ = XMVector3Normalize(XMLoadFloat3(&oppositeDirectionZ));
+		XMVECTOR playerPosVectorZ = XMLoadFloat3(&p_pos);
+		playerPosVectorZ -= 10.0f * oppositeDirectionVectorZ;
+
+		// Z 좌표를 5140의 범위 내로 클램핑합니다.
+		playerPosVectorZ = XMVectorClamp(playerPosVectorZ, XMVectorSet(0, 0, 0, 0), XMVectorSet(5140, 0, 5140, 0));
+		XMStoreFloat3(&p_pos, playerPosVectorZ);
+	}
+	m_pPlayer->SetPosition(p_pos);
+}
 
 void CScene::CheckPlayerByObjectLen() {
 	// 플레이어와 오브젝트들의 거리를 체크해서 이동에 대한 bool 값 전달
@@ -452,6 +487,8 @@ void CScene::CheckPlayerByObjectLen() {
 	
 }
 
+
+
 void CScene::AnimateObjects(float fTimeElapsed)
 {
 	m_fElapsedTime = fTimeElapsed;
@@ -468,6 +505,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 	}
 	CheckPlayerByItem();
 	CheckPlayerByEnemy();
+	CheckPlayerByTerrian();
 	//CheckEnemyByBullet(fTimeElapsed);
 	//CheckPlayerByObjectLen();
 	IsCollision(fTimeElapsed);
