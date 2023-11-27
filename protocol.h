@@ -40,6 +40,27 @@ struct m_Pos
 
 
 #pragma pack(push,1)
+struct m_Pos
+{
+	float x;
+	float y;
+	float z;
+};
+struct m_Look
+{
+	float x;
+	float y;
+	float z;
+};
+
+enum COLLIDERTYPE
+{
+	ITEM,
+	BULLET,
+	PLAYER
+};
+
+#pragma pack(push,1)
 struct CS_LOGIN_PACKET
 {
 	unsigned char size;
@@ -82,6 +103,7 @@ struct SC_LOGIN_PACKET
 	int id;
 	int hp;
 	int speed;
+	XMFLOAT3 Look;
 	char name[NAME_SIZE];
 
 
@@ -91,6 +113,7 @@ struct SC_ADD_PLAYER_PACKET
 	unsigned char size;
 	char type;
 	m_Pos pos;
+	XMFLOAT3 Look;
 	int id;
 	int hp;
 	int speed;
@@ -140,6 +163,9 @@ struct SC_REMOVE_PACKET
 	int id;
 
 };
+
+
+
 
 
 

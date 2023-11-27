@@ -108,6 +108,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			strcpy_s(Clients[my_id].name, p->name);
 			Clients[my_id]._hp = p->hp;
 			Clients[my_id]._speed = p->speed;
+			Clients[my_id].c_look = p->Look;
 			SetEvent(conevent);
 			break;
 		}
@@ -121,6 +122,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id].c_pos.x = p->pos.x;
 			Clients[my_id].c_pos.y = p->pos.y;
 			Clients[my_id].c_pos.z = p->pos.z;
+			Clients[my_id].c_look = p->Look;
 			strcpy_s(Clients[my_id].name, p->name);
 			break;
 		}

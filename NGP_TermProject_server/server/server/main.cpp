@@ -18,7 +18,7 @@ private:
 	char	m_state;
 	char	recv_buf[BUF_SIZE];
 	
-	
+	XMFLOAT3 Lookvec;
 	m_Pos m_pos;
 	float m_yaw, m_pitch, m_roll;
 	char name[NAME_SIZE];
@@ -56,6 +56,7 @@ public:
 	char getState() { return m_state; }
 	int getHp() { return m_hp; }
 	char* getName() { return name; }
+	XMFLOAT3 getLookVec() { return Lookvec; }
 
 	void setSocket(SOCKET socket) { m_sock = socket; }
 	void setID(int c_id) { m_id = c_id; }
@@ -67,6 +68,7 @@ public:
 	void setState(char state) { m_state = state; }
 	void setHp(int hp) { m_hp = hp; }
 	void setName(char* _name) { strcpy_s(name, _name); }
+	void setLook(XMFLOAT3 look) { Lookvec = look; }
 public:
 	// Network
 	void sendLoginPacket(SC_LOGIN_PACKET packet)
@@ -162,9 +164,11 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	EnterCriticalSection(&clients[client_id].m_cs);
 	clients[client_id].setID(client_id); // 0 
 	m_Pos clientPos{ 100.f * client_id,0.0f,10.0f * client_id };
+	XMFLOAT3 clientLook{ 0.0f,0.0f,0.0f };
 	clients[client_id].setPos(clientPos);
 	clients[client_id].setHp(100);
 	clients[client_id].setSpeed(10.0f);
+	clients[client_id].setLook(clientLook);
 
 	LeaveCriticalSection(&clients[client_id].m_cs);
 
@@ -175,6 +179,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	packet.pos = clients[client_id].getPos();
 	packet.speed = clients[client_id].getSpeed();
 	packet.hp = clients[client_id].getHp();
+	packet.Look = clients[client_id].getLookVec();
 	if (client_id == 0)
 		strcpy_s(packet.name, "SDY");
 	if (client_id == 1)
@@ -201,6 +206,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			strcpy_s(p.name, clients[client_id].getName());
 			p.pos = clients[client_id].getPos();
 			p.speed = clients[client_id].getSpeed();
+			p.Look = clients[client_id].getLookVec();
 			pl.sendAddPakcet(p);
 		}
 		// 다른 클라이언트 정보를 나에게 보내기
@@ -212,6 +218,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			p.type = SC_ADD_PLAYER;
 			p.id = pl.getID();
 			p.hp = pl.getHp();
+			p.Look = pl.getLookVec();
 			strcpy_s(p.name, pl.getName());
 			p.pos = pl.getPos();
 			p.speed = pl.getSpeed();
