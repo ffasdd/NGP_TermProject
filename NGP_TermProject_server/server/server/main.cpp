@@ -55,6 +55,7 @@ public:
 	float getSpeed() { return m_speed; }
 	char getState() { return m_state; }
 	int getHp() { return m_hp; }
+	char* getName() { return name; }
 
 	void setSocket(SOCKET socket) { m_sock = socket; }
 	void setID(int c_id) { m_id = c_id; }
@@ -71,6 +72,12 @@ public:
 	void sendLoginPacket(SC_LOGIN_PACKET packet)
 	{
 		send(m_sock, (char*)&packet, sizeof(SC_LOGIN_PACKET), 0);
+	}
+
+	void sendAddPakcet(SC_ADD_PLAYER_PACKET packet)
+	{
+		send(m_sock, (char*)&packet, sizeof(SC_ADD_PLAYER_PACKET), 0);
+
 	}
 	
 
@@ -177,8 +184,41 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 
 	clients[client_id].sendLoginPacket(packet);
+	// 일단 로그인 되는지 확인부터 ok 
+
+
+	if (clients[2].getID() != -1)
+	{
+		for (auto& pl : clients)
+		{
+			// 내 정보를 다른 클라이언트들한테 보내기 
+			if (client_id == pl.getID())continue;
+			SC_ADD_PLAYER_PACKET p;
+			p.size = sizeof(SC_ADD_PLAYER_PACKET);
+			p.type = SC_ADD_PLAYER;
+			p.id = client_id;
+			p.hp = clients[client_id].getHp();
+			strcpy_s(p.name, clients[client_id].getName());
+			p.pos = clients[client_id].getPos();
+			p.speed = clients[client_id].getSpeed();
+			pl.sendAddPakcet(p);
+		}
+		// 다른 클라이언트 정보를 나에게 보내기
+		for (auto& pl : clients)
+		{
+			if (client_id == pl.getID())continue;
+			SC_ADD_PLAYER_PACKET p;
+			p.size = sizeof(SC_ADD_PLAYER_PACKET);
+			p.type = SC_ADD_PLAYER;
+			p.id = pl.getID();
+			p.hp = pl.getHp();
+			strcpy_s(p.name, pl.getName());
+			p.pos = pl.getPos();
+			p.speed = pl.getSpeed();
+			clients[client_id].sendAddPakcet(p);
+		}
+	}
 	
-	// 일단 로그인 되는지 확인부터 
 
 	return 0;
 }

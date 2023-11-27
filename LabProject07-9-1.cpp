@@ -97,6 +97,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 		switch (recvbuf[1])
 		{
 		case SC_LOGIN_PLAYER:
+		{
 			SC_LOGIN_PACKET* p = reinterpret_cast<SC_LOGIN_PACKET*>(&recvbuf);
 			my_id = p->id;
 			Clients[my_id].c_id = my_id;
@@ -108,6 +109,19 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id]._hp = p->hp;
 			Clients[my_id]._speed = p->speed;
 			SetEvent(conevent);
+			break;
+		}
+		case SC_ADD_PLAYER:
+			SC_ADD_PLAYER_PACKET* p = reinterpret_cast<SC_ADD_PLAYER_PACKET*>(&recvbuf);
+			my_id = p->id;
+			Clients[my_id].c_id = my_id;
+			Clients[my_id].m_state = ST_RUNNING;
+			Clients[my_id]._hp = p->hp;
+			Clients[my_id]._speed = p->speed;
+			Clients[my_id].c_pos.x = p->pos.x;
+			Clients[my_id].c_pos.y = p->pos.y;
+			Clients[my_id].c_pos.z = p->pos.z;
+			strcpy_s(Clients[my_id].name, p->name);
 			break;
 		}
 	}
