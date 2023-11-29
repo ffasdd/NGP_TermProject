@@ -126,8 +126,6 @@ public:
 	bool						followP = false;
 	bool type = false; // false -> 속도 증가 / true -> 총알 커지는거
 
-	
-
 	void SetActive(bool bActive) { m_bActive = bActive; }
 	void SetRotationSpeed(float fSpeed) { m_fRotationSpeed = fSpeed; }
 	void SetMovingSpeed(float fSpeed) { m_fMovingSpeed = fSpeed; }
@@ -144,7 +142,6 @@ public:
 
 	XMFLOAT4X4						m_xmf4x4Transform;
 	XMFLOAT4X4						m_xmf4x4World;
-
 
 	CGameObject 					*m_pParent = NULL;
 	CGameObject 					*m_pChild = NULL;
@@ -198,6 +195,7 @@ public:
 	void SetTarget(XMFLOAT3 xmf3TargetPosition);
 	void SetPosition(XMFLOAT3 xmf3Position);
 	void SetScale(float x, float y, float z);
+
 	void MoveStrafe(float fDistance = 1.0f);
 	void MoveUp(float fDistance = 1.0f);
 	void MoveForward(float fDistance = 1.0f);

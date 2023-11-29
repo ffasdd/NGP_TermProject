@@ -64,7 +64,6 @@ public:
 	bool TCheckIntersectRect(XMFLOAT2 OtherLT, XMFLOAT2 OtherRB, XMFLOAT2 ObjectLT, XMFLOAT2 ObjectRB);
 	
 	void CheckPlayerByItem();
-	void CheckPlayerByEnemy();
 	void CheckEnemyByBullet(float fTimeElapsed);
 	void LookPlayer();
 	void IsCollision(float fTimeElapsed);

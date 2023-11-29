@@ -9,6 +9,10 @@
 // Windows 헤더 파일:
 #include <windows.h>
 
+#include <winsock2.h> // 윈속2 메인 헤더
+#include <ws2tcpip.h> // 윈속2 확장 헤더
+#pragma comment(lib, "ws2_32") // ws2_32.lib 링크
+
 // C의 런타임 헤더 파일입니다.
 #include <stdlib.h>
 #include <malloc.h>
@@ -21,6 +25,7 @@
 #include <shellapi.h>
 
 #include <fstream>
+#include<array>
 #include <vector>
 
 using namespace std;
@@ -86,7 +91,7 @@ using Microsoft::WRL::ComPtr;
 #define BULLETS					50
 
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
-
+#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
 extern UINT gnCbvSrvDescriptorIncrementSize;
 
 extern ID3D12Resource *CreateBufferResource(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, void *pData, UINT nBytes, D3D12_HEAP_TYPE d3dHeapType = D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATES d3dResourceStates = D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, ID3D12Resource **ppd3dUploadBuffer = NULL);

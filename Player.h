@@ -99,7 +99,6 @@ public:
 	CMyTankPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature);
 	virtual ~CMyTankPlayer();
 
-	
 	float					m_fBulletEffectiveRange = 1500.0f;
 	CGameObject*			m_ptankbotFrame = NULL;
 	CGameObject*			m_ptanktopFrame = NULL;
@@ -108,6 +107,7 @@ public:
 
 	void Setplaypos(float x, float y, float z);
 	XMFLOAT3 m_pos;
+
 private:
 	virtual void OnInitialize();
 

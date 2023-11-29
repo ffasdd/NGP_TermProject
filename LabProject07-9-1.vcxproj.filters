@@ -57,6 +57,15 @@
     <ClInclude Include="LabProject07-9-1.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Network.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="protocol.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="INFO.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -90,6 +99,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="LabProject07-9-1.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Network.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

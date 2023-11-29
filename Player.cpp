@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "Player.h"
 #include "Shader.h"
+#include "LabProject07-9-1.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // CPlayer
@@ -208,7 +209,10 @@ CMyTankPlayer::CMyTankPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList
 	pGameObject->SetObjectID(1);
 	SetChild(pGameObject, true);
 
+
+
 	Setplaypos(100.f, 0.f, 100.f);
+
 	for (int i = 0; i < BULLETS; i++)
 	{
 		CGameObject* pBulletModel= CGameObject::LoadGeometryFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/bullet.bin");
@@ -262,7 +266,6 @@ void CMyTankPlayer::Setplaypos(float x, float y, float z)
 	m_pos.y = y;
 	m_pos.z = z;
 }
-
 
 void CMyTankPlayer::Animate(float fTimeElapsed, XMFLOAT4X4 *pxmf4x4Parent)
 {

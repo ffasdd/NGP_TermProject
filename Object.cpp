@@ -278,8 +278,6 @@ void CGameObject::SetScale(float x, float y, float z)
 	UpdateTransform(NULL);
 }
 
-
-
 XMFLOAT3 CGameObject::GetPosition()
 {
 	return(XMFLOAT3(m_xmf4x4World._41, m_xmf4x4World._42, m_xmf4x4World._43));
