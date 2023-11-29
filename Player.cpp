@@ -202,14 +202,14 @@ void CPlayer::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamer
 CMyTankPlayer::CMyTankPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature)
 {
 	m_pCamera = ChangeCamera(THIRD_PERSON_CAMERA, 0.0f);
-
+	
 	CGameObject *pGameObject = CGameObject::LoadGeometryFromFile(pd3dDevice, pd3dCommandList, pd3dGraphicsRootSignature, "Model/tank.bin");
 
 	pGameObject->SetScale(1.0f, 1.0f, 1.0f);
 	pGameObject->SetObjectID(1);
 	SetChild(pGameObject, true);
 
-
+	// Clients[my_id].c_pos.x
 
 	Setplaypos(100.f, 0.f, 100.f);
 
