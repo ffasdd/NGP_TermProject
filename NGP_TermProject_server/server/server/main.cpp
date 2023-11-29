@@ -3,10 +3,6 @@
 #include"stdafx.h"
 
 
-array<Item, MAX_ITEM>items;
-array<SOCKET, 3> connectclients;
-
-
 enum { ST_EMPTY, ST_RUNNING};
 
 
@@ -81,7 +77,12 @@ public:
 		send(m_sock, (char*)&packet, sizeof(SC_ADD_PLAYER_PACKET), 0);
 
 	}
+	void sendMovePacket(SC_MOVE_PACKET packet)
+	{
+		send(m_sock, (char*)&packet, sizeof(SC_MOVE_PACKET), 0);
+	}
 	
+
 
 
 };
@@ -191,42 +192,61 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	clients[client_id].sendLoginPacket(packet);
 	// 일단 로그인 되는지 확인부터 ok 
 
-
-	if (clients[2].getID() != -1)
+	while (true)
 	{
-		for (auto& pl : clients)
-		{
-			// 내 정보를 다른 클라이언트들한테 보내기 
-			if (client_id == pl.getID())continue;
-			SC_ADD_PLAYER_PACKET p;
-			p.size = sizeof(SC_ADD_PLAYER_PACKET);
-			p.type = SC_ADD_PLAYER;
-			p.id = client_id;
-			p.hp = clients[client_id].getHp();
-			strcpy_s(p.name, clients[client_id].getName());
-			p.pos = clients[client_id].getPos();
-			p.speed = clients[client_id].getSpeed();
-			p.Look = clients[client_id].getLookVec();
-			pl.sendAddPakcet(p);
-		}
-		// 다른 클라이언트 정보를 나에게 보내기
-		for (auto& pl : clients)
-		{
-			if (client_id == pl.getID())continue;
-			SC_ADD_PLAYER_PACKET p;
-			p.size = sizeof(SC_ADD_PLAYER_PACKET);
-			p.type = SC_ADD_PLAYER;
-			p.id = pl.getID();
-			p.hp = pl.getHp();
-			p.Look = pl.getLookVec();
-			strcpy_s(p.name, pl.getName());
-			p.pos = pl.getPos();
-			p.speed = pl.getSpeed();
-			clients[client_id].sendAddPakcet(p);
-		}
-	}
-	
 
+
+		if (clients[2].getID() != -1)
+		{
+			for (auto& pl : clients)
+			{
+				// 내 정보를 다른 클라이언트들한테 보내기 
+				if (client_id == pl.getID())continue;
+				SC_ADD_PLAYER_PACKET p;
+				p.size = sizeof(SC_ADD_PLAYER_PACKET);
+				p.type = SC_ADD_PLAYER;
+				p.id = client_id;
+				p.hp = clients[client_id].getHp();
+				strcpy_s(p.name, clients[client_id].getName());
+				p.pos = clients[client_id].getPos();
+				p.speed = clients[client_id].getSpeed();
+				p.Look = clients[client_id].getLookVec();
+				pl.sendAddPakcet(p);
+			}
+			// 다른 클라이언트 정보를 나에게 보내기
+			/*for (auto& pl : clients)
+			{
+				if (client_id == pl.getID())continue;
+				SC_ADD_PLAYER_PACKET p;
+				p.size = sizeof(SC_ADD_PLAYER_PACKET);
+				p.type = SC_ADD_PLAYER;
+				p.id = pl.getID();
+				p.hp = pl.getHp();
+				p.Look = pl.getLookVec();
+				strcpy_s(p.name, pl.getName());
+				p.pos = pl.getPos();
+				p.speed = pl.getSpeed();
+				clients[client_id].sendAddPakcet(p);
+			}*/
+		}
+
+		/*while (1)
+		{
+			char recvbuf[BUF_SIZE];
+			recv(client_sock, recvbuf, BUF_SIZE, 0);
+			switch (recvbuf[1])
+			{
+			case CS_MOVE_PLAYER:
+			{
+				CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(&recvbuf);
+
+
+				break;
+			}
+
+			}
+		}*/
+	}
 	return 0;
 }
 

@@ -66,6 +66,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		}
 		else
 		{
+
 			gGameFramework.FrameAdvance();
 		}
 	}
@@ -91,6 +92,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 	inet_pton(AF_INET, "127.0.0.1", &clientaddr.sin_addr);
 	connect(clientsocket, (sockaddr*)&clientaddr, sizeof(clientaddr));
 
+
 	while (true)
 	{
 		recv(clientsocket, recvbuf, BUF_SIZE, 0);
@@ -109,7 +111,6 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id]._hp = p->hp;
 			Clients[my_id]._speed = p->speed;
 			Clients[my_id].c_look = p->Look;
-			SetEvent(conevent);
 			break;
 		}
 		case SC_ADD_PLAYER:
@@ -124,6 +125,8 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id].c_pos.z = p->pos.z;
 			Clients[my_id].c_look = p->Look;
 			strcpy_s(Clients[my_id].name, p->name);
+			if (Clients[0].c_id != -1 && Clients[1].c_id != -1 && Clients[2].c_id != -1)
+				SetEvent(conevent);
 			break;
 		}
 	}

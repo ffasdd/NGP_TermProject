@@ -22,23 +22,6 @@ constexpr char SC_END = 7;
 constexpr char SC_UPDATE = 8;
 constexpr char SC_ADD_PLAYER = 9;
 
-	
-enum COLLIDERTYPE
-{
-	ITEM,
-	BULLET,
-	PLAYER
-};
-
-
-struct m_Pos
-{
-	float x;
-	float y;
-	float z;
-};
-
-
 #pragma pack(push,1)
 struct m_Pos
 {
