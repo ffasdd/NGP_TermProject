@@ -20,6 +20,7 @@ BOOL InitInstance(HINSTANCE, int);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
 
+
 array<CLIENT, 3>Clients;
 
 HANDLE conevent = CreateEvent(NULL, FALSE, FALSE, NULL);
@@ -66,6 +67,12 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		}
 		else
 		{
+			// 값 전달해주기
+			if (gGameFramework.m_pPlayer != NULL) {
+				for (int i = 0; i < 3; i++) {
+					gGameFramework.myFunc_SetPosition(i, Clients[i].c_pos);
+				}
+			}
 			gGameFramework.FrameAdvance();
 		}
 	}
@@ -127,6 +134,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			break;
 		}
 	}
+
 	return 0;
 };
 

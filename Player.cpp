@@ -211,7 +211,7 @@ CMyTankPlayer::CMyTankPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList
 
 	// Clients[my_id].c_pos.x
 
-	Setplaypos(100.f, 0.f, 100.f);
+	// Setplaypos(100.f, 0.f, 100.f);
 
 	for (int i = 0; i < BULLETS; i++)
 	{

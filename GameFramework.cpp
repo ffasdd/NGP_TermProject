@@ -436,13 +436,15 @@ void CGameFramework::BuildObjects()
 	if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
 	// 수신받고 플레이어 배치 
 
-	CMyTankPlayer* pAirplanePlayer = new CMyTankPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature());
+	CMyTankPlayer* pmyPlayer = new CMyTankPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature());
 	// 플레이어 위치를 정해주는 함수입니다. SetPosition에 들어가는 XMFLOAT3값을 수정하면 플레이어 시작 위치가 바뀝니다.
-	// pAirplanePlayer->SetPosition(XMFLOAT3(100.0f, 0.0f, 200.0f));
-	// 예나언니 여기는 서버에서 받아온 정보로 SetPosition 하려고 변경한 부분이야
-	pAirplanePlayer->SetPosition(pAirplanePlayer->m_pos);
-	pAirplanePlayer->SetPlayerUpdatedContext(m_pScene->GetTerrain());
-	m_pScene->m_pPlayer = m_pPlayer = pAirplanePlayer;
+	// 셋 플레이어 포스를 여기서 해봐여
+	
+	pmyPlayer->SetPlayerUpdatedContext(m_pScene->GetTerrain());
+	m_pScene->m_pPlayer = m_pPlayer = pmyPlayer;
+
+	//pmyPlayer->Setplaypos(setpos.x,setpos.y,setpos.z);
+	//pmyPlayer->SetPosition(pmyPlayer->m_pos);
 	m_pCamera = m_pPlayer->GetCamera();
 	
 
@@ -641,3 +643,30 @@ void CGameFramework::FrameAdvance()
 	::SetWindowText(m_hWnd, m_pszFrameRate);
 }
 
+void CGameFramework::myFunc_SetPosition(int n, XMFLOAT3 position) {
+
+	if (Login_ID == n)
+	{
+		m_pPlayer->SetPosition(position);
+
+	}
+	else
+	{
+		int others_id = -1;
+		switch (Login_ID) {
+		case 0:
+			others_id = n - 1;
+			break;
+		case 1:
+			others_id = n;
+			if (n == 2) others_id -= 1;
+			break;
+		case 2:
+			others_id = n;
+			break;
+		}
+
+		m_pScene->m_ppGameObjects[others_id+30]->SetPosition(position);
+
+	}
+}

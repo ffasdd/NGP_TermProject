@@ -35,7 +35,7 @@ public:
 		m_id = -1;
 		m_sock = 0;
 		m_state = ST_EMPTY;
-		m_pos = { 0.0f,0.0f,0.0f };
+		m_pos = { 100.0f,0.0f,100.0f };
 		m_yaw = m_pitch = m_roll = 0.0f;
 		m_speed = 0;
 		m_hp = 0;
@@ -163,7 +163,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	}
 	EnterCriticalSection(&clients[client_id].m_cs);
 	clients[client_id].setID(client_id); // 0 
-	m_Pos clientPos{ 100.f * client_id,0.0f,10.0f * client_id };
+	m_Pos clientPos{ 300.f * (client_id + 1) ,0.0f,100.0f * (client_id + 1) };
 	XMFLOAT3 clientLook{ 0.0f,0.0f,0.0f };
 	clients[client_id].setPos(clientPos);
 	clients[client_id].setHp(100);

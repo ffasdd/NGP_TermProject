@@ -38,6 +38,8 @@ public:
     void AnimateObjects();
     void FrameAdvance();
 
+	void myFunc_SetPosition(int n, XMFLOAT3 position);
+
 	void WaitForGpuComplete();
 	void MoveToNextFrame();
 
@@ -49,6 +51,10 @@ public:
 
 	CGameObject* m_pLockedObject = NULL;
 
+	CPlayer* m_pPlayer = NULL;
+	XMFLOAT3 setpos;
+
+	int Login_ID;
 private:
 	HINSTANCE					m_hInstance;
 	HWND						m_hWnd; 
@@ -89,7 +95,6 @@ private:
 	CGameTimer					m_GameTimer;
 
 	CScene						*m_pScene = NULL;
-	CPlayer						*m_pPlayer = NULL;
 	CCamera						*m_pCamera = NULL;
 	Network						network;
 

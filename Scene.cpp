@@ -498,6 +498,10 @@ void CScene::AnimateObjects(float fTimeElapsed)
 		m_pLights[1].m_xmf3Position = m_pPlayer->GetPosition();
 		m_pLights[1].m_xmf3Direction = m_pPlayer->GetLookVector();
 	}
+
+	for (int i = 30; i < 32; ++i) {
+		// m_ppGameObjects[i]->SetPosition();
+	}
 	// 예나언니 여기서 주석처리 안된 함수만 확인해줭
 	CheckPlayerByItem();
 	CheckPlayerByEnemy();
