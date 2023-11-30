@@ -70,7 +70,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			// 값 전달해주기
 			if (gGameFramework.m_pPlayer != NULL) {
 				for (int i = 0; i < 3; i++) {
-					gGameFramework.myFunc_SetPosition(i, Clients[i].c_pos);
+					gGameFramework.myFunc_SetPosition(i, Clients[i].c_id, Clients[i].c_pos);
 				}
 			}
 			gGameFramework.FrameAdvance();

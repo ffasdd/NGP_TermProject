@@ -516,8 +516,10 @@ void CGameFramework::AnimateObjects()
 {
 	float fTimeElapsed = m_GameTimer.GetTimeElapsed();
 
-	if (m_pScene) m_pScene->AnimateObjects(fTimeElapsed);
+	//**** 지워도 지장 없길래 일단 지워둠
+	//if (m_pScene) m_pScene->AnimateObjects(fTimeElapsed);
 
+	// 총알 날아가는 애니메이션 그리는 부분
 	if (m_pPlayer) m_pPlayer->Animate(fTimeElapsed, NULL);
 }
 
@@ -643,15 +645,17 @@ void CGameFramework::FrameAdvance()
 	::SetWindowText(m_hWnd, m_pszFrameRate);
 }
 
-void CGameFramework::myFunc_SetPosition(int n, XMFLOAT3 position) {
+void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position) {
+	Login_ID = id;
 
 	if (Login_ID == n)
 	{
 		m_pPlayer->SetPosition(position);
-
 	}
+
 	else
 	{
+		// 이 부분들 수정 필요함
 		int others_id = -1;
 		switch (Login_ID) {
 		case 0:
@@ -666,7 +670,18 @@ void CGameFramework::myFunc_SetPosition(int n, XMFLOAT3 position) {
 			break;
 		}
 
+		// **** 수정하다가 말았음
+		//int others_id = 0;
+		//switch(Login_ID){
+		//case 0:
+		//	others_id = n - 1;
+		//	break;
+		//case 1:
+		//	if (n == 2) others_id = 1;
+		//	break;
+		//case 2:
+		//	others_id = n;
+		//}
 		m_pScene->m_ppGameObjects[others_id+30]->SetPosition(position);
-
 	}
 }

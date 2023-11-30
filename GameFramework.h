@@ -38,7 +38,7 @@ public:
     void AnimateObjects();
     void FrameAdvance();
 
-	void myFunc_SetPosition(int n, XMFLOAT3 position);
+	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
 
 	void WaitForGpuComplete();
 	void MoveToNextFrame();
