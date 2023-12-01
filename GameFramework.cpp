@@ -662,25 +662,12 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position) {
 			break;
 		case 1:
 			others_id = n;
-			if (n == 2) others_id -= 1;
+			if (n == 2) others_id = 1;
 			break;
 		case 2:
 			others_id = n;
 			break;
 		}
-
-		// **** 수정하다가 말았음
-		//int others_id = 0;
-		//switch(Login_ID){
-		//case 0:
-		//	others_id = n - 1;
-		//	break;
-		//case 1:
-		//	if (n == 2) others_id = 1;
-		//	break;
-		//case 2:
-		//	others_id = n;
-		//}
 		m_pScene->m_ppGameObjects[others_id+30]->SetPosition(position);
 	}
 }
