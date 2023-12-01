@@ -113,22 +113,22 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	// **** 상대방 set position
 	////%// 적을 그리는 부분입니다. 플레이어와 마찬가지로 SetPosition 함수로 위치를 지정합니다.
 	CGameObject* pEnemy1 = CGameObject::LoadGeometryFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/tank.bin");
-	pEnemy1->SetScale(1.0f, 1.0f, 1.0f);
-	pEnemy1->SetPosition(1000.0f, 0.0f, 300.0f);
-	pEnemy1->SetContext(m_pTerrain);
-	m_ppGameObjects[30] = pEnemy1;
-	m_ppGameObjects[30]->SetObjectID(0);
-	m_ppGameObjects[30]->SetRimpower(5);
-	m_ppGameObjects[30]->Enemy[0] = pEnemy1;
+	//pEnemy1->SetScale(1.0f, 1.0f, 1.0f);
+	//pEnemy1->SetPosition(1000.0f, 0.0f, 300.0f);
+	//pEnemy1->SetContext(m_pTerrain);
+	//m_ppGameObjects[30] = pEnemy1;
+	//m_ppGameObjects[30]->SetObjectID(0);
+	//m_ppGameObjects[30]->SetRimpower(5);
+	//m_ppGameObjects[30]->Enemy[0] = pEnemy1;
 
 	CGameObject* pEnemy2 = CGameObject::LoadGeometryFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/tank.bin");
-	pEnemy2->SetScale(1.0f, 1.0f, 1.0f);
-	pEnemy2->SetPosition(800.0f, 0.0f, 300.0f);
-	pEnemy2->SetContext(m_pTerrain);
-	m_ppGameObjects[31] = pEnemy2;
-	m_ppGameObjects[31]->SetObjectID(0);
-	m_ppGameObjects[31]->SetRimpower(5);
-	m_ppGameObjects[31]->Enemy[1] = pEnemy2;
+	//pEnemy2->SetScale(1.0f, 1.0f, 1.0f);
+	//pEnemy2->SetPosition(800.0f, 0.0f, 300.0f);
+	//pEnemy2->SetContext(m_pTerrain);
+	//m_ppGameObjects[31] = pEnemy2;
+	//m_ppGameObjects[31]->SetObjectID(0);
+	//m_ppGameObjects[31]->SetRimpower(5);
+	//m_ppGameObjects[31]->Enemy[1] = pEnemy2;
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);	
 }

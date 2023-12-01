@@ -22,7 +22,7 @@ INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
 
 
 array<CLIENT, 3>Clients;
-
+int id = 0;
 HANDLE conevent = CreateEvent(NULL, FALSE, FALSE, NULL);
 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
@@ -53,6 +53,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 
 	WaitForSingleObject(conevent, INFINITE);
 	cout << " CONNECT " << endl;
+
 
 	while (1)
 	{
@@ -107,6 +108,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 		{
 			SC_LOGIN_PACKET* p = reinterpret_cast<SC_LOGIN_PACKET*>(&recvbuf);
 			my_id = p->id;
+			gGameFramework.Login_ID = p->id;
 			Clients[my_id].c_id = my_id;
 			Clients[my_id].c_pos.x = p->pos.x;
 			Clients[my_id].c_pos.y = p->pos.y;
@@ -116,7 +118,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id]._hp = p->hp;
 			Clients[my_id]._speed = p->speed;
 			Clients[my_id].c_look = p->Look;
-			SetEvent(conevent);
+			//SetEvent(conevent);	
 			break;
 		}
 		case SC_ADD_PLAYER:
@@ -131,6 +133,8 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id].c_pos.z = p->pos.z;
 			Clients[my_id].c_look = p->Look;
 			strcpy_s(Clients[my_id].name, p->name);
+			if (Clients[0].c_id != -1 && Clients[1].c_id != -1 && Clients[2].c_id != -1)
+				SetEvent(conevent);
 			break;
 		}
 	}

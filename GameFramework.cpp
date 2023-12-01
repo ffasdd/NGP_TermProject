@@ -646,7 +646,6 @@ void CGameFramework::FrameAdvance()
 }
 
 void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position) {
-	Login_ID = id;
 
 	if (Login_ID == n)
 	{
