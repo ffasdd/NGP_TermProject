@@ -118,7 +118,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id]._hp = p->hp;
 			Clients[my_id]._speed = p->speed;
 			Clients[my_id].c_look = p->Look;
-			//SetEvent(conevent);	
+			SetEvent(conevent);	
 			break;
 		}
 		case SC_ADD_PLAYER:

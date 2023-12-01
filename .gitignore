@@ -256,3 +256,8 @@ UpgradeLog*.htm
 
 # Microsoft Fakes
 FakesAssemblies/
+.vs/LabProject07-9-1/FileContentIndex/b4d7eae5-8d7f-4d65-b6df-5002075c2e13.vsidx
+.vs/LabProject07-9-1/FileContentIndex/0137259e-b68b-4c23-91be-ab9b71c91eef.vsidx
+.vs/LabProject07-9-1/v17/Solution.VC.db
+NGP_TermProject_server/server/.vs/server/FileContentIndex/6f75aef7-29da-4e50-8e5e-fa68d176149a.vsidx
+NGP_TermProject_server/server/.vs/server/v17/Solution.VC.db
