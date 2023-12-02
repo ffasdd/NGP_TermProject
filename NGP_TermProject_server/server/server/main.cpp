@@ -246,6 +246,9 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 			}
 		}*/
+
+		// recv - 키 입력 받아보아요
+
 	}
 	return 0;
 }

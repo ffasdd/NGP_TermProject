@@ -6,6 +6,9 @@
 #include "GameFramework.h"
 #include "UILayer.h"
 
+queue<short> q_Down_Key;
+queue<short> q_Up_Key;
+
 CGameFramework::CGameFramework()
 {
 	m_pdxgiFactory = NULL;
@@ -480,11 +483,31 @@ void CGameFramework::ProcessInput()
 	if (GetKeyboardState(pKeysBuffer) && m_pScene) bProcessedByScene = m_pScene->ProcessInput(pKeysBuffer);
 	if (!bProcessedByScene)
 	{
+		// 0 : UP, 1 : DOWN, 2 : LEFT, 3 : RIGHT
+		int direction = -1;
 		DWORD dwDirection = 0;
-		if (pKeysBuffer[VK_UP] & 0xF0) dwDirection |= DIR_FORWARD;
-		if (pKeysBuffer[VK_DOWN] & 0xF0) dwDirection |= DIR_BACKWARD;
-		if (pKeysBuffer[VK_LEFT] & 0xF0) dwDirection |= DIR_LEFT;
-		if (pKeysBuffer[VK_RIGHT] & 0xF0) dwDirection |= DIR_RIGHT;
+		
+		if (pKeysBuffer[VK_UP] & 0xF0) {
+			dwDirection |= DIR_FORWARD;
+			direction = 0;
+		}
+		
+		if (pKeysBuffer[VK_DOWN] & 0xF0) {
+			dwDirection |= DIR_BACKWARD;
+			direction = 1;
+		}
+		
+		if (pKeysBuffer[VK_LEFT] & 0xF0) {
+			dwDirection |= DIR_LEFT;
+			direction = 2;
+		}
+		
+		if (pKeysBuffer[VK_RIGHT] & 0xF0) {
+			dwDirection |= DIR_RIGHT;
+			direction = 3;
+		}
+		if (direction != -1)
+			q_Down_Key.push(direction);
 
 		float cxDelta = 0.0f, cyDelta = 0.0f;
 		POINT ptCursorPos;
@@ -670,4 +693,16 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position) {
 		}
 		m_pScene->m_ppGameObjects[others_id+30]->SetPosition(position);
 	}
+}
+
+bool CGameFramework::is_KeyInput_Empty() {
+	return q_Down_Key.empty();
+}
+
+short CGameFramework::pop_keyvalue() {
+
+	short temp = q_Down_Key.front();
+	q_Down_Key.pop();
+
+	return temp;
 }

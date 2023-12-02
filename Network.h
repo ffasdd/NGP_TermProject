@@ -1,4 +1,6 @@
 #pragma once
+//SOCKET ssocket;
+
 struct Client
 {
 	char name[20];
@@ -10,6 +12,7 @@ class Network
 {
 public:
 	SOCKET clientsocket;
+
 	HANDLE _handle;
 	
 	Client* clientinfo;
