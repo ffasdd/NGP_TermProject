@@ -40,6 +40,10 @@ public:
 
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
 
+	bool is_KeyInput_Empty();
+
+	short pop_keyvalue();
+
 	void WaitForGpuComplete();
 	void MoveToNextFrame();
 

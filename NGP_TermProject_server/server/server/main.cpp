@@ -3,17 +3,17 @@
 #include"stdafx.h"
 
 
-enum { ST_EMPTY, ST_RUNNING };
+enum { ST_EMPTY, ST_RUNNING};
 
 
 class CLIENT
 {
-private:
+private: 
 	int m_id = 0;
 	SOCKET m_sock;
 	char	m_state;
 	char	recv_buf[BUF_SIZE];
-
+	
 	XMFLOAT3 Lookvec;
 	m_Pos m_pos;
 	float m_yaw, m_pitch, m_roll;
@@ -45,9 +45,9 @@ public:
 	SOCKET getSock() { return m_sock; }
 	int getID() { return m_id; }
 	m_Pos getPos() { return m_pos; }
-	float getYaw() { return m_yaw; }
-	float getPitch() { return m_pitch; }
-	float getRoll() { return m_roll; }
+	float getYaw() { return m_yaw;}
+	float getPitch() { return m_pitch;}
+	float getRoll() { return m_roll;}
 	float getSpeed() { return m_speed; }
 	char getState() { return m_state; }
 	int getHp() { return m_hp; }
@@ -81,7 +81,7 @@ public:
 	{
 		send(m_sock, (char*)&packet, sizeof(SC_MOVE_PACKET), 0);
 	}
-
+	
 
 
 
@@ -213,10 +213,24 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 				p.Look = clients[client_id].getLookVec();
 				pl.sendAddPakcet(p);
 			}
-
+			// 다른 클라이언트 정보를 나에게 보내기
+			/*for (auto& pl : clients)
+			{
+				if (client_id == pl.getID())continue;
+				SC_ADD_PLAYER_PACKET p;
+				p.size = sizeof(SC_ADD_PLAYER_PACKET);
+				p.type = SC_ADD_PLAYER;
+				p.id = pl.getID();
+				p.hp = pl.getHp();
+				p.Look = pl.getLookVec();
+				strcpy_s(p.name, pl.getName());
+				p.pos = pl.getPos();
+				p.speed = pl.getSpeed();
+				clients[client_id].sendAddPakcet(p);
+			}*/
 		}
 
-		while (1)
+		/*while (1)
 		{
 			char recvbuf[BUF_SIZE];
 			recv(client_sock, recvbuf, BUF_SIZE, 0);
@@ -225,24 +239,16 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			case CS_MOVE_PLAYER:
 			{
 				CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(&recvbuf);
-				switch (p->direction)
-				{
-				case _FORWARD:
-					EnterCriticalSection(&clients[client_id].m_cs);
-						LeaveCriticalSection(&clients[client_id].m_cs);
-					break;
-				case _BACK:
-					break;
-				case _LEFT:
-					break;
-				case _RIGHT:
-					break;
-				}
+
+
 				break;
 			}
 
 			}
-		}
+		}*/
+
+		// recv - 키 입력 받아보아요
+
 	}
 	return 0;
 }

@@ -58,6 +58,7 @@ using namespace std;
 #include <vector>
 #include <map>
 #include <sstream>
+#include <queue>
 
 #ifdef _DEBUG
 #include <dxgidebug.h>

@@ -56,7 +56,7 @@ struct CS_LOGIN_PACKET
 struct CS_MOVE_PACKET {
 	unsigned char size;
 	char	type;
-	char	direction;  // 0 : UP, 1 : DOWN, 2 : LEFT, 3 : RIGHT
+	int	direction;  // 0 : UP, 1 : DOWN, 2 : LEFT, 3 : RIGHT
 
 };
 
@@ -148,9 +148,6 @@ struct SC_REMOVE_PACKET
 	int id;
 
 };
-
-
-
 
 
 
