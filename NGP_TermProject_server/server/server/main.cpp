@@ -236,6 +236,10 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 				cout << " Up " << endl;
 				// 여기서 받고 clients 위치 정보 처리 이후 다시 send 
 				// send...
+				// move(dir); 함수 만들어서 후처리 이후에
+				// send(client_sock,...);
+				// client에 넣어서 값 수정할때 m_cs 임계영역 지정해야함 
+
 				break;
 			case 1:
 				cout << " Down " << endl;

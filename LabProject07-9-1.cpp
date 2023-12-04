@@ -159,6 +159,8 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 
 			cout << "Key: " << keyvalue_pack.direction << endl; //test
 		}
+		// 전송하고 바로 다시 recv 해서 clients에 올려야 
+
 
 	}
 	return 0;
