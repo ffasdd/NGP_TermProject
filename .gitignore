@@ -256,3 +256,7 @@ UpgradeLog*.htm
 
 # Microsoft Fakes
 FakesAssemblies/
+*.obj
+*.obj
+*.obj
+*.exe
