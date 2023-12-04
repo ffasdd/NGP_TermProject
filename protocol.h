@@ -108,14 +108,11 @@ struct SC_MOVE_PACKET
 {
 	unsigned char size;
 	char type;
-	m_Pos pos;
+	int _id;
+	XMFLOAT3 pos;
 	XMFLOAT3 look;
 	XMFLOAT3 up;
-	int id;
-	int hp;
 	int speed;
-
-
 };
 struct SC_ROTATE_PACKET
 {

@@ -2,7 +2,7 @@
 
 #include"stdafx.h"
 
-m_Pos calcMove(m_Pos vec1, XMFLOAT3 vec2, float Accelerator)
+XMFLOAT3 calcMove(XMFLOAT3 vec1, XMFLOAT3 vec2, float Accelerator)
 {
 	float acc = Accelerator;
 
@@ -25,7 +25,7 @@ private:
 	char	recv_buf[BUF_SIZE];
 	
 	XMFLOAT3 Lookvec;
-	m_Pos m_pos;
+	XMFLOAT3 m_pos;
 	float m_yaw, m_pitch, m_roll;
 	char name[NAME_SIZE];
 	int m_hp;
@@ -54,7 +54,7 @@ public:
 public:
 	SOCKET getSock() { return m_sock; }
 	int getID() { return m_id; }
-	m_Pos getPos() { return m_pos; }
+	XMFLOAT3 getPos() { return m_pos; }
 	float getYaw() { return m_yaw;}
 	float getPitch() { return m_pitch;}
 	float getRoll() { return m_roll;}
@@ -66,7 +66,7 @@ public:
 
 	void setSocket(SOCKET socket) { m_sock = socket; }
 	void setID(int c_id) { m_id = c_id; }
-	void setPos(m_Pos pos) { m_pos = pos; }
+	void setPos(XMFLOAT3 pos) { m_pos = pos; }
 	void setYaw(float yaw) { m_yaw = yaw; }
 	void setPitch(float pitch) { m_pitch = pitch; }
 	void setRoll(float roll) { m_roll = roll; }
@@ -174,7 +174,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	}
 	EnterCriticalSection(&clients[client_id].m_cs);
 	clients[client_id].setID(client_id); // 0 
-	m_Pos clientPos{ 300.f * (client_id + 1) ,0.0f,100.0f * (client_id + 1) };
+	XMFLOAT3 clientPos{ 300.f * (client_id + 1) ,0.0f,100.0f * (client_id + 1) };
 	XMFLOAT3 clientLook{ 0.0f,0.0f,0.0f };
 	clients[client_id].setPos(clientPos);
 	clients[client_id].setHp(100);
@@ -250,16 +250,32 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 					// move(dir); 함수 만들어서 후처리 이후에
 					// send(client_sock,...);
 					// client에 넣어서 값 수정할때 m_cs 임계영역 지정해야함 
-					m_Pos Move_Vertical_Result{ 0, 0, 0 };
+					XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
 					XMFLOAT3 lookvec{ 1,0,1 };
 					//Move_Vertical_Result = calcMove(clients[client_id].getPos(), clients[client_id].getLookVec(), clients[client_id].getSpeed());
 					Move_Vertical_Result = calcMove(clients[client_id].getPos(), lookvec, clients[client_id].getSpeed());
 					// 아이템 관련한것-> 클라에서
 					// 클라에서 속도 관련 아이템 4개 먹었다 하면 speed를 기본 속도 + 4
 					// 총알 크기...  
-
+					EnterCriticalSection(&clients[client_id].m_cs);
 					clients[client_id].setPos(Move_Vertical_Result);
+					LeaveCriticalSection(&clients[client_id].m_cs);
+					// 나한테 내 위치 전송 
+					for (auto& pl : clients)
+					{
 
+					SC_MOVE_PACKET movepacket;
+					movepacket.type = SC_MOVE_PLAYER;
+					movepacket.size = sizeof(SC_MOVE_PACKET);
+					movepacket._id = pl.getID();
+					movepacket.pos = pl.getPos();
+					movepacket.look = pl.getLookVec();
+					movepacket.speed = pl.getSpeed();
+					movepacket.up = { 0, 0, 0 };
+					clients[client_id].sendMovePacket(movepacket);
+					}
+				
+				
 				}
 				break;
 			case 1:
