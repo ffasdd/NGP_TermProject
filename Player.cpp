@@ -196,6 +196,16 @@ void CPlayer::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamer
 	CGameObject::Render(pd3dCommandList, pCamera);
 }
 
+void CPlayer::SetSpeed(float speed)
+{
+	m_speed += speed;
+}
+
+void CPlayer::SetBulletSize(float bulletsize)
+{
+	m_BulletSize += bulletsize;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // CAirplanePlayer
 
@@ -328,7 +338,7 @@ void CMyTankPlayer::FireBullet()
 		xmf3Direction.y += 0.01f;
 		pBulletObject->SetFirePosition(xmf3FirePosition);
 		pBulletObject->SetMovingDirection(xmf3Direction);
-		pBulletObject->SetScale(m_BulletSizeX, m_BulletSizeY, m_BulletSizeZ);
+		pBulletObject->SetScale(m_BulletSize, m_BulletSize, m_BulletSize);
 		pBulletObject->SetActive(true);
 	}
 }
