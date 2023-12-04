@@ -270,3 +270,8 @@ NGP_TermProject_server/server/.vs/server/v17/Solution.VC.db
 .vs/LabProject07-9-1/v17/.suo
 .vs/LabProject07-9-1/v17/Browse.VC.db
 NGP_TermProject_server/server/.vs/server/v17/Browse.VC.db
+*.db-shm
+*.db-wal
+*.opendb
+*.vsidx
+*.vsidx
