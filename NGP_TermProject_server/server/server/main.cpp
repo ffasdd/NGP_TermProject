@@ -2,6 +2,16 @@
 
 #include"stdafx.h"
 
+m_Pos calcMove(m_Pos vec1, XMFLOAT3 vec2, float Accelerator)
+{
+	float acc = Accelerator;
+
+	vec1.x = vec1.x + vec2.x * Accelerator;
+	vec1.y = vec1.y + vec2.y * Accelerator;
+	vec1.z = vec1.z + vec2.z * Accelerator;
+
+	return vec1;
+}
 
 enum { ST_EMPTY, ST_RUNNING};
 
@@ -213,42 +223,60 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 				p.Look = clients[client_id].getLookVec();
 				pl.sendAddPakcet(p);
 			}
-			// 다른 클라이언트 정보를 나에게 보내기
-			/*for (auto& pl : clients)
-			{
-				if (client_id == pl.getID())continue;
-				SC_ADD_PLAYER_PACKET p;
-				p.size = sizeof(SC_ADD_PLAYER_PACKET);
-				p.type = SC_ADD_PLAYER;
-				p.id = pl.getID();
-				p.hp = pl.getHp();
-				p.Look = pl.getLookVec();
-				strcpy_s(p.name, pl.getName());
-				p.pos = pl.getPos();
-				p.speed = pl.getSpeed();
-				clients[client_id].sendAddPakcet(p);
-			}*/
 		}
 
-		/*while (1)
+		if (clients[0].getState() == ST_RUNNING && clients[1].getState() == ST_RUNNING && clients[2].getState() == ST_RUNNING)
+			break;
+			// recv - 키 입력 받아보아요
+
+	}
+	// 패킷 수신 
+	while (1)
+	{
+		char recvbuf[BUF_SIZE];
+		recv(client_sock, recvbuf, BUF_SIZE, 0);
+		switch (recvbuf[1])
 		{
-			char recvbuf[BUF_SIZE];
-			recv(client_sock, recvbuf, BUF_SIZE, 0);
-			switch (recvbuf[1])
+		case CS_MOVE_PLAYER:
+		{
+			CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(&recvbuf);
+			switch (p->direction)
 			{
-			case CS_MOVE_PLAYER:
-			{
-				CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(&recvbuf);
+			case 0:
+				cout << " Up " << endl;
+				{
+					// 여기서 받고 clients 위치 정보 처리 이후 다시 send 
+					// send...
+					// move(dir); 함수 만들어서 후처리 이후에
+					// send(client_sock,...);
+					// client에 넣어서 값 수정할때 m_cs 임계영역 지정해야함 
+					m_Pos Move_Vertical_Result{ 0, 0, 0 };
+					XMFLOAT3 lookvec{ 1,0,1 };
+					//Move_Vertical_Result = calcMove(clients[client_id].getPos(), clients[client_id].getLookVec(), clients[client_id].getSpeed());
+					Move_Vertical_Result = calcMove(clients[client_id].getPos(), lookvec, clients[client_id].getSpeed());
+					// 아이템 관련한것-> 클라에서
+					// 클라에서 속도 관련 아이템 4개 먹었다 하면 speed를 기본 속도 + 4
+					// 총알 크기...  
 
+					clients[client_id].setPos(Move_Vertical_Result);
 
+				}
+				break;
+			case 1:
+				cout << " Down " << endl;
+				break;
+			case 2:
+				cout << " Left " << endl;
+				break;
+			case 3:
+				cout << " Right " << endl;
 				break;
 			}
 
-			}
-		}*/
+			break;
+		}
 
-		// recv - 키 입력 받아보아요
-
+		}
 	}
 	return 0;
 }
