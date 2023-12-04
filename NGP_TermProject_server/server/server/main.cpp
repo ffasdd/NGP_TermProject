@@ -260,15 +260,22 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 					EnterCriticalSection(&clients[client_id].m_cs);
 					clients[client_id].setPos(Move_Vertical_Result);
 					LeaveCriticalSection(&clients[client_id].m_cs);
+					// 나한테 내 위치 전송 
+					for (auto& pl : clients)
+					{
+
 					SC_MOVE_PACKET movepacket;
 					movepacket.type = SC_MOVE_PLAYER;
 					movepacket.size = sizeof(SC_MOVE_PACKET);
-					movepacket.pos = clients[client_id].getPos();
-					movepacket.look = clients[client_id].getLookVec();
-					movepacket.speed = clients[client_id].getSpeed();
+					movepacket._id = pl.getID();
+					movepacket.pos = pl.getPos();
+					movepacket.look = pl.getLookVec();
+					movepacket.speed = pl.getSpeed();
 					movepacket.up = { 0, 0, 0 };
 					clients[client_id].sendMovePacket(movepacket);
-
+					}
+				
+				
 				}
 				break;
 			case 1:

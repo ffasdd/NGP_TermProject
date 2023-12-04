@@ -140,6 +140,7 @@ struct SC_MOVE_PACKET
 {
 	unsigned char size;
 	char type;
+	int _id;
 	XMFLOAT3 pos;
 	XMFLOAT3 look;
 	XMFLOAT3 up;
