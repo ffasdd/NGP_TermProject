@@ -159,10 +159,17 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			retval = send(clientsocket, (char*)&keyvalue_pack, sizeof(CS_MOVE_PACKET), 0);		// 서버로 전송합니다.
 
 			cout << "Key: " << keyvalue_pack.direction << endl; //test
+			break;
 		}
-		// 전송하고 바로 다시 recv 해서 clients에 올려야 
-
-
+	}
+	while (true)
+	{
+		recv(clientsocket, recvbuf, BUF_SIZE, 0);
+		SC_MOVE_PACKET* p = reinterpret_cast<SC_MOVE_PACKET*>(&recvbuf);
+		Clients[my_id].c_pos = p->pos;
+		Clients[my_id].c_look = p->look;
+		Clients[my_id]._speed = p->speed;
+		// 전송하고 바로 다시 recv 해서 clients에 올려야
 	}
 	return 0;
 };
