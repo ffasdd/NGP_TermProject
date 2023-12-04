@@ -2,6 +2,16 @@
 
 #include"stdafx.h"
 
+m_Pos calcMove(m_Pos vec1, XMFLOAT3 vec2, float Accelerator)
+{
+	float acc = Accelerator;
+
+	vec1.x = vec1.x + vec2.x * Accelerator;
+	vec1.y = vec1.y + vec2.y * Accelerator;
+	vec1.z = vec1.z + vec2.z * Accelerator;
+
+	return vec1;
+}
 
 enum { ST_EMPTY, ST_RUNNING};
 
@@ -234,12 +244,23 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			{
 			case 0:
 				cout << " Up " << endl;
-				// 여기서 받고 clients 위치 정보 처리 이후 다시 send 
-				// send...
-				// move(dir); 함수 만들어서 후처리 이후에
-				// send(client_sock,...);
-				// client에 넣어서 값 수정할때 m_cs 임계영역 지정해야함 
+				{
+					// 여기서 받고 clients 위치 정보 처리 이후 다시 send 
+					// send...
+					// move(dir); 함수 만들어서 후처리 이후에
+					// send(client_sock,...);
+					// client에 넣어서 값 수정할때 m_cs 임계영역 지정해야함 
+					m_Pos Move_Vertical_Result{ 0, 0, 0 };
+					XMFLOAT3 lookvec{ 1,0,1 };
+					//Move_Vertical_Result = calcMove(clients[client_id].getPos(), clients[client_id].getLookVec(), clients[client_id].getSpeed());
+					Move_Vertical_Result = calcMove(clients[client_id].getPos(), lookvec, clients[client_id].getSpeed());
+					// 아이템 관련한것-> 클라에서
+					// 클라에서 속도 관련 아이템 4개 먹었다 하면 speed를 기본 속도 + 4
+					// 총알 크기...  
 
+					clients[client_id].setPos(Move_Vertical_Result);
+
+				}
 				break;
 			case 1:
 				cout << " Down " << endl;

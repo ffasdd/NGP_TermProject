@@ -135,6 +135,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id].c_pos.z = p->pos.z;
 			Clients[my_id].c_look = p->Look;
 			strcpy_s(Clients[my_id].name, p->name);
+			
 
 			break;
 		}
