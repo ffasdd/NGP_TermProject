@@ -6,8 +6,8 @@
 #include "GameFramework.h"
 #include "UILayer.h"
 
-queue<short> q_Down_Key;
-queue<short> q_Up_Key;
+queue<char> q_Down_Key;
+queue<char> q_Up_Key;
 
 CGameFramework::CGameFramework()
 {
@@ -489,6 +489,7 @@ void CGameFramework::ProcessInput()
 		
 		if (pKeysBuffer[VK_UP] & 0xF0) {
 			dwDirection |= DIR_FORWARD;
+			
 			direction = 0;
 		}
 		
@@ -701,7 +702,7 @@ bool CGameFramework::is_KeyInput_Empty() {
 
 short CGameFramework::pop_keyvalue() {
 
-	short temp = q_Down_Key.front();
+	char temp = q_Down_Key.front();
 	q_Down_Key.pop();
 
 	return temp;

@@ -213,42 +213,45 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 				p.Look = clients[client_id].getLookVec();
 				pl.sendAddPakcet(p);
 			}
-			// 다른 클라이언트 정보를 나에게 보내기
-			/*for (auto& pl : clients)
-			{
-				if (client_id == pl.getID())continue;
-				SC_ADD_PLAYER_PACKET p;
-				p.size = sizeof(SC_ADD_PLAYER_PACKET);
-				p.type = SC_ADD_PLAYER;
-				p.id = pl.getID();
-				p.hp = pl.getHp();
-				p.Look = pl.getLookVec();
-				strcpy_s(p.name, pl.getName());
-				p.pos = pl.getPos();
-				p.speed = pl.getSpeed();
-				clients[client_id].sendAddPakcet(p);
-			}*/
 		}
 
-		/*while (1)
+		if (clients[0].getState() == ST_RUNNING && clients[1].getState() == ST_RUNNING && clients[2].getState() == ST_RUNNING)
+			break;
+			// recv - 키 입력 받아보아요
+
+	}
+	// 패킷 수신 
+	while (1)
+	{
+		char recvbuf[BUF_SIZE];
+		recv(client_sock, recvbuf, BUF_SIZE, 0);
+		switch (recvbuf[1])
 		{
-			char recvbuf[BUF_SIZE];
-			recv(client_sock, recvbuf, BUF_SIZE, 0);
-			switch (recvbuf[1])
+		case CS_MOVE_PLAYER:
+		{
+			CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(&recvbuf);
+			switch (p->direction)
 			{
-			case CS_MOVE_PLAYER:
-			{
-				CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(&recvbuf);
-
-
+			case 0:
+				cout << " Up " << endl;
+				// 여기서 받고 clients 위치 정보 처리 이후 다시 send 
+				// send...
+				break;
+			case 1:
+				cout << " Down " << endl;
+				break;
+			case 2:
+				cout << " Left " << endl;
+				break;
+			case 3:
+				cout << " Right " << endl;
 				break;
 			}
 
-			}
-		}*/
+			break;
+		}
 
-		// recv - 키 입력 받아보아요
-
+		}
 	}
 	return 0;
 }

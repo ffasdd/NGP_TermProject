@@ -69,22 +69,13 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		}
 		else
 		{
-			if (!gGameFramework.is_KeyInput_Empty()) {
-				char send_keyValue = gGameFramework.pop_keyvalue();									// 키입력 큐에 있는 키값 중 가장 먼저 입력된 키값을
-				CS_MOVE_PACKET keyvalue_pack;
-				keyvalue_pack.type = CS_MOVE_PLAYER;
-				keyvalue_pack.direction = send_keyValue;
-				retval = send(ssocket, (char*)&keyvalue_pack, sizeof(CS_MOVE_PACKET), 0);		// 서버로 전송합니다.
-
-				cout << "Key: " << keyvalue_pack.direction << endl; //test
-			}
-
 			// 값 전달해주기
 			if (gGameFramework.m_pPlayer != NULL) {
 				for (int i = 0; i < 3; i++) {
 					gGameFramework.myFunc_SetPosition(i, Clients[i].c_id, Clients[i].c_pos);
 				}
 			}
+
 			gGameFramework.FrameAdvance();
 		}
 	}
@@ -112,8 +103,6 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 
 	while (true)
 	{
-		
-
 		recv(clientsocket, recvbuf, BUF_SIZE, 0);
 		switch (recvbuf[1])
 		{
@@ -131,7 +120,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id]._hp = p->hp;
 			Clients[my_id]._speed = p->speed;
 			Clients[my_id].c_look = p->Look;
-			SetEvent(conevent);	
+			SetEvent(conevent);
 			break;
 		}
 		case SC_ADD_PLAYER:
@@ -146,12 +135,32 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id].c_pos.z = p->pos.z;
 			Clients[my_id].c_look = p->Look;
 			strcpy_s(Clients[my_id].name, p->name);
-			if (Clients[0].c_id != -1 && Clients[1].c_id != -1 && Clients[2].c_id != -1)
-				SetEvent(conevent);
+
 			break;
 		}
+		if (Clients[0].c_id != -1 && Clients[1].c_id != -1 && Clients[2].c_id != -1)
+		{
+			SetEvent(conevent);
+			break;
+		}
+
 	}
 
+	while (true)
+	{
+
+		if (!gGameFramework.is_KeyInput_Empty()) {
+
+			char send_keyValue = gGameFramework.pop_keyvalue();									// 키입력 큐에 있는 키값 중 가장 먼저 입력된 키값을
+			CS_MOVE_PACKET keyvalue_pack;
+			keyvalue_pack.type = CS_MOVE_PLAYER;
+			keyvalue_pack.direction = send_keyValue;
+			retval = send(clientsocket, (char*)&keyvalue_pack, sizeof(CS_MOVE_PACKET), 0);		// 서버로 전송합니다.
+
+			cout << "Key: " << keyvalue_pack.direction << endl; //test
+		}
+
+	}
 	return 0;
 };
 
