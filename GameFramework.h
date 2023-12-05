@@ -39,9 +39,11 @@ public:
     void FrameAdvance();
 
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
+	void myFunc_SetLook(int n, int id, XMFLOAT3 look);
 
 	bool is_KeyInput_Empty();
 
+	bool is_Mouse_Empty();
 	short pop_keyvalue();
 
 	void WaitForGpuComplete();
@@ -59,6 +61,7 @@ public:
 	XMFLOAT3 setpos;
 
 	int Login_ID;
+	bool Is_Mouse_Down = false;
 private:
 	HINSTANCE					m_hInstance;
 	HWND						m_hWnd; 

@@ -181,7 +181,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	EnterCriticalSection(&clients[client_id].m_cs);
 	clients[client_id].setID(client_id); // 0 
 	XMFLOAT3 clientPos{ 300.f * (client_id + 1) ,0.0f,100.0f * (client_id + 1) };
-	XMFLOAT3 clientLook{ 0.0f,0.0f,0.0f };
+	XMFLOAT3 clientLook{ 1.0f,0.0f,1.0f };
 	clients[client_id].setPos(clientPos);
 	clients[client_id].setHp(100);
 	clients[client_id].setSpeed(5.0f);
@@ -300,6 +300,10 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 			break;
 		}
+		case CS_ROTATE_PLAYER:
+			// 이부분에서 로테이트 받은 패킷열어서 수정후 다시전송 
+
+			break;
 
 		}
 	}
