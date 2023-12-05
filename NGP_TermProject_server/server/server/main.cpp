@@ -31,6 +31,9 @@ private:
 	int m_hp;
 	float m_speed;
 
+	// 총알 관련 추가 
+	int bullet_size;
+
 
 
 public:
@@ -62,6 +65,7 @@ public:
 	char getState() { return m_state; }
 	int getHp() { return m_hp; }
 	char* getName() { return name; }
+	int getBulletSize() { return bullet_size; }
 	XMFLOAT3 getLookVec() { return Lookvec; }
 
 	void setSocket(SOCKET socket) { m_sock = socket; }
@@ -75,6 +79,8 @@ public:
 	void setHp(int hp) { m_hp = hp; }
 	void setName(char* _name) { strcpy_s(name, _name); }
 	void setLook(XMFLOAT3 look) { Lookvec = look; }
+	void setBulletSize(int bulletsize) { bullet_size = bulletsize; }
+
 public:
 	// Network
 	void sendLoginPacket(SC_LOGIN_PACKET packet)
@@ -178,8 +184,9 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	XMFLOAT3 clientLook{ 0.0f,0.0f,0.0f };
 	clients[client_id].setPos(clientPos);
 	clients[client_id].setHp(100);
-	clients[client_id].setSpeed(10.0f);
+	clients[client_id].setSpeed(5.0f);
 	clients[client_id].setLook(clientLook);
+	clients[client_id].setBulletSize(5);
 
 	LeaveCriticalSection(&clients[client_id].m_cs);
 
@@ -190,6 +197,8 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	packet.pos = clients[client_id].getPos();
 	packet.speed = clients[client_id].getSpeed();
 	packet.hp = clients[client_id].getHp();
+	packet.Look = clients[client_id].getLookVec();
+	packet.bulletsize = clients[client_id].getBulletSize();
 	packet.Look = clients[client_id].getLookVec();
 	if (client_id == 0)
 		strcpy_s(packet.name, "SDY");
@@ -221,6 +230,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 				p.pos = clients[client_id].getPos();
 				p.speed = clients[client_id].getSpeed();
 				p.Look = clients[client_id].getLookVec();
+				p.bulletsize = clients[client_id].getBulletSize();
 				pl.sendAddPakcet(p);
 			}
 		}
@@ -260,10 +270,9 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 					EnterCriticalSection(&clients[client_id].m_cs);
 					clients[client_id].setPos(Move_Vertical_Result);
 					LeaveCriticalSection(&clients[client_id].m_cs);
-					// 나한테 내 위치 전송 
+
 					for (auto& pl : clients)
 					{
-
 					SC_MOVE_PACKET movepacket;
 					movepacket.type = SC_MOVE_PLAYER;
 					movepacket.size = sizeof(SC_MOVE_PACKET);

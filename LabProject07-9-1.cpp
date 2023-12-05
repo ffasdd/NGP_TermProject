@@ -55,7 +55,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	WaitForSingleObject(conevent, INFINITE);
 	cout << " CONNECT " << endl;
 	int retval;
-	SOCKET ssocket = socket(AF_INET, SOCK_STREAM, 0);
 	while (1)
 	{
 		if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
@@ -121,6 +120,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id]._hp = p->hp;
 			Clients[my_id]._speed = p->speed;
 			Clients[my_id].c_look = p->Look;
+			Clients[my_id].bullet_size = p->bulletsize;
 			SetEvent(conevent);
 			break;
 		}
@@ -135,6 +135,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id].c_pos.y = p->pos.y;
 			Clients[my_id].c_pos.z = p->pos.z;
 			Clients[my_id].c_look = p->Look;
+			Clients[my_id].bullet_size = p->bulletsize;
 			strcpy_s(Clients[my_id].name, p->name);
 
 
@@ -150,9 +151,9 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 	// 게임실행 
 	while (true)
 	{
-
 		while (true)
 		{
+
 			if (!gGameFramework.is_KeyInput_Empty()) {
 
 				char send_keyValue = gGameFramework.pop_keyvalue();									// 키입력 큐에 있는 키값 중 가장 먼저 입력된 키값을
@@ -162,22 +163,20 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 				retval = send(clientsocket, (char*)&keyvalue_pack, sizeof(CS_MOVE_PACKET), 0);		// 서버로 전송합니다.
 
 				cout << "Key: " << keyvalue_pack.direction << endl; //test
+
 				break;
 			}
 		}
-
 		while (true)
-		{
-			recv(clientsocket, recvbuf, BUF_SIZE, 0);
-			SC_MOVE_PACKET* p = reinterpret_cast<SC_MOVE_PACKET*>(&recvbuf);
-			
-			Clients[p->_id].c_pos = p->pos;
-			Clients[p->_id].c_look = p->look;
-			Clients[p->_id]._speed = p->speed;
-		
-			// 전송하고 바로 다시 recv 해서 clients에 올려야
-			break;
+		{	
+				recv(clientsocket, recvbuf, BUF_SIZE, 0);
+				SC_MOVE_PACKET* p = reinterpret_cast<SC_MOVE_PACKET*>(&recvbuf);
+				Clients[p->_id].c_pos = p->pos;
+				Clients[p->_id].c_look = p->look;
+				Clients[p->_id]._speed = p->speed;
+				break;
 		}
+
 	}
 	return 0;
 };
