@@ -84,10 +84,11 @@ struct SC_LOGIN_PACKET
 {
 	unsigned char size;
 	char type;
-	m_Pos pos;
+	XMFLOAT3 pos;
 	int id;
 	int hp;
 	int speed;
+	int bulletsize;
 	XMFLOAT3 Look;
 	char name[NAME_SIZE];
 
@@ -97,11 +98,12 @@ struct SC_ADD_PLAYER_PACKET
 {
 	unsigned char size;
 	char type;
-	m_Pos pos;
+	XMFLOAT3 pos;
 	XMFLOAT3 Look;
 	int id;
 	int hp;
 	int speed;
+	int bulletsize;
 	char name[NAME_SIZE];
 };
 struct SC_MOVE_PACKET
@@ -127,6 +129,7 @@ struct SC_FIREBULLET_PACKET
 	unsigned char size;
 	char type;
 	XMFLOAT3 bpos;
+	int bulletsize;
 	char dir;
 
 };
@@ -145,6 +148,4 @@ struct SC_REMOVE_PACKET
 	int id;
 
 };
-
-
 

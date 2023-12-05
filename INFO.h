@@ -12,8 +12,11 @@ public:
 	XMFLOAT3 c_look;
 	int _hp;
 	int _speed;
+	
 	char name[20];
 
+	// ÃÑ¾Ë 
+	int bullet_size;
 public:
 	CLIENT()
 	{
@@ -25,6 +28,7 @@ public:
 		_hp = 0;
 		_speed = 0;
 		name[0] = 0;
+		bullet_size = 0;
 	}
 
 };
