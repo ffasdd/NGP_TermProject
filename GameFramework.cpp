@@ -341,7 +341,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			((CMyTankPlayer*)m_pPlayer)->m_hp -= 5;
 			break;
 		case VK_CONTROL:
-			((CMyTankPlayer*)m_pPlayer)->FireBullet();
+			//((CMyTankPlayer*)m_pPlayer)->FireBullet();
+			q_Down_Key.push(4);
 			break;
 		default:
 			break;
@@ -489,7 +490,6 @@ void CGameFramework::ProcessInput()
 		
 		if (pKeysBuffer[VK_UP] & 0xF0) {
 			dwDirection |= DIR_FORWARD;
-			
 			direction = 0;
 		}
 		

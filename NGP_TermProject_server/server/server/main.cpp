@@ -264,18 +264,18 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 					for (auto& pl : clients)
 					{
 
-					SC_MOVE_PACKET movepacket;
-					movepacket.type = SC_MOVE_PLAYER;
-					movepacket.size = sizeof(SC_MOVE_PACKET);
-					movepacket._id = pl.getID();
-					movepacket.pos = pl.getPos();
-					movepacket.look = pl.getLookVec();
-					movepacket.speed = pl.getSpeed();
-					movepacket.up = { 0, 0, 0 };
-					clients[client_id].sendMovePacket(movepacket);
+						SC_MOVE_PACKET movepacket;
+						movepacket.type = SC_MOVE_PLAYER;
+						movepacket.size = sizeof(SC_MOVE_PACKET);
+						movepacket._id = pl.getID();
+						movepacket.pos = pl.getPos();
+						movepacket.look = pl.getLookVec();
+						movepacket.speed = pl.getSpeed();
+						movepacket.up = { 0, 0, 0 };
+						clients[client_id].sendMovePacket(movepacket);
 					}
-				
-				
+
+
 				}
 				break;
 			case 1:
@@ -287,14 +287,15 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			case 3:
 				cout << " Right " << endl;
 				break;
+			case 4:
+				cout << "Fire" << endl;
+				//break;
 			}
-
 			break;
 		}
-
 		}
+		return 0;
 	}
-	return 0;
 }
 
 int main()

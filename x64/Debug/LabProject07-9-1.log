@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 ﻿  GameFramework.cpp
   LabProject07-9-1.vcxproj -> C:\Users\nhc08\Desktop\NGP_TermProject\x64\Debug\LabProject07-9-1.exe
 =======
@@ -10,3 +11,7 @@ C:\git\NGP_TermProject\LabProject07-9-1.cpp(158,24): warning C4244: '초기화 �
   코드를 생성하고 있습니다...
   LabProject07-9-1.vcxproj -> C:\git\NGP_TermProject\x64\Debug\LabProject07-9-1.exe
 >>>>>>> server
+=======
+﻿  GameFramework.cpp
+  LabProject07-9-1.vcxproj -> C:\예나 대학자료\2023-2\넷겜플\넷겜플텀프\NGP_TermProject\x64\Debug\LabProject07-9-1.exe
+>>>>>>> yena
