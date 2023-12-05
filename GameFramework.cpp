@@ -342,6 +342,13 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		case 'M':
 			((CMyTankPlayer*)m_pPlayer)->m_hp -= 5;
 			break;
+		case 'Z':
+			q_Down_Key.push(4);
+			break;
+		case 'X':
+			q_Down_Key.push(5);
+			break;
+
 		case VK_CONTROL:
 			((CMyTankPlayer*)m_pPlayer)->FireBullet();
 			break;

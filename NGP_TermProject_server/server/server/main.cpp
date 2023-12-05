@@ -97,7 +97,11 @@ public:
 	{
 		send(m_sock, (char*)&packet, sizeof(SC_MOVE_PACKET), 0);
 	}
-	
+	void sendRotatePacket(SC_ROTATE_PACKET packet)
+	{
+		send(m_sock, (char*)&packet, sizeof(SC_ROTATE_PACKET), 0);
+		
+	}
 
 
 
@@ -181,7 +185,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	EnterCriticalSection(&clients[client_id].m_cs);
 	clients[client_id].setID(client_id); // 0 
 	XMFLOAT3 clientPos{ 300.f * (client_id + 1) ,0.0f,100.0f * (client_id + 1) };
-	XMFLOAT3 clientLook{ 1.0f,0.0f,1.0f };
+	XMFLOAT3 clientLook{ 0.0f,0.0f,1.0f };
 	clients[client_id].setPos(clientPos);
 	clients[client_id].setHp(100);
 	clients[client_id].setSpeed(5.0f);
@@ -402,16 +406,25 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 				}
 				break;
-			case 4:
-				cout << "Fire" << endl;
-				//break;
+			case 4: // rot left
+				
+				break;
+			case 5 : 
+				// rot right
+				break;
 			}
 			break;
 		}
 
 		case CS_ROTATE_PLAYER:
+			cout << " Recv Rotate " << endl;
 			// 이부분에서 로테이트 받은 패킷열어서 수정후 다시전송 
-
+			SC_ROTATE_PACKET p;
+			p.id = client_id;
+			p.rot = { 0,0,0 };
+			p.size = sizeof(SC_ROTATE_PACKET);
+			p.type = SC_ROTATE_PLAYER;
+			clients[client_id].sendRotatePacket(p);
 			break;
 
 		}

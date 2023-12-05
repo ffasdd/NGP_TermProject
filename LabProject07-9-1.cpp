@@ -161,6 +161,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 				CS_MOVE_PACKET keyvalue_pack;
 				keyvalue_pack.type = CS_MOVE_PLAYER;
 				keyvalue_pack.direction = send_keyValue;
+				keyvalue_pack.LookVec = Clients[my_id].c_look;
 				retval = send(clientsocket, (char*)&keyvalue_pack, sizeof(CS_MOVE_PACKET), 0);		// 서버로 전송합니다.
 
 				cout << "Key: " << keyvalue_pack.direction << endl; //test
@@ -168,27 +169,43 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 
 				break;
 			}
-	/*		if (!gGameFramework.is_Mouse_Empty()) {
 
+			if (gGameFramework.is_Mouse_Empty()) {
+
+				cout << " click mouse " << endl;
 				CS_ROTATE_PACKET rotPack;
-				rotPack.size = sizeof(CS_ROTATE_PACKET);
 				rotPack.type = CS_ROTATE_PLAYER;
+				rotPack.size = sizeof(CS_ROTATE_PACKET);
 				rotPack.lookvec = Clients[my_id].c_look;
 				send(clientsocket, (char*)&rotPack, sizeof(CS_ROTATE_PACKET), 0);
 				break;
 
-			}*/
+			}
 
 		}
 		while (true)
 		{
-
-
 			recv(clientsocket, recvbuf, BUF_SIZE, 0);
-			SC_MOVE_PACKET* p = reinterpret_cast<SC_MOVE_PACKET*>(&recvbuf);
-			Clients[p->_id].c_pos = p->pos;
-			Clients[p->_id].c_look = p->look;
-			Clients[p->_id]._speed = p->speed;
+			switch (recvbuf[1])
+			{
+			case SC_MOVE_PLAYER:
+			{
+				SC_MOVE_PACKET* p = reinterpret_cast<SC_MOVE_PACKET*>(&recvbuf);
+				Clients[p->_id].c_pos = p->pos;
+				Clients[p->_id].c_look = p->look;
+				Clients[p->_id]._speed = p->speed;
+				break;
+			}
+			case SC_ROTATE_PLAYER:
+			{
+				break;
+
+			}
+			default:
+				break;
+
+			}
+
 			break;
 		}
 
