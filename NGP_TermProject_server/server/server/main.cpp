@@ -408,6 +408,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			}
 			break;
 		}
+
 		case CS_ROTATE_PLAYER:
 			// 이부분에서 로테이트 받은 패킷열어서 수정후 다시전송 
 
