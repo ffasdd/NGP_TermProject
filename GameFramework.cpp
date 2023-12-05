@@ -295,11 +295,13 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 	{
 	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
+		Is_Mouse_Down = true;
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
 		break;
 	case WM_LBUTTONUP:
 	case WM_RBUTTONUP:
+		Is_Mouse_Down = false;
 		::ReleaseCapture();
 		break;
 	case WM_MOUSEMOVE:
@@ -696,8 +698,40 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position) {
 	}
 }
 
+void CGameFramework::myFunc_SetLook(int n, int id, XMFLOAT3 look)
+{
+	if (Login_ID == n)
+	{
+		m_pPlayer->SetLook(look);
+	}
+
+	else
+	{
+		// 이 부분들 수정 필요함
+		int others_id = -1;
+		switch (Login_ID) {
+		case 0:
+			others_id = n - 1;
+			break;
+		case 1:
+			others_id = n;
+			if (n == 2) others_id = 1;
+			break;
+		case 2:
+			others_id = n;
+			break;
+		}
+		m_pScene->m_ppGameObjects[others_id + 30]->SetLook(look.x,look.y,look.z);
+	}
+}
+
 bool CGameFramework::is_KeyInput_Empty() {
 	return q_Down_Key.empty();
+}
+
+bool CGameFramework::is_Mouse_Empty()
+{
+	return Is_Mouse_Down;
 }
 
 short CGameFramework::pop_keyvalue() {

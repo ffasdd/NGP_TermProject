@@ -182,7 +182,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	EnterCriticalSection(&clients[client_id].m_cs);
 	clients[client_id].setID(client_id); // 0 
 	XMFLOAT3 clientPos{ 300.f * (client_id + 1) ,0.0f,100.0f * (client_id + 1) };
-	XMFLOAT3 clientLook{ 0.0f,0.0f,0.0f };
+	XMFLOAT3 clientLook{ 1.0f,0.0f,1.0f };
 	clients[client_id].setPos(clientPos);
 	clients[client_id].setHp(100);
 	clients[client_id].setSpeed(5.0f);
@@ -264,9 +264,8 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 					XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
 					XMFLOAT3 lookvec{ 0, 0, 0 };
 
-					// getLookVec()의 반환값을 l-value로 저장
-					//auto&& lookVecRef = clients[client_id].getLookVec();
-					XMFLOAT3 lookVecRef = { 1.0f,0.0,1.0f };
+					auto&& lookVecRef = clients[client_id].getLookVec();
+
 					XMVECTOR lookvecVector = XMVector3Normalize(XMLoadFloat3(&lookVecRef));
 					XMStoreFloat3(&lookvec, lookvecVector);
 					//Move_Vertical_Result = calcMove(clients[client_id].getPos(), clients[client_id].getLookVec(), clients[client_id].getSpeed());
@@ -280,15 +279,15 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 					for (auto& pl : clients)
 					{
-					SC_MOVE_PACKET movepacket;
-					movepacket.type = SC_MOVE_PLAYER;
-					movepacket.size = sizeof(SC_MOVE_PACKET);
-					movepacket._id = pl.getID();
-					movepacket.pos = pl.getPos();
-					movepacket.look = pl.getLookVec();
-					movepacket.speed = pl.getSpeed();
-					movepacket.up = { 0, 0, 0 };
-					clients[client_id].sendMovePacket(movepacket);
+						SC_MOVE_PACKET movepacket;
+						movepacket.type = SC_MOVE_PLAYER;
+						movepacket.size = sizeof(SC_MOVE_PACKET);
+						movepacket._id = pl.getID();
+						movepacket.pos = pl.getPos();
+						movepacket.look = pl.getLookVec();
+						movepacket.speed = pl.getSpeed();
+						movepacket.up = { 0, 0, 0 };
+						clients[client_id].sendMovePacket(movepacket);
 					}
 
 
@@ -303,8 +302,9 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 					// send(client_sock,...);
 					// client에 넣어서 값 수정할때 m_cs 임계영역 지정해야함 
 					XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
-					// XMFLOAT3 lookVector = clients[client_id].getLookVec();
-					XMFLOAT3 lookVector = { 1.0f,0.0,1.0f };
+
+					XMFLOAT3 lookVector = clients[client_id].getLookVec();
+
 
 					XMFLOAT3 backVector;
 					XMMATRIX rotationMatrix = XMMatrixRotationY(XM_PI); // 180도 회전
@@ -341,9 +341,9 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 					// send(client_sock,...);
 					// client에 넣어서 값 수정할때 m_cs 임계영역 지정해야함 
 					XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
-					
-					//XMFLOAT3 lookVector = clients[client_id].getLookVec();
-					XMFLOAT3 lookVector = { 1.0f,0.0,1.0f };
+
+					XMFLOAT3 lookVector = clients[client_id].getLookVec();
+
 
 					XMFLOAT3 leftVector;
 					XMMATRIX rotationMatrix = XMMatrixRotationY(-XM_PIDIV2); // -90도 회전
@@ -380,9 +380,9 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 					// send(client_sock,...);
 					// client에 넣어서 값 수정할때 m_cs 임계영역 지정해야함 
 					XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
-					
-					//XMFLOAT3 lookVector = clients[client_id].getLookVec();
-					XMFLOAT3 lookVector = { 1.0f,0.0,1.0f };
+
+					XMFLOAT3 lookVector = clients[client_id].getLookVec();
+
 
 					XMFLOAT3 rightVector;
 					XMMATRIX rotationMatrix = XMMatrixRotationY(XM_PIDIV2); // 90도 회전
@@ -416,6 +416,13 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			}
 			break;
 		}
+
+		case CS_ROTATE_PLAYER:
+			// 이부분에서 로테이트 받은 패킷열어서 수정후 다시전송 
+
+			break;
+
+
 		}
 		return 0;
 	}

@@ -51,20 +51,21 @@ struct CS_LOGIN_PACKET
 	unsigned char size;
 	char type;
 	char name[NAME_SIZE];
+	
 };
 
 struct CS_MOVE_PACKET {
 	unsigned char size;
 	char	type;
 	char	direction;  // 0 : UP, 1 : DOWN, 2 : LEFT, 3 : RIGHT
-
+	XMFLOAT3 LookVec;
 };
 
 struct CS_ROTATE_PACKET
 {
 	unsigned char size;
 	char type;
-	char rotdir;
+	XMFLOAT3 lookvec;
 	// °¢µµ ÁÂÇ¥ 
 };
 struct CS_FIREBULLET_PACKET
