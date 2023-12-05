@@ -43,8 +43,10 @@ public:
 
 	bool is_KeyInput_Empty();
 
-	bool is_Mouse_Empty();
+	//bool is_QE_Empty();
 	short pop_keyvalue();
+
+	XMFLOAT3 pop_LookValue();
 
 	void WaitForGpuComplete();
 	void MoveToNextFrame();
@@ -61,7 +63,7 @@ public:
 	XMFLOAT3 setpos;
 
 	int Login_ID;
-	bool Is_Mouse_Down = false;
+	//bool Is_QE_Down = false;
 private:
 	HINSTANCE					m_hInstance;
 	HWND						m_hWnd; 

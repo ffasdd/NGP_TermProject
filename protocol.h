@@ -57,7 +57,7 @@ struct CS_LOGIN_PACKET
 struct CS_MOVE_PACKET {
 	unsigned char size;
 	char	type;
-	char	direction;  // 0 : UP, 1 : DOWN, 2 : LEFT, 3 : RIGHT
+	char	direction;  // 0 : UP, 1 : DOWN, 2 : LEFT, 3 : RIGHT, 4 : RotateL, 5 : RotateR
 	XMFLOAT3 LookVec;
 };
 
