@@ -344,3 +344,6 @@ NGP_TermProject_server/server/.vs/server/v17/Browse.VC.db
 *.obj
 *.idb
 *.pdb
+.vs/LabProject07-9-1/v17/.suo
+*.db
+*.db
