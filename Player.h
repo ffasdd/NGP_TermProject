@@ -39,7 +39,7 @@ public:
 
 	int							m_hp;
 	float m_BulletSize = 5.0;
-	float m_speed = 10.0;
+	float m_speed = 20.0;
 
 	float						m_vel;
 	CPlayer();
