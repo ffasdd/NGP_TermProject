@@ -168,7 +168,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	int client_id = 0;
 	for (int i = 0; i < MAX_USER; ++i)
 	{
-		if (clients[i].getState() == ST_EMPTY) 
+		if (clients[i].getState() == ST_EMPTY) //체크를 어떻게?  
 		{
 			//0 
 			client_id = i;
@@ -204,7 +204,6 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	packet.hp = clients[client_id].getHp();
 	packet.Look = clients[client_id].getLookVec();
 	packet.bulletsize = clients[client_id].getBulletSize();
-	packet.Look = clients[client_id].getLookVec();
 	if (client_id == 0)
 		strcpy_s(packet.name, "SDY");
 	if (client_id == 1)
@@ -236,9 +235,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 				p.Look = clients[client_id].getLookVec();
 				p.bulletsize = clients[client_id].getBulletSize();
 				pl.sendAddPakcet(p);
-				cout << " send " << p.id << " clients add " << endl;
 			}
-			cout << " Send Add Packet Complete" << endl;
 		}
 
 		if (clients[0].getState() == ST_RUNNING && clients[1].getState() == ST_RUNNING && clients[2].getState() == ST_RUNNING)
@@ -246,7 +243,6 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			// recv - 키 입력 받아보아요
 
 	}
-
 	// 패킷 수신 
 	while (1)
 	{
@@ -425,7 +421,6 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			}
 			break;
 		}
-
 		case CS_ROTATE_PLAYER:
 			cout << " Recv Rotate " << endl;
 			// 이부분에서 로테이트 받은 패킷열어서 수정후 다시전송 
