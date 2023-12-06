@@ -153,6 +153,11 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 	{
 		while (true)
 		{
+			// 이렇게 하면 매 프레임 전송 되는거겠졍...?
+			CS_ITEM_PACKET item_pack;
+			item_pack.p_speed = gGameFramework.GetPlayerSpeed();
+			item_pack.p_bulletsize = gGameFramework.GetPlayerBulletSize();
+			retval = send(clientsocket, (char*)&item_pack, sizeof(CS_ITEM_PACKET), 0);		// 서버로 전송합니다.
 
 			if (!gGameFramework.is_KeyInput_Empty()) {
 

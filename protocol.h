@@ -11,6 +11,7 @@ constexpr char CS_MOVE_PLAYER = 1;
 constexpr char CS_ROTATE_PLAYER = 2;
 constexpr char CS_FIREBULLET_PLAYER = 3;
 constexpr char CS_REMOVE = 4;
+constexpr char CS_ITEM = 5;
 
 // Server to Client Packet type
 
@@ -78,6 +79,12 @@ struct CS_REMOVE_PACKET
 {
 	unsigned char size;
 	char type;
+};
+struct CS_ITEM_PACKET
+{
+	unsigned char size;
+	float p_speed;
+	float p_bulletsize;
 };
 
 struct SC_LOGIN_PACKET
