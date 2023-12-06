@@ -153,13 +153,6 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 	while (true)
 	{
 		if (!gGameFramework.is_KeyInput_Empty()) {
-			char send_keyValue = gGameFramework.pop_keyvalue();									// 키입력 큐에 있는 키값 중 가장 먼저 입력된 키값을
-			CS_MOVE_PACKET keyvalue_pack;
-			keyvalue_pack.type = CS_MOVE_PLAYER;
-			keyvalue_pack.direction = send_keyValue;
-			retval = send(clientsocket, (char*)&keyvalue_pack, sizeof(CS_MOVE_PACKET), 0);		// 서버로 전송합니다.
-
-			if (!gGameFramework.is_KeyInput_Empty()) {
 
 				char send_keyValue = gGameFramework.pop_keyvalue();									// 키입력 큐에 있는 키값 중 가장 먼저 입력된 키값을
 				CS_MOVE_PACKET keyvalue_pack;
@@ -174,26 +167,31 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 				break;
 			}
 
-			if (gGameFramework.is_Mouse_Empty()) {
+		if (gGameFramework.is_Mouse_Empty()) {
 
-				cout << " click mouse " << endl;
-				CS_ROTATE_PACKET rotPack;
-				rotPack.type = CS_ROTATE_PLAYER;
-				rotPack.size = sizeof(CS_ROTATE_PACKET);
-				rotPack.lookvec = Clients[my_id].c_look;
-				send(clientsocket, (char*)&rotPack, sizeof(CS_ROTATE_PACKET), 0);
-				break;
-
-			}
-
+			cout << " click mouse " << endl;
 			CS_ROTATE_PACKET rotPack;
-			rotPack.size = sizeof(CS_ROTATE_PACKET);
 			rotPack.type = CS_ROTATE_PLAYER;
+			rotPack.size = sizeof(CS_ROTATE_PACKET);
 			rotPack.lookvec = Clients[my_id].c_look;
 			send(clientsocket, (char*)&rotPack, sizeof(CS_ROTATE_PACKET), 0);
 			break;
+
 		}
-		while (true)
+
+
+
+		//if (!gGameFramework.is_QE_Empty()) {
+
+		//	CS_ROTATE_PACKET rotPack;
+		//	rotPack.size = sizeof(CS_ROTATE_PACKET);
+		//	rotPack.type = CS_ROTATE_PLAYER;
+		//	rotPack.lookvec = Clients[my_id].c_look;
+		//	send(clientsocket, (char*)&rotPack, sizeof(CS_ROTATE_PACKET), 0);
+		//	break;
+		//}+
+
+		for (int i = 0; i < 3; i++)
 		{
 			recv(clientsocket, recvbuf, BUF_SIZE, 0);
 			switch (recvbuf[1])
