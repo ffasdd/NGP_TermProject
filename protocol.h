@@ -24,19 +24,7 @@ constexpr char SC_END = 7;
 constexpr char SC_UPDATE = 8;
 constexpr char SC_ADD_PLAYER = 9;
 
-#pragma pack(push,1)
-struct m_Pos
-{
-	float x;
-	float y;
-	float z;
-};
-struct m_Look
-{
-	float x;
-	float y;
-	float z;
-};
+
 
 enum COLLIDERTYPE
 {
@@ -122,7 +110,7 @@ struct SC_ROTATE_PACKET
 	unsigned char size;
 	char type;
 	int id;
-	XMFLOAT3 look;
+	XMFLOAT3 rot;
 
 };
 struct SC_FIREBULLET_PACKET
