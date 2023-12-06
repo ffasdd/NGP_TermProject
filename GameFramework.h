@@ -40,6 +40,9 @@ public:
 
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
 
+	float GetPlayerSpeed();
+	float GetPlayerBulletSize();
+
 	bool is_KeyInput_Empty();
 
 	short pop_keyvalue();

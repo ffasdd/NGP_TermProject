@@ -696,6 +696,14 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position) {
 	}
 }
 
+float CGameFramework::GetPlayerSpeed() {
+	return m_pScene->m_pPlayer->m_speed;
+}
+
+float CGameFramework::GetPlayerBulletSize() {
+	return m_pScene->m_pPlayer->m_BulletSize;
+}
+
 bool CGameFramework::is_KeyInput_Empty() {
 	return q_Down_Key.empty();
 }
