@@ -24,6 +24,8 @@ private:
 	char	m_state;
 	char	recv_buf[BUF_SIZE];
 	
+	XMFLOAT3 Upvec;
+	XMFLOAT3 Rightvec;
 	XMFLOAT3 Lookvec;
 	XMFLOAT3 m_pos;
 	float m_yaw, m_pitch, m_roll;
@@ -50,6 +52,9 @@ public:
 		m_speed = 10;
 		m_hp = 0;
 		name[0] = 0;
+		Upvec = { 0.0f,1.0f,0.0f };
+		Rightvec = { 1.0f,0.0f,0.0f };
+		Lookvec = { 0.0f,0.0f,1.0f };
 		InitializeCriticalSection(&m_cs);
 
 	}
@@ -68,6 +73,8 @@ public:
 	char* getName() { return name; }
 	int getBulletSize() { return bullet_size; }
 	XMFLOAT3 getLookVec() { return Lookvec; }
+	XMFLOAT3 getRightVec() { return Rightvec; }
+	XMFLOAT3 getUpVec() { return Upvec; }
 
 	void setSocket(SOCKET socket) { m_sock = socket; }
 	void setID(int c_id) { m_id = c_id; }
@@ -80,6 +87,8 @@ public:
 	void setHp(int hp) { m_hp = hp; }
 	void setName(char* _name) { strcpy_s(name, _name); }
 	void setLook(XMFLOAT3 look) { Lookvec = look; }
+	void setRight(XMFLOAT3 right) { Rightvec = right; }
+	void setUp(XMFLOAT3 up) { Upvec = up; }
 	void setBulletSize(int bulletsize) { bullet_size = bulletsize; }
 
 public:
@@ -152,6 +161,29 @@ void err_display(int errcode)
 	LocalFree(lpMsgBuf);
 }
 
+void RotateLookVectorAndUpdateRight(XMFLOAT3& lookVector, XMFLOAT3& rightVector, float angleInDegrees)
+{
+	// Convert the angle to radians
+	float angleInRadians = DirectX::XMConvertToRadians(angleInDegrees);
+
+	// Convert the look vector to XMVECTOR
+	XMVECTOR lookVectorXM = XMLoadFloat3(&lookVector);
+
+	// Create a rotation matrix for rotating around the Y-axis
+	XMMATRIX rotationMatrix = XMMatrixRotationY(angleInRadians);
+
+	// Apply rotation to the look vector
+	XMVECTOR rotatedLookVectorXM = XMVector3Transform(lookVectorXM, rotationMatrix);
+
+	// Convert the result back to XMFLOAT3 for the look vector
+	XMStoreFloat3(&lookVector, rotatedLookVectorXM);
+
+	// Update the right vector based on the updated look vector
+	XMVECTOR rightVectorXM = XMLoadFloat3(&rightVector);
+	XMVECTOR rotatedRightVectorXM = XMVector3TransformCoord(rightVectorXM, rotationMatrix);
+	XMStoreFloat3(&rightVector, rotatedRightVectorXM);
+}
+
 
 DWORD WINAPI ProcessClient(LPVOID arg)
 {
@@ -187,10 +219,14 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	clients[client_id].setID(client_id); // 0 
 	XMFLOAT3 clientPos{ 300.f * (client_id + 1) ,0.0f,100.0f * (client_id + 1) };
 	XMFLOAT3 clientLook{ 0.0f,0.0f,1.0f };
+	XMFLOAT3 clientUp{ 0.0f,1.0f,0.0f };
+	XMFLOAT3 clientRight{ 1.0f,0.0f,0.0f };
 	clients[client_id].setPos(clientPos);
 	clients[client_id].setHp(100);
 	clients[client_id].setSpeed(5.0f);
 	clients[client_id].setLook(clientLook);
+	clients[client_id].setRight(clientRight);
+	clients[client_id].setUp(clientUp);
 	clients[client_id].setBulletSize(5);
 
 	LeaveCriticalSection(&clients[client_id].m_cs);
@@ -204,7 +240,8 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	packet.hp = clients[client_id].getHp();
 	packet.Look = clients[client_id].getLookVec();
 	packet.bulletsize = clients[client_id].getBulletSize();
-	packet.Look = clients[client_id].getLookVec();
+	packet.Up = clients[client_id].getUpVec();
+	packet.Right = clients[client_id].getRightVec();
 	if (client_id == 0)
 		strcpy_s(packet.name, "SDY");
 	if (client_id == 1)
@@ -236,6 +273,8 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 				p.speed = clients[client_id].getSpeed();
 				p.Look = clients[client_id].getLookVec();
 				p.bulletsize = clients[client_id].getBulletSize();
+				p.Right = clients[client_id].getRightVec();
+				p.Up = clients[client_id].getUpVec();
 				pl.sendAddPakcet(p);
 			}
 		}
@@ -290,7 +329,9 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 						movepacket.pos = pl.getPos();
 						movepacket.look = pl.getLookVec();
 						movepacket.speed = pl.getSpeed();
-						movepacket.up = { 0, 0, 0 };
+						movepacket.right = pl.getRightVec();
+						movepacket.up = pl.getUpVec();
+					
 						clients[client_id].sendMovePacket(movepacket);
 					}
 
@@ -329,7 +370,8 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 						movepacket.pos = pl.getPos();
 						movepacket.look = pl.getLookVec();
 						movepacket.speed = pl.getSpeed();
-						movepacket.up = { 0, 0, 0 };
+						movepacket.right = pl.getRightVec();
+						movepacket.up = pl.getUpVec();
 						clients[client_id].sendMovePacket(movepacket);
 					}
 
@@ -368,7 +410,8 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 						movepacket.pos = pl.getPos();
 						movepacket.look = pl.getLookVec();
 						movepacket.speed = pl.getSpeed();
-						movepacket.up = { 0, 0, 0 };
+						movepacket.right = pl.getRightVec();
+						movepacket.up = pl.getUpVec();
 						clients[client_id].sendMovePacket(movepacket);
 					}
 
@@ -407,7 +450,8 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 						movepacket.pos = pl.getPos();
 						movepacket.look = pl.getLookVec();
 						movepacket.speed = pl.getSpeed();
-						movepacket.up = { 0, 0, 0 };
+						movepacket.right = pl.getRightVec();
+						movepacket.up = pl.getUpVec();
 						clients[client_id].sendMovePacket(movepacket);
 					}
 
@@ -415,8 +459,34 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 				}
 				break;
 			case 4: // rot left
-				
+			{
+
+				CS_ROTATE_PACKET* rotpacket = reinterpret_cast<CS_ROTATE_PACKET*>(&recvbuf);
+				XMFLOAT3 c_lookvec = rotpacket->lookvec;
+				XMFLOAT3 c_rightvec = rotpacket->rightvec;
+				RotateLookVectorAndUpdateRight(c_lookvec, c_rightvec,-5.0f);
+
+				EnterCriticalSection(&clients[client_id].m_cs);
+				clients[client_id].setLook(c_lookvec);
+				clients[client_id].setRight(c_rightvec);
+				LeaveCriticalSection(&clients[client_id].m_cs);
+
+				for (auto& pl : clients)
+				{
+					SC_ROTATE_PACKET sc_rotpacket;
+					sc_rotpacket.type = SC_ROTATE_PLAYER;
+					sc_rotpacket.size = sizeof(SC_ROTATE_PACKET);
+					sc_rotpacket.pos = pl.getPos();
+					sc_rotpacket.id = pl.getID();
+					sc_rotpacket.look = pl.getLookVec();
+					sc_rotpacket.right = pl.getRightVec();
+					sc_rotpacket.up = pl.getUpVec();
+
+					clients[client_id].sendRotatePacket(sc_rotpacket);
+
+				}
 				break;
+			}
 			case 5 : 
 				// rot right
 				break;
@@ -424,16 +494,16 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			break;
 		}
 
-		case CS_ROTATE_PLAYER:
-			cout << " Recv Rotate " << endl;
-			// 이부분에서 로테이트 받은 패킷열어서 수정후 다시전송 
-			SC_ROTATE_PACKET p;
-			p.id = client_id;
-			p.rot = { 0,0,0 };
-			p.size = sizeof(SC_ROTATE_PACKET);
-			p.type = SC_ROTATE_PLAYER;
-			clients[client_id].sendRotatePacket(p);
-			break;
+		//case CS_ROTATE_PLAYER:
+		//	cout << " Recv Rotate " << endl;
+		//	// 이부분에서 로테이트 받은 패킷열어서 수정후 다시전송 
+		//	SC_ROTATE_PACKET p;
+		//	p.id = client_id;
+		//	p.rot = { 0,0,0 };
+		//	p.size = sizeof(SC_ROTATE_PACKET);
+		//	p.type = SC_ROTATE_PLAYER;
+		//	clients[client_id].sendRotatePacket(p);
+		//	break;
 
 
 		}
