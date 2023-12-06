@@ -96,7 +96,6 @@ struct CS_ROTATE_PACKET
 	unsigned char size;
 	char type;
 	XMFLOAT3 lookvec;
-	XMFLOAT3 rightvec;
 	// °¢µµ ÁÂÇ¥ 
 };
 struct CS_FIREBULLET_PACKET
@@ -122,8 +121,6 @@ struct SC_LOGIN_PACKET
 	int speed;
 	int bulletsize;
 	XMFLOAT3 Look;
-	XMFLOAT3 Up;
-	XMFLOAT3 Right;
 	char name[NAME_SIZE];
 
 
@@ -134,8 +131,6 @@ struct SC_ADD_PLAYER_PACKET
 	char type;
 	XMFLOAT3 pos;
 	XMFLOAT3 Look;
-	XMFLOAT3 Up;
-	XMFLOAT3 Right;
 	int id;
 	int hp;
 	int speed;
@@ -150,7 +145,6 @@ struct SC_MOVE_PACKET
 	XMFLOAT3 pos;
 	XMFLOAT3 look;
 	XMFLOAT3 up;
-	XMFLOAT3 right;
 	int speed;
 };
 struct SC_ROTATE_PACKET
@@ -158,10 +152,7 @@ struct SC_ROTATE_PACKET
 	unsigned char size;
 	char type;
 	int id;
-	XMFLOAT3 pos;
 	XMFLOAT3 look;
-	XMFLOAT3 up;
-	XMFLOAT3 right;
 
 };
 struct SC_FIREBULLET_PACKET

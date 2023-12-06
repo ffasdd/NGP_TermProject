@@ -122,7 +122,7 @@ struct SC_ROTATE_PACKET
 	unsigned char size;
 	char type;
 	int id;
-	XMFLOAT3 rot;
+	XMFLOAT3 look;
 
 };
 struct SC_FIREBULLET_PACKET
