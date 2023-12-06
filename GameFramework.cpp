@@ -333,6 +333,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			break;
 		case 'Q':
 			((CMyTankPlayer*)m_pPlayer)->RotateTop(-5.0f);
+			((CMyTankPlayer*)m_pPlayer)->SetSpeed(10.f);
 			break;
 		case 'W':
 			((CMyTankPlayer*)m_pPlayer)->RotateTop(+5.0f);

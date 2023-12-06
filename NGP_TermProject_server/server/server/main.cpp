@@ -416,6 +416,14 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			}
 			break;
 		}
+		case CS_ITEM:
+		{
+			// 알고있기만 하면 되는데....
+			CS_ITEM_PACKET* p = reinterpret_cast<CS_ITEM_PACKET*>(&recvbuf);
+			cout << p->p_speed << endl;
+			break;
+		}
+
 		}
 		return 0;
 	}

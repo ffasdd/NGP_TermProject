@@ -158,7 +158,8 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			item_pack.p_speed = gGameFramework.GetPlayerSpeed();
 			item_pack.p_bulletsize = gGameFramework.GetPlayerBulletSize();
 			retval = send(clientsocket, (char*)&item_pack, sizeof(CS_ITEM_PACKET), 0);		// 서버로 전송합니다.
-
+			cout << item_pack.p_speed << endl; //test
+			
 			if (!gGameFramework.is_KeyInput_Empty()) {
 
 				char send_keyValue = gGameFramework.pop_keyvalue();									// 키입력 큐에 있는 키값 중 가장 먼저 입력된 키값을
