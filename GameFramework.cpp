@@ -361,6 +361,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			//((CMyTankPlayer*)m_pPlayer)->FireBullet();
 			//q_Down_Key.push(6);
 =======
+=======
 		case VK_CONTROL:
 			((CMyTankPlayer*)m_pPlayer)->FireBullet();
 >>>>>>> parent of 9d40963 (add left right  ( z , x ))

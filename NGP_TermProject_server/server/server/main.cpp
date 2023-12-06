@@ -218,6 +218,8 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	XMFLOAT3 clientLook{ 0.0f,0.0f,1.0f };
 	XMFLOAT3 clientUp{ 0.0f,1.0f,0.0f };
 	XMFLOAT3 clientRight{ 1.0f,0.0f,0.0f };
+	XMFLOAT3 clientLook{ 1.0f,0.0f,1.0f };
+>>>>>>> parent of 9d40963 (add left right  ( z , x ))
 =======
 	XMFLOAT3 clientLook{ 1.0f,0.0f,1.0f };
 >>>>>>> parent of 9d40963 (add left right  ( z , x ))
@@ -459,6 +461,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 				}
 				break;
 <<<<<<< HEAD
+<<<<<<< HEAD
 			case 4: // rot left
 			{
 
@@ -491,6 +494,10 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			case 5 : 
 				// rot right
 				break;
+			case 4:
+				cout << "Fire" << endl;
+				//break;
+>>>>>>> parent of 9d40963 (add left right  ( z , x ))
 =======
 			case 4:
 				cout << "Fire" << endl;
