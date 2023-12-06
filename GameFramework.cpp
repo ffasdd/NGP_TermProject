@@ -349,6 +349,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			break;
 		case 'M':
 			break;
+<<<<<<< HEAD
 		case 'Z':
 			q_Down_Key.push(4);
 			break;
@@ -359,6 +360,11 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			// ÃÑ¾Ë ¹ß»ç
 			//((CMyTankPlayer*)m_pPlayer)->FireBullet();
 			//q_Down_Key.push(6);
+=======
+=======
+		case VK_CONTROL:
+			((CMyTankPlayer*)m_pPlayer)->FireBullet();
+>>>>>>> parent of 9d40963 (add left right  ( z , x ))
 			break;
 		default:
 			break;
