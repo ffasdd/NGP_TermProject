@@ -95,7 +95,7 @@ struct CS_ROTATE_PACKET
 {
 	unsigned char size;
 	char type;
-	XMFLOAT3 lookvec;
+	char rotdir;
 	// °¢µµ ÁÂÇ¥ 
 };
 struct CS_FIREBULLET_PACKET

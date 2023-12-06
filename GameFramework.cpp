@@ -289,7 +289,7 @@ void CGameFramework::ChangeSwapChainState()
 	CreateRenderTargetViews();
 }
 
-// **** »ç¿ëx
+
 void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
 	if (m_pScene) m_pScene->OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
@@ -297,13 +297,13 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 	{
 	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
-		//Is_Mouse_Down = true;
+
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
 		break;
 	case WM_LBUTTONUP:
 	case WM_RBUTTONUP:
-		//Is_Mouse_Down = false;
+
 		::ReleaseCapture();
 		break;
 	case WM_MOUSEMOVE:
@@ -336,19 +336,21 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		case VK_F5:
 			break;
 		case 'Q':
-			// ÇÃ·¹ÀÌ¾î ¿ÞÂÊÀ¸·Î È¸Àü
+
 			//m_pPlayer->Rotate(0.0f, -5.0f, 0.0f);
 			q_Down_Key.push(4);
 			q_Look.push(m_pPlayer->GetLook());
 			break;
 		case 'E':
-			// ÇÃ·¹ÀÌ¾î ¿À¸¥ÂÊÀ¸·Î È¸Àü
+		
 			//m_pPlayer->Rotate(0.0f, 5.0f, 0.0f);
 			q_Down_Key.push(5);
 			q_Look.push(m_pPlayer->GetLook());
 			break;
 		case 'M':
 			break;
+<<<<<<< HEAD
+<<<<<<< HEAD
 		case 'Z':
 			q_Down_Key.push(4);
 			break;
@@ -356,9 +358,12 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			q_Down_Key.push(5);
 			break;
 		case VK_SPACE:
-			// ÃÑ¾Ë ¹ß»ç
-			//((CMyTankPlayer*)m_pPlayer)->FireBullet();
-			//q_Down_Key.push(6);
+
+=======
+=======
+		case VK_CONTROL:
+			((CMyTankPlayer*)m_pPlayer)->FireBullet();
+
 			break;
 		default:
 			break;
@@ -369,7 +374,7 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 	}
 }
 
-// ****¸¶¿ì½º »ç¿ëx
+
 LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
 	switch (nMessageID)
@@ -433,39 +438,32 @@ void CGameFramework::OnDestroy()
 
 void CGameFramework::BuildObjects()
 {
-	// ¿¹³ª¾ð´Ï
+
 	m_pUILayer = new UILayer(m_nSwapChainBuffers, 2, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
 
 	ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
-	IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"¸¼Àº °íµñ", m_nWndClientHeight / 25.0f);
+	IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", m_nWndClientHeight / 25.0f);
 	D2D1_RECT_F d2dRect = D2D1::RectF((float)m_nWndClientWidth - 230.0f, m_nWndClientHeight - 75.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
 
 	WCHAR pstrOutputText[256];
-	wcscpy_s(pstrOutputText, 256, L"°ÔÀÓ ½ÃÀÛ\n");
+	wcscpy_s(pstrOutputText, 256, L"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½\n");
 	m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
 
-	// pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
-	// pdwTextFormat = m_pUILayer->CreateTextFormat(L"¸¼Àº °íµñ", m_nWndClientHeight / 25.0f);
-	// d2dRect = D2D1::RectF((float)m_nWndClientWidth - 250.0f, 15.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
-	// 
-	// m_pUILayer->UpdateTextOutputs(1, NULL, &d2dRect, pdwTextFormat, pd2dBrush);
-	////////////////////////////////////////////////////////////////////////////////////////
+
 
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
 
 	m_pScene = new CScene();
 	if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
-	// ¼ö½Å¹Þ°í ÇÃ·¹ÀÌ¾î ¹èÄ¡ 
+
 
 	CMyTankPlayer* pmyPlayer = new CMyTankPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature());
-	// ÇÃ·¹ÀÌ¾î À§Ä¡¸¦ Á¤ÇØÁÖ´Â ÇÔ¼öÀÔ´Ï´Ù. SetPosition¿¡ µé¾î°¡´Â XMFLOAT3°ªÀ» ¼öÁ¤ÇÏ¸é ÇÃ·¹ÀÌ¾î ½ÃÀÛ À§Ä¡°¡ ¹Ù²ò´Ï´Ù.
-	// ¼Â ÇÃ·¹ÀÌ¾î Æ÷½º¸¦ ¿©±â¼­ ÇØºÁ¿©
+
 	
 	pmyPlayer->SetPlayerUpdatedContext(m_pScene->GetTerrain());
 	m_pScene->m_pPlayer = m_pPlayer = pmyPlayer;
 
-	//pmyPlayer->Setplaypos(setpos.x,setpos.y,setpos.z);
-	//pmyPlayer->SetPosition(pmyPlayer->m_pos);
+
 	m_pCamera = m_pPlayer->GetCamera();
 	
 
@@ -530,7 +528,7 @@ void CGameFramework::ProcessInput()
 			q_Look.push(m_pPlayer->GetLook());
 		}
 
-		// ****»ç¿ëx
+
 		//float cxDelta = 0.0f, cyDelta = 0.0f;
 		//POINT ptCursorPos;
 		//if (GetCapture() == m_hWnd)
@@ -542,7 +540,7 @@ void CGameFramework::ProcessInput()
 		//	SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
 		//}
 		
-		// ****»ç¿ëx
+
 		//if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f))
 		//{
 		//	if (cxDelta || cyDelta)
@@ -562,10 +560,10 @@ void CGameFramework::AnimateObjects()
 {
 	float fTimeElapsed = m_GameTimer.GetTimeElapsed();
 
-	//**** Áö¿öµµ ÁöÀå ¾ø±æ·¡ ÀÏ´Ü Áö¿öµÒ
+
 	//if (m_pScene) m_pScene->AnimateObjects(fTimeElapsed);
 
-	// ÃÑ¾Ë ³¯¾Æ°¡´Â ¾Ö´Ï¸ÞÀÌ¼Ç ±×¸®´Â ºÎºÐ
+
 	if (m_pPlayer) m_pPlayer->Animate(fTimeElapsed, NULL);
 }
 
@@ -595,7 +593,7 @@ void CGameFramework::MoveToNextFrame()
 	}
 }
 
-// ¿¹³ª¾ð´Ï ¿©±â´Â UI ¾÷µ¥ÀÌÆ® ÇÏ´Â ÇÔ¼ö¾ç
+
 void CGameFramework::UpdateUI()
 {
 	// Calculate the width of the rectangle based on the percentage
@@ -604,8 +602,7 @@ void CGameFramework::UpdateUI()
 	// Set up the layout rectangle for the rectangle
 	D2D1_RECT_F rect = { 0, 470, 640 / 30 * rectWidth, 450 };
 	ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Red, 4.0f));
-	//IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"¸¼Àº °íµñ", m_nWndClientHeight / 25.0f);
-	//m_pUILayer->DrawRect(2, &rect);
+
 	m_pUILayer->UpdateTextOutputs(1, NULL, &rect, NULL, pd2dBrush);
 }
 
@@ -747,10 +744,6 @@ bool CGameFramework::is_KeyInput_Empty() {
 	return q_Down_Key.empty();
 }
 
-//bool CGameFramework::is_QE_Empty()
-//{
-//	return Is_QE_Down;
-//}
 
 short CGameFramework::pop_keyvalue() {
 
