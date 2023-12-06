@@ -107,7 +107,11 @@ public:
 	{
 		send(m_sock, (char*)&packet, sizeof(SC_MOVE_PACKET), 0);
 	}
-	
+	void sendRotatePacket(SC_ROTATE_PACKET packet)
+	{
+		send(m_sock, (char*)&packet, sizeof(SC_ROTATE_PACKET), 0);
+		
+	}
 
 
 
@@ -214,13 +218,9 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	EnterCriticalSection(&clients[client_id].m_cs);
 	clients[client_id].setID(client_id); // 0 
 	XMFLOAT3 clientPos{ 300.f * (client_id + 1) ,0.0f,100.0f * (client_id + 1) };
-<<<<<<< HEAD
 	XMFLOAT3 clientLook{ 0.0f,0.0f,1.0f };
 	XMFLOAT3 clientUp{ 0.0f,1.0f,0.0f };
 	XMFLOAT3 clientRight{ 1.0f,0.0f,0.0f };
-=======
-	XMFLOAT3 clientLook{ 1.0f,0.0f,1.0f };
->>>>>>> parent of 9d40963 (add left right  ( z , x ))
 	clients[client_id].setPos(clientPos);
 	clients[client_id].setHp(100);
 	clients[client_id].setSpeed(5.0f);
@@ -458,7 +458,6 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 				}
 				break;
-<<<<<<< HEAD
 			case 4: // rot left
 			{
 
@@ -491,16 +490,10 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			case 5 : 
 				// rot right
 				break;
-=======
-			case 4:
-				cout << "Fire" << endl;
-				//break;
->>>>>>> parent of 9d40963 (add left right  ( z , x ))
 			}
 			break;
 		}
 
-<<<<<<< HEAD
 		//case CS_ROTATE_PLAYER:
 		//	cout << " Recv Rotate " << endl;
 		//	// 이부분에서 로테이트 받은 패킷열어서 수정후 다시전송 
@@ -512,12 +505,6 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 		//	clients[client_id].sendRotatePacket(p);
 		//	break;
 
-=======
-		case CS_ROTATE_PLAYER:
-			// 이부분에서 로테이트 받은 패킷열어서 수정후 다시전송 
-
-			break;
->>>>>>> parent of 9d40963 (add left right  ( z , x ))
 
 		}
 		return 0;
