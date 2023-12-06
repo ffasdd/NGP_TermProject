@@ -354,3 +354,11 @@ NGP_TermProject_server/server/.vs/server/v17/Browse.VC.db
 *.db
 *.db
 >>>>>>> yena
+*.obj
+*.tlog
+*.tlog
+*.tlog
+*.tlog
+*.tlog
+*.idb
+*.pdb
