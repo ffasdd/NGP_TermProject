@@ -72,7 +72,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			if (gGameFramework.m_pPlayer != NULL) {
 				for (int i = 0; i < 3; i++) {
 					gGameFramework.myFunc_SetPosition(i, Clients[i].c_id, Clients[i].c_pos);
-					gGameFramework.myFunc_SetLook(i, Clients[i].c_id, Clients[i].c_look);
+					gGameFramework.myFunc_SetLookRight(i, Clients[i].c_id, Clients[i].c_look, Clients[i].c_right);
 				}
 			}
 
@@ -121,6 +121,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id]._hp = p->hp;
 			Clients[my_id]._speed = p->speed;
 			Clients[my_id].c_look = p->Look;
+			Clients[my_id].c_right = p->Right;
 			Clients[my_id].bullet_size = p->bulletsize;
 			SetEvent(conevent);
 			break;
@@ -137,6 +138,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id].c_pos.y = p->pos.y;
 			Clients[my_id].c_pos.z = p->pos.z;
 			Clients[my_id].c_look = p->Look;
+			Clients[my_id].c_right = p->Right;
 			Clients[my_id].bullet_size = p->bulletsize;
 			strcpy_s(Clients[my_id].name, p->name);
 
@@ -161,6 +163,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			keyvalue_pack.type = CS_MOVE_PLAYER;
 			keyvalue_pack.direction = send_keyValue;
 			keyvalue_pack.LookVec = Clients[my_id].c_look;
+			keyvalue_pack.RightVec = Clients[my_id].c_right;
 			retval = send(clientsocket, (char*)&keyvalue_pack, sizeof(CS_MOVE_PACKET), 0);		// 서버로 전송합니다.
 
 			cout << "Key: " << keyvalue_pack.direction << endl; //test
@@ -188,6 +191,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 				SC_MOVE_PACKET* p = reinterpret_cast<SC_MOVE_PACKET*>(&recvbuf);
 				Clients[p->_id].c_pos = p->pos;
 				Clients[p->_id].c_look = p->look;
+				Clients[p->_id].c_right = p->right;
 				Clients[p->_id]._speed = p->speed;
 				break;
 			}

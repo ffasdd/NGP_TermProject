@@ -59,8 +59,10 @@ struct CS_MOVE_PACKET {
 	char	type;
 	char	direction;  // 0 : UP, 1 : DOWN, 2 : LEFT, 3 : RIGHT, 4 : RotateL, 5 : RotateR
 	XMFLOAT3 LookVec;
+	XMFLOAT3 RightVec;
 };
 
+// »ç¿ëX
 struct CS_ROTATE_PACKET
 {
 	unsigned char size;
@@ -91,6 +93,7 @@ struct SC_LOGIN_PACKET
 	int speed;
 	int bulletsize;
 	XMFLOAT3 Look;
+	XMFLOAT3 Right;
 	char name[NAME_SIZE];
 
 
@@ -101,6 +104,7 @@ struct SC_ADD_PLAYER_PACKET
 	char type;
 	XMFLOAT3 pos;
 	XMFLOAT3 Look;
+	XMFLOAT3 Right;
 	int id;
 	int hp;
 	int speed;
@@ -115,6 +119,7 @@ struct SC_MOVE_PACKET
 	XMFLOAT3 pos;
 	XMFLOAT3 look;
 	XMFLOAT3 up;
+	XMFLOAT3 right;
 	int speed;
 };
 struct SC_ROTATE_PACKET

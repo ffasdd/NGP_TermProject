@@ -6,6 +6,7 @@
 #include "GameFramework.h"
 #include "UILayer.h"
 
+queue<XMFLOAT3> q_Right;
 queue<XMFLOAT3> q_Look;
 queue<char> q_Down_Key;
 queue<char> q_Up_Key;
@@ -337,15 +338,17 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			break;
 		case 'Q':
 			// 플레이어 왼쪽으로 회전
-			//m_pPlayer->Rotate(0.0f, -5.0f, 0.0f);
+			m_pPlayer->Rotate(0.0f, -5.0f, 0.0f);
 			q_Down_Key.push(4);
 			q_Look.push(m_pPlayer->GetLook());
+			q_Right.push(m_pPlayer->GetRight());
 			break;
 		case 'E':
 			// 플레이어 오른쪽으로 회전
 			//m_pPlayer->Rotate(0.0f, 5.0f, 0.0f);
 			q_Down_Key.push(5);
 			q_Look.push(m_pPlayer->GetLook());
+			q_Right.push(m_pPlayer->GetRight());
 			break;
 		case 'M':
 			break;
@@ -528,6 +531,7 @@ void CGameFramework::ProcessInput()
 		{
 			q_Down_Key.push(direction);
 			q_Look.push(m_pPlayer->GetLook());
+			q_Right.push(m_pPlayer->GetRight());
 		}
 
 		// ****사용x
@@ -717,11 +721,12 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position) {
 	}
 }
 
-void CGameFramework::myFunc_SetLook(int n, int id, XMFLOAT3 look)
+void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 look, XMFLOAT3 right)
 {
 	if (Login_ID == n)
 	{
 		m_pPlayer->SetLook(look);
+		m_pPlayer->SetRight(right);
 	}
 
 	else
@@ -740,8 +745,61 @@ void CGameFramework::myFunc_SetLook(int n, int id, XMFLOAT3 look)
 			break;
 		}
 		m_pScene->m_ppGameObjects[others_id + 30]->SetLook(look.x,look.y,look.z);
+		m_pScene->m_ppGameObjects[others_id + 30]->SetRight(look.x, look.y, look.z);
 	}
 }
+
+//void CGameFramework::myFunc_SetLook(int n, int id, XMFLOAT3 look, XMFLOAT3 right)
+//{
+//	if (Login_ID == n)
+//	{
+//		m_pPlayer->SetLook(look);
+//	}
+//
+//	else
+//	{
+//		int others_id = -1;
+//		switch (Login_ID) {
+//		case 0:
+//			others_id = n - 1;
+//			break;
+//		case 1:
+//			others_id = n;
+//			if (n == 2) others_id = 1;
+//			break;
+//		case 2:
+//			others_id = n;
+//			break;
+//		}
+//		m_pScene->m_ppGameObjects[others_id + 30]->SetLook(look.x, look.y, look.z);
+//	}
+//}
+
+//void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 look, XMFLOAT3 right)
+//{
+//	if (Login_ID == n)
+//	{
+//		m_pPlayer->SetLook(look);
+//	}
+//
+//	else
+//	{
+//		int others_id = -1;
+//		switch (Login_ID) {
+//		case 0:
+//			others_id = n - 1;
+//			break;
+//		case 1:
+//			others_id = n;
+//			if (n == 2) others_id = 1;
+//			break;
+//		case 2:
+//			others_id = n;
+//			break;
+//		}
+//		m_pScene->m_ppGameObjects[others_id + 30]->SetLook(look.x, look.y, look.z);
+//	}
+//}
 
 bool CGameFramework::is_KeyInput_Empty() {
 	return q_Down_Key.empty();
@@ -764,6 +822,14 @@ XMFLOAT3 CGameFramework::pop_LookValue() {
 
 	XMFLOAT3 temp = q_Look.front();
 	q_Look.pop();
+
+	return temp;
+}
+
+XMFLOAT3 CGameFramework::pop_RightValue() {
+
+	XMFLOAT3 temp = q_Right.front();
+	q_Right.pop();
 
 	return temp;
 }

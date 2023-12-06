@@ -39,7 +39,7 @@ public:
     void FrameAdvance();
 
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
-	void myFunc_SetLook(int n, int id, XMFLOAT3 look);
+	void myFunc_SetLookRight(int n, int id, XMFLOAT3 look, XMFLOAT3 right);
 
 	bool is_KeyInput_Empty();
 
@@ -47,6 +47,8 @@ public:
 	short pop_keyvalue();
 
 	XMFLOAT3 pop_LookValue();
+
+	XMFLOAT3 pop_RightValue();
 
 	void WaitForGpuComplete();
 	void MoveToNextFrame();
