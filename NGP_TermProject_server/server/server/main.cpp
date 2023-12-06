@@ -1,4 +1,4 @@
-// ¼­¹ö ½ÇÇà ¸ÞÀÎºÎºÐ, 
+
 
 #include"stdafx.h"
 
@@ -31,7 +31,7 @@ private:
 	int m_hp;
 	float m_speed;
 
-	// ÃÑ¾Ë °ü·Ã Ãß°¡ 
+
 	int bullet_size;
 
 
@@ -126,7 +126,6 @@ void err_quit(const char* msg)
 	exit(1);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â
 void err_display(const char* msg)
 {
 	LPVOID lpMsgBuf;
@@ -139,7 +138,6 @@ void err_display(const char* msg)
 	LocalFree(lpMsgBuf);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â
 void err_display(int errcode)
 {
 	LPVOID lpMsgBuf;
@@ -148,7 +146,7 @@ void err_display(int errcode)
 		NULL, errcode,
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 		(char*)&lpMsgBuf, 0, NULL);
-	printf("[¿À·ù] %s\n", (char*)lpMsgBuf);
+	printf("[ï¿½ï¿½ï¿½ï¿½] %s\n", (char*)lpMsgBuf);
 	LocalFree(lpMsgBuf);
 }
 
@@ -168,7 +166,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	int client_id = 0;
 	for (int i = 0; i < MAX_USER; ++i)
 	{
-		if (clients[i].getState() == ST_EMPTY) //Ã¼Å©¸¦ ¾î¶»°Ô?  
+		if (clients[i].getState() == ST_EMPTY) 
 		{
 			//0 
 			client_id = i;
@@ -214,8 +212,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 
 	clients[client_id].sendLoginPacket(packet);
-	// ÀÏ´Ü ·Î±×ÀÎ µÇ´ÂÁö È®ÀÎºÎÅÍ ok 
-
+	
 	while (true)
 	{
 
@@ -224,7 +221,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 		{
 			for (auto& pl : clients)
 			{
-				// ³» Á¤º¸¸¦ ´Ù¸¥ Å¬¶óÀÌ¾ðÆ®µéÇÑÅ× º¸³»±â 
+				// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 				if (client_id == pl.getID())continue;
 				SC_ADD_PLAYER_PACKET p;
 				p.size = sizeof(SC_ADD_PLAYER_PACKET);
@@ -242,10 +239,10 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 		if (clients[0].getState() == ST_RUNNING && clients[1].getState() == ST_RUNNING && clients[2].getState() == ST_RUNNING)
 			break;
-			// recv - Å° ÀÔ·Â ¹Þ¾Æº¸¾Æ¿ä
+			
 
 	}
-	// ÆÐÅ¶ ¼ö½Å 
+
 	while (1)
 	{
 		char recvbuf[BUF_SIZE];
@@ -260,11 +257,11 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			case 0:
 				cout << " Up " << endl;
 				{
-					// ¿©±â¼­ ¹Þ°í clients À§Ä¡ Á¤º¸ Ã³¸® ÀÌÈÄ ´Ù½Ã send 
+					// ï¿½ï¿½ï¿½â¼­ ï¿½Þ°ï¿½ clients ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ send 
 					// send...
-					// move(dir); ÇÔ¼ö ¸¸µé¾î¼­ ÈÄÃ³¸® ÀÌÈÄ¿¡
+					// move(dir); ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½î¼­ ï¿½ï¿½Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½Ä¿ï¿½
 					// send(client_sock,...);
-					// client¿¡ ³Ö¾î¼­ °ª ¼öÁ¤ÇÒ¶§ m_cs ÀÓ°è¿µ¿ª ÁöÁ¤ÇØ¾ßÇÔ 
+					// clientï¿½ï¿½ ï¿½Ö¾î¼­ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½ m_cs ï¿½Ó°è¿µï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ï¿½ï¿½ 
 					XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
 					XMFLOAT3 lookvec{ 0, 0, 0 };
 
@@ -274,9 +271,9 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 					XMStoreFloat3(&lookvec, lookvecVector);
 					//Move_Vertical_Result = calcMove(clients[client_id].getPos(), clients[client_id].getLookVec(), clients[client_id].getSpeed());
 					Move_Vertical_Result = calcMove(clients[client_id].getPos(), lookvec, clients[client_id].getSpeed());
-					// ¾ÆÀÌÅÛ °ü·ÃÇÑ°Í-> Å¬¶ó¿¡¼­
-					// Å¬¶ó¿¡¼­ ¼Óµµ °ü·Ã ¾ÆÀÌÅÛ 4°³ ¸Ô¾ú´Ù ÇÏ¸é speed¸¦ ±âº» ¼Óµµ + 4
-					// ÃÑ¾Ë Å©±â...  
+					// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ°ï¿½-> Å¬ï¿½ó¿¡¼ï¿½
+					// Å¬ï¿½ó¿¡¼ï¿½ ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 4ï¿½ï¿½ ï¿½Ô¾ï¿½ï¿½ï¿½ ï¿½Ï¸ï¿½ speedï¿½ï¿½ ï¿½âº» ï¿½Óµï¿½ + 4
+					// ï¿½Ñ¾ï¿½ Å©ï¿½ï¿½...  
 					EnterCriticalSection(&clients[client_id].m_cs);
 					clients[client_id].setPos(Move_Vertical_Result);
 					LeaveCriticalSection(&clients[client_id].m_cs);
@@ -300,18 +297,18 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			case 1:
 				cout << " Down " << endl;
 				{
-					// ¿©±â¼­ ¹Þ°í clients À§Ä¡ Á¤º¸ Ã³¸® ÀÌÈÄ ´Ù½Ã send 
+					// ï¿½ï¿½ï¿½â¼­ ï¿½Þ°ï¿½ clients ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ send 
 					// send...
-					// move(dir); ÇÔ¼ö ¸¸µé¾î¼­ ÈÄÃ³¸® ÀÌÈÄ¿¡
+					// move(dir); ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½î¼­ ï¿½ï¿½Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½Ä¿ï¿½
 					// send(client_sock,...);
-					// client¿¡ ³Ö¾î¼­ °ª ¼öÁ¤ÇÒ¶§ m_cs ÀÓ°è¿µ¿ª ÁöÁ¤ÇØ¾ßÇÔ 
+					// clientï¿½ï¿½ ï¿½Ö¾î¼­ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½ m_cs ï¿½Ó°è¿µï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ï¿½ï¿½ 
 					XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
 
 					XMFLOAT3 lookVector = clients[client_id].getLookVec();
 
 
 					XMFLOAT3 backVector;
-					XMMATRIX rotationMatrix = XMMatrixRotationY(XM_PI); // 180µµ È¸Àü
+					XMMATRIX rotationMatrix = XMMatrixRotationY(XM_PI); // 180ï¿½ï¿½ È¸ï¿½ï¿½
 					XMVECTOR backVectorXM = XMVector3Transform(XMLoadFloat3(&lookVector), rotationMatrix);
 					XMStoreFloat3(&backVector, backVectorXM);
 					Move_Vertical_Result = calcMove(clients[client_id].getPos(), backVector, clients[client_id].getSpeed());
@@ -339,18 +336,18 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			case 2:
 				cout << " Left " << endl;
 				{
-					// ¿©±â¼­ ¹Þ°í clients À§Ä¡ Á¤º¸ Ã³¸® ÀÌÈÄ ´Ù½Ã send 
+					// ï¿½ï¿½ï¿½â¼­ ï¿½Þ°ï¿½ clients ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ send 
 					// send...
-					// move(dir); ÇÔ¼ö ¸¸µé¾î¼­ ÈÄÃ³¸® ÀÌÈÄ¿¡
+					// move(dir); ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½î¼­ ï¿½ï¿½Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½Ä¿ï¿½
 					// send(client_sock,...);
-					// client¿¡ ³Ö¾î¼­ °ª ¼öÁ¤ÇÒ¶§ m_cs ÀÓ°è¿µ¿ª ÁöÁ¤ÇØ¾ßÇÔ 
+					// clientï¿½ï¿½ ï¿½Ö¾î¼­ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½ m_cs ï¿½Ó°è¿µï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ï¿½ï¿½ 
 					XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
 
 					XMFLOAT3 lookVector = clients[client_id].getLookVec();
 
 
 					XMFLOAT3 leftVector;
-					XMMATRIX rotationMatrix = XMMatrixRotationY(-XM_PIDIV2); // -90µµ È¸Àü
+					XMMATRIX rotationMatrix = XMMatrixRotationY(-XM_PIDIV2); // -90ï¿½ï¿½ È¸ï¿½ï¿½
 					XMVECTOR leftVectorXM = XMVector3Transform(XMLoadFloat3(&lookVector), rotationMatrix);
 					XMStoreFloat3(&leftVector, leftVectorXM);
 					Move_Vertical_Result = calcMove(clients[client_id].getPos(), leftVector, clients[client_id].getSpeed());
@@ -378,18 +375,18 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			case 3:
 				cout << " Right " << endl;
 				{
-					// ¿©±â¼­ ¹Þ°í clients À§Ä¡ Á¤º¸ Ã³¸® ÀÌÈÄ ´Ù½Ã send 
+					// ï¿½ï¿½ï¿½â¼­ ï¿½Þ°ï¿½ clients ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ send 
 					// send...
-					// move(dir); ÇÔ¼ö ¸¸µé¾î¼­ ÈÄÃ³¸® ÀÌÈÄ¿¡
+					// move(dir); ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½î¼­ ï¿½ï¿½Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½Ä¿ï¿½
 					// send(client_sock,...);
-					// client¿¡ ³Ö¾î¼­ °ª ¼öÁ¤ÇÒ¶§ m_cs ÀÓ°è¿µ¿ª ÁöÁ¤ÇØ¾ßÇÔ 
+					// clientï¿½ï¿½ ï¿½Ö¾î¼­ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½ m_cs ï¿½Ó°è¿µï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ï¿½ï¿½ 
 					XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
 
 					XMFLOAT3 lookVector = clients[client_id].getLookVec();
 
 
 					XMFLOAT3 rightVector;
-					XMMATRIX rotationMatrix = XMMatrixRotationY(XM_PIDIV2); // 90µµ È¸Àü
+					XMMATRIX rotationMatrix = XMMatrixRotationY(XM_PIDIV2); // 90ï¿½ï¿½ È¸ï¿½ï¿½
 					XMVECTOR rightVectorXM = XMVector3Transform(XMLoadFloat3(&lookVector), rotationMatrix);
 					XMStoreFloat3(&rightVector, rightVectorXM);
 					Move_Vertical_Result = calcMove(clients[client_id].getPos(), rightVector, clients[client_id].getSpeed());
@@ -426,7 +423,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 		case CS_ROTATE_PLAYER:
 			cout << " Recv Rotate " << endl;
-			// ÀÌºÎºÐ¿¡¼­ ·ÎÅ×ÀÌÆ® ¹ÞÀº ÆÐÅ¶¿­¾î¼­ ¼öÁ¤ÈÄ ´Ù½ÃÀü¼Û 
+			// ï¿½ÌºÎºÐ¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¶ï¿½ï¿½ï¿½î¼­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 			SC_ROTATE_PACKET p;
 			p.id = client_id;
 			p.rot = { 0,0,0 };
@@ -435,7 +432,6 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			clients[client_id].sendRotatePacket(p);
 			break;
 
-
 		}
 		return 0;
 	}
@@ -443,7 +439,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 int main()
 {
-	// À©¼Ó ÃÊ±âÈ­
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
 	WSADATA wsa;
 
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
