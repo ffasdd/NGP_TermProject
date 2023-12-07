@@ -48,7 +48,7 @@ constexpr char CS_REMOVE = 4;
 // Server to Client Packet type
 
 constexpr char SC_LOGIN_PLAYER = 1;
-constexpr char SC_MOVE_PLAYER = 2;
+constexpr char SC_UPDATE_PLAYER = 2;
 constexpr char SC_ROTATE_PLAYER = 3;
 constexpr char SC_FIREBULLET_PLAYER = 4;
 constexpr char SC_COLLIDER = 5;
@@ -57,18 +57,7 @@ constexpr char SC_END = 7;
 constexpr char SC_UPDATE = 8;
 constexpr char SC_ADD_PLAYER = 9;
 
-struct m_Pos
-{
-	float x;
-	float y;
-	float z;
-};
-struct m_Look
-{
-	float x;
-	float y;
-	float z;
-};
+
 
 enum COLLIDERTYPE
 {

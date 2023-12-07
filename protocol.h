@@ -7,7 +7,7 @@ constexpr int NAME_SIZE = 20;
 constexpr int MAX_ITEM = 30;
 // Client to Server Packet type
 constexpr char CS_LOGIN_PLAYER = 0;
-constexpr char CS_MOVE_PLAYER = 1;
+constexpr char CS_EVENT = 1;
 constexpr char CS_ROTATE_PLAYER = 2;
 constexpr char CS_FIREBULLET_PLAYER = 3;
 constexpr char CS_REMOVE = 4;
@@ -24,19 +24,7 @@ constexpr char SC_END = 7;
 constexpr char SC_UPDATE = 8;
 constexpr char SC_ADD_PLAYER = 9;
 
-#pragma pack(push,1)
-struct m_Pos
-{
-	float x;
-	float y;
-	float z;
-};
-struct m_Look
-{
-	float x;
-	float y;
-	float z;
-};
+
 
 enum COLLIDERTYPE
 {

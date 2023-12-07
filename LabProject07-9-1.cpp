@@ -21,10 +21,13 @@ BOOL InitInstance(HINSTANCE, int);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
 
+SOCKET clientsocket;
 
 array<CLIENT, 3>Clients;
 int id = 0;
 HANDLE conevent = CreateEvent(NULL, FALSE, FALSE, NULL);
+HANDLE recvevent = CreateEvent(NULL, FALSE, FALSE, NULL);
+
 
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
@@ -52,8 +55,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	HANDLE network_th;
 	network_th = CreateThread(NULL, 0, ConnecttoServer, NULL, 0, NULL); // 로그인 쓰레드 
 
-
-
 	WaitForSingleObject(conevent, INFINITE);
 	cout << " CONNECT " << endl;
 	int retval;
@@ -71,6 +72,18 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		else
 		{
 			// 값 전달해주기
+			if (!gGameFramework.is_KeyInput_Empty())
+			{
+				char send_keyvalue = gGameFramework.pop_keyvalue();
+				CS_EVENT_PACKET p;
+				p.type = CS_EVENT;
+				p.direction = send_keyvalue;
+				p.size = sizeof(CS_EVENT_PACKET);
+				send(clientsocket, (char*)&p, sizeof(CS_EVENT_PACKET), 0);
+				//SetEvent(recvevent);
+
+			}
+
 			if (gGameFramework.m_pPlayer != NULL) {
 				for (int i = 0; i < 3; i++) {
 					gGameFramework.myFunc_SetPosition(i, Clients[i].c_id, Clients[i].c_pos);
@@ -91,7 +104,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 {
 	int retval;
 	int my_id;
-	SOCKET clientsocket = socket(AF_INET, SOCK_STREAM, 0);
+	clientsocket = socket(AF_INET, SOCK_STREAM, 0);
 	char recvbuf[BUF_SIZE];
 	if (clientsocket == INVALID_SOCKET)
 	{
@@ -146,55 +159,50 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 		}
 		if (Clients[0].c_id != -1 && Clients[1].c_id != -1 && Clients[2].c_id != -1)
 		{
-			HANDLE recv_th;
-			recv_th = CreateThread(NULL, 0, recvtoserver, NULL, 0, NULL);  // 로그인 완료시 서버와 통신 쓰레드 생성 
+			Sleep(10);
 			SetEvent(conevent);
+
+			HANDLE recv_th;
+			recv_th = CreateThread(NULL, 0, recvtoserver, (LPVOID)(clientsocket), 0, NULL);  // 로그인 완료시 서버와 통신 쓰레드 생성 
 			break;
 		}
 
 	}
 
+
 };
 
 DWORD WINAPI recvtoserver(LPVOID arg)
 {
-
+	SOCKET _socket = (SOCKET)arg;
 	int retval;
 	int my_id;
-	SOCKET clientsocket = socket(AF_INET, SOCK_STREAM, 0);
 	char recvbuf[BUF_SIZE];
 	if (clientsocket == INVALID_SOCKET)
 	{
 		return 0;
 	}
-	sockaddr_in clientaddr;
-	clientaddr.sin_family = AF_INET;
-	clientaddr.sin_port = htons(9000);
-	inet_pton(AF_INET, "127.0.0.1", &clientaddr.sin_addr);
-	connect(clientsocket, (sockaddr*)&clientaddr, sizeof(clientaddr));
-	// 게임실행 
+
 	while (true)
 	{
-		while (true)
-		{
-			recv(clientsocket, recvbuf, BUF_SIZE, 0);
-			switch (recvbuf[1])
-			{
-			case SC_UPDATE_PLAYER:
-			{
-				SC_UPDATE_PACKET* p = reinterpret_cast<SC_UPDATE_PACKET*>(&recvbuf);
-				Clients[p->_id].c_pos = p->pos;
-				Clients[p->_id].c_look = p->look;
-				Clients[p->_id]._speed = p->speed;
-				Clients[p->_id].c_right = p->right;
-				Clients[p->_id]._speed = p->speed;
-				break;
-			}
+		recv(_socket, recvbuf, sizeof(SC_UPDATE_PACKET), 0);
 
-			}
+		switch (recvbuf[1])
+		{
+		case SC_UPDATE_PLAYER:
+		{
+			SC_UPDATE_PACKET* p = reinterpret_cast<SC_UPDATE_PACKET*>(&recvbuf);
+			Clients[p->_id].c_pos = p->pos;
+			Clients[p->_id].c_look = p->look;
+			Clients[p->_id]._speed = p->speed;
+			Clients[p->_id].c_right = p->right;
+			break;
 		}
 
+		}
 	}
+
+
 
 }
 
