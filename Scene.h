@@ -77,6 +77,8 @@ public:
 
 	void ReleaseUploadBuffers();
 
+	queue<int>					q_Item_Num;
+
 	CPlayer						*m_pPlayer = NULL;
 	float Ttime;
 	XMFLOAT3					m_xmf3Position;
@@ -106,7 +108,7 @@ public:
 	LIGHTS						*m_pcbMappedLights = NULL;
 
 	float						m_fElapsedTime = 0.0f;
-
+	bool 						Is_Item_Collision = false;
 	CHeightMapTerrain* m_pTerrain = NULL;
 	CHeightMapTerrain* GetTerrain() { return(m_pTerrain); }
 };

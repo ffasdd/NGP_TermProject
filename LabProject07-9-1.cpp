@@ -14,6 +14,8 @@ TCHAR							szWindowClass[MAX_LOADSTRING];
 
 CGameFramework					gGameFramework;
 
+int _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow);
+
 DWORD WINAPI ConnecttoServer(LPVOID arg);
 DWORD WINAPI recvtoserver(LPVOID arg);
 ATOM MyRegisterClass(HINSTANCE hInstance);
@@ -83,10 +85,22 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 				//SetEvent(recvevent);
 
 			}
+			if (gGameFramework.is_Item_Collision()) {
+				CS_ITEM_PACKET item_pack;
+				item_pack.type = CS_ITEM;
+				item_pack.num = gGameFramework.GetItemNum();
+				item_pack.p_speed = gGameFramework.GetPlayerSpeed();
+				item_pack.p_bulletsize = gGameFramework.GetPlayerBulletSize();
+				retval = send(clientsocket, (char*)&item_pack, sizeof(CS_ITEM_PACKET), 0);      // 서버로 전송합니다.
+				// cout << item_pack.p_speed << endl; //test
+
+				break;
+			}
 
 			if (gGameFramework.m_pPlayer != NULL) {
 				for (int i = 0; i < 3; i++) {
 					gGameFramework.myFunc_SetPosition(i, Clients[i].c_id, Clients[i].c_pos);
+					gGameFramework.myFunc_SetLookRight(i, Clients[i].c_id, Clients[i].c_look, Clients[i].c_right);
 				}
 			}
 
@@ -136,6 +150,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id]._hp = p->hp;
 			Clients[my_id]._speed = p->speed;
 			Clients[my_id].c_look = p->Look;
+			Clients[my_id].c_right = p->Right;
 			Clients[my_id].bullet_size = p->bulletsize;
 			//SetEvent(conevent);
 			break;
@@ -151,6 +166,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id].c_pos.y = p->pos.y;
 			Clients[my_id].c_pos.z = p->pos.z;
 			Clients[my_id].c_look = p->Look;
+			Clients[my_id].c_right = p->Right;
 			Clients[my_id].bullet_size = p->bulletsize;
 			strcpy_s(Clients[my_id].name, p->name);
 
@@ -197,6 +213,11 @@ DWORD WINAPI recvtoserver(LPVOID arg)
 			Clients[p->_id]._speed = p->speed;
 			Clients[p->_id].c_right = p->right;
 			break;
+		}
+		case SC_ITEM:
+		{
+			SC_ITEM_PACKET* p = reinterpret_cast<SC_ITEM_PACKET*>(&recvbuf);
+
 		}
 
 		}

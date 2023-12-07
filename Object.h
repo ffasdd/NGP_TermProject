@@ -191,6 +191,8 @@ public:
 	float m_time = 0.0;
 	float GetTime(float time);
 
+	void SetRight(float x, float y, float z);
+	void SetLook(float x, float y, float z);
 	void SetPosition(float x, float y, float z);
 	void SetTarget(XMFLOAT3 xmf3TargetPosition);
 	void SetPosition(XMFLOAT3 xmf3Position);

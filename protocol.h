@@ -11,6 +11,7 @@ constexpr char CS_EVENT = 1;
 constexpr char CS_ROTATE_PLAYER = 2;
 constexpr char CS_FIREBULLET_PLAYER = 3;
 constexpr char CS_REMOVE = 4;
+constexpr char CS_ITEM = 5;
 
 // Server to Client Packet type
 
@@ -23,6 +24,8 @@ constexpr char SC_REMOVE = 6;
 constexpr char SC_END = 7;
 constexpr char SC_UPDATE = 8;
 constexpr char SC_ADD_PLAYER = 9;
+constexpr char SC_ITEM = 10;
+
 
 
 
@@ -68,6 +71,15 @@ struct CS_REMOVE_PACKET
 	char type;
 };
 
+struct CS_ITEM_PACKET
+{
+	unsigned char size;
+	char type;
+	int num;
+	float p_speed;
+	float p_bulletsize;
+};
+
 struct SC_LOGIN_PACKET
 {
 	unsigned char size;
@@ -78,6 +90,7 @@ struct SC_LOGIN_PACKET
 	int speed;
 	int bulletsize;
 	XMFLOAT3 Look;
+	XMFLOAT3 Right;
 	char name[NAME_SIZE];
 
 
@@ -88,6 +101,7 @@ struct SC_ADD_PLAYER_PACKET
 	char type;
 	XMFLOAT3 pos;
 	XMFLOAT3 Look;
+	XMFLOAT3 Right;
 	int id;
 	int hp;
 	int speed;
@@ -103,6 +117,12 @@ struct SC_UPDATE_PACKET
 	XMFLOAT3 look;
 	XMFLOAT3 right;
 	int speed;
+	int bulletsize;
+};
+struct SC_ITEM_PACKET {
+	unsigned char size;
+	char type;
+	int num;
 };
 struct SC_ROTATE_PACKET
 {

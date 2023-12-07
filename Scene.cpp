@@ -375,7 +375,7 @@ void CScene::CheckEnemyByBullet(float time) {
 void CScene::IsCollision(float time) {
 	//%// 아이템과 플레이어 충돌을 확인합니다
 	static float fTimeElapsed = 0.0f;  
-
+	Is_Item_Collision = false;
 	for (int i = 0; i < m_nGameObjects; ++i) {
 		if (m_ppGameObjects[i]->isCollision) {
 			if (m_ppGameObjects[i]->type) {
@@ -389,6 +389,8 @@ void CScene::IsCollision(float time) {
 				m_pPlayer->SetSpeed(2.f);
 				m_ppGameObjects[i]->draw = false;
 			}
+			q_Item_Num.push(i);
+			Is_Item_Collision = true;
 		}
 		
 	}
