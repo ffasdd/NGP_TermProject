@@ -122,7 +122,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id].c_look = p->Look;
 			Clients[my_id].c_right = p->right;
 			Clients[my_id].bullet_size = p->bulletsize;
-			SetEvent(conevent);
+			//SetEvent(conevent);
 			break;
 		}
 		case SC_ADD_PLAYER:
@@ -176,6 +176,8 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 		}
 		if (Clients[0].c_id != -1 && Clients[1].c_id != -1 && Clients[2].c_id != -1)
 		{
+			//HANDLE recv_th;
+			//recv_th = CreateThread(NULL, 0, recvtoserver, NULL, 0, NULL);
 			SetEvent(conevent);
 			break;
 		}
@@ -197,7 +199,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 
 				cout << "Key: " << keyvalue_pack.direction << endl; //test
 
-				break;
+				
 			}
 
 			// CS_ROTATE_PACKET
@@ -216,12 +218,29 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 
 				break;
 			}
-
 			// CS_STATE_PACKET
 		}
+		/*while (true)
+		{
+
+			recv(clientsocket, recvbuf, BUF_SIZE, 0);
+			SC_MOVE_PACKET* p = reinterpret_cast<SC_MOVE_PACKET*>(&recvbuf);
+			Clients[p->_id].c_pos = p->pos;
+			Clients[p->_id].c_look = p->look;
+			Clients[p->_id]._speed = p->speed;
+			break;
+		}*/
+
+			
+		}
 	}
-	return 0;
+
 };
+
+//DWORD WINAPI recvtoserver(LPVOID arg)
+//{
+//
+//}
 
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {

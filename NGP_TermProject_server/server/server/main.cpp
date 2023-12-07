@@ -214,8 +214,6 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 	while (true)
 	{
-
-
 		if (clients[2].getID() != -1)
 		{
 			for (auto& pl : clients)
@@ -235,11 +233,9 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 				pl.sendAddPakcet(p);
 			}
 		}
-
 		if (clients[0].getState() == ST_RUNNING && clients[1].getState() == ST_RUNNING && clients[2].getState() == ST_RUNNING)
 			break;
 			// recv - 키 입력 받아보아요
-
 	}
 	// 패킷 수신 
 	while (1)
@@ -394,17 +390,17 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 					clients[client_id].setPos(Move_Vertical_Result);
 					LeaveCriticalSection(&clients[client_id].m_cs);
 
-					for (auto& pl : clients)
+					for (auto& pl : clients) // 움직인 내 정보를 모두에게 
 					{
 						SC_MOVE_PACKET movepacket;
 						movepacket.type = SC_MOVE_PLAYER;
 						movepacket.size = sizeof(SC_MOVE_PACKET);
-						movepacket._id = pl.getID();
-						movepacket.pos = pl.getPos();
-						movepacket.look = pl.getLookVec();
-						movepacket.speed = pl.getSpeed();
-						movepacket.up = { 0, 0, 0 };
-						clients[client_id].sendMovePacket(movepacket);
+						movepacket._id =clients[client_id].getID();
+						movepacket.pos = clients[client_id].getPos();
+						movepacket.look = clients[client_id].getLookVec();
+						movepacket.speed = clients[client_id].getSpeed();
+			
+						pl.sendMovePacket(movepacket);
 					}
 
 
@@ -414,7 +410,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 				cout << "Fire" << endl;
 				//break;
 			}
-			break;
+			
 		}
 		case CS_ITEM:
 		{
@@ -425,7 +421,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 		}
 
 		}
-		return 0;
+
 	}
 }
 
