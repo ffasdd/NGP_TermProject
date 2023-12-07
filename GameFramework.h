@@ -39,10 +39,16 @@ public:
     void FrameAdvance();
 
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
+<<<<<<< HEAD
 
 	float GetPlayerSpeed();
 	float GetPlayerBulletSize();
 
+=======
+	void myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Right);
+	bool is_Item_Collision();
+	int GetItemNum();
+>>>>>>> server
 	bool is_KeyInput_Empty();
 
 	bool is_Item_Collision();
@@ -50,6 +56,10 @@ public:
 	int GetItemNum();
 
 	short pop_keyvalue();
+
+
+	float GetPlayerSpeed();
+	float GetPlayerBulletSize();
 
 	void WaitForGpuComplete();
 	void MoveToNextFrame();

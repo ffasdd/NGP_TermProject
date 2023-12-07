@@ -77,7 +77,11 @@ public:
 
 	void ReleaseUploadBuffers();
 
+<<<<<<< HEAD
 	queue<int> q_Item_Num;
+=======
+	queue<int>					q_Item_Num;
+>>>>>>> server
 
 	CPlayer						*m_pPlayer = NULL;
 	float Ttime;
@@ -108,7 +112,7 @@ public:
 	LIGHTS						*m_pcbMappedLights = NULL;
 
 	float						m_fElapsedTime = 0.0f;
-
+	bool 						Is_Item_Collision = false;
 	CHeightMapTerrain* m_pTerrain = NULL;
 	CHeightMapTerrain* GetTerrain() { return(m_pTerrain); }
 };

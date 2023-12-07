@@ -7,37 +7,40 @@ constexpr int NAME_SIZE = 20;
 constexpr int MAX_ITEM = 30;
 // Client to Server Packet type
 constexpr char CS_LOGIN_PLAYER = 0;
-constexpr char CS_MOVE_PLAYER = 1;
+constexpr char CS_EVENT = 1;
 constexpr char CS_ROTATE_PLAYER = 2;
 constexpr char CS_FIREBULLET_PLAYER = 3;
+<<<<<<< HEAD
 // constexpr char CS_REMOVE = 4;
 constexpr char CS_ITEM = 5;
 constexpr char CS_STATE = 5;
+=======
+constexpr char CS_REMOVE = 4;
+constexpr char CS_ITEM = 5;
+>>>>>>> server
 
 // Server to Client Packet type
 
 constexpr char SC_LOGIN_PLAYER = 1;
-constexpr char SC_MOVE_PLAYER = 2;
+constexpr char SC_UPDATE_PLAYER = 2;
 constexpr char SC_ROTATE_PLAYER = 3;
 constexpr char SC_FIREBULLET_PLAYER = 4;
+<<<<<<< HEAD
 constexpr char SC_REMOVE = 5;
 constexpr char SC_END = 6;
 constexpr char SC_UPDATE = 7;
 constexpr char SC_ADD_PLAYER =8;
+=======
+constexpr char SC_COLLIDER = 5;
+constexpr char SC_REMOVE = 6;
+constexpr char SC_END = 7;
+constexpr char SC_UPDATE = 8;
+constexpr char SC_ADD_PLAYER = 9;
+constexpr char SC_ITEM = 10;
 
-#pragma pack(push,1)
-struct m_Pos
-{
-	float x;
-	float y;
-	float z;
-};
-struct m_Look
-{
-	float x;
-	float y;
-	float z;
-};
+
+>>>>>>> server
+
 
 enum COLLIDERTYPE
 {
@@ -53,10 +56,19 @@ struct CS_LOGIN_PACKET
 	char type;
 	char name[NAME_SIZE];
 };
+<<<<<<< HEAD
 struct CS_MOVE_PACKET {
 	unsigned char size;
 	char	type;
 	char	direction;  // 0 : UP, 1 : DOWN, 2 : LEFT, 3 : RIGHT
+=======
+
+struct CS_EVENT_PACKET {
+	unsigned char size;
+	char	type;
+	char	direction;  // 0 : UP, 1 : DOWN, 2 : LEFT, 3 : RIGHT, 4 : LEFT, 5 : RIGHT , 6 : FIREBULLET
+
+>>>>>>> server
 };
 struct CS_ROTATE_PACKET
 {
@@ -90,6 +102,15 @@ struct CS_STATE_PACKET
 	float hp;
 };
 
+struct CS_ITEM_PACKET
+{
+	unsigned char size;
+	char type;
+	int num;
+	float p_speed;
+	float p_bulletsize;
+};
+
 struct SC_LOGIN_PACKET
 {
 	unsigned char size;
@@ -100,7 +121,11 @@ struct SC_LOGIN_PACKET
 	int speed;
 	int bulletsize;
 	XMFLOAT3 Look;
+<<<<<<< HEAD
 	XMFLOAT3 right;
+=======
+	XMFLOAT3 Right;
+>>>>>>> server
 	char name[NAME_SIZE];
 
 
@@ -111,13 +136,17 @@ struct SC_ADD_PLAYER_PACKET
 	char type;
 	XMFLOAT3 pos;
 	XMFLOAT3 Look;
+<<<<<<< HEAD
 	XMFLOAT3 right;
+=======
+	XMFLOAT3 Right;
+>>>>>>> server
 	int id;
 	int hp;
 	int bulletsize;
 	char name[NAME_SIZE];
 };
-struct SC_MOVE_PACKET
+struct SC_UPDATE_PACKET
 {
 	unsigned char size;
 	char type;
@@ -125,6 +154,16 @@ struct SC_MOVE_PACKET
 	XMFLOAT3 pos;
 	XMFLOAT3 look;
 	XMFLOAT3 right;
+<<<<<<< HEAD
+=======
+	int speed;
+	int bulletsize;
+};
+struct SC_ITEM_PACKET {
+	unsigned char size;
+	char type;
+	int num;
+>>>>>>> server
 };
 struct SC_ROTATE_PACKET
 {

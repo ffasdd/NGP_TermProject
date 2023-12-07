@@ -332,18 +332,21 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		case VK_F5:
 			break;
 		case 'Q':
+<<<<<<< HEAD
 			((CMyTankPlayer*)m_pPlayer)->RotateTop(-5.0f);
 			((CMyTankPlayer*)m_pPlayer)->SetSpeed(10.f);
+=======
+			q_Down_Key.push(4);
+>>>>>>> server
 			break;
-		case 'W':
-			((CMyTankPlayer*)m_pPlayer)->RotateTop(+5.0f);
+		case 'E':
+			q_Down_Key.push(5);
 			break;
 		case 'M':
-			((CMyTankPlayer*)m_pPlayer)->m_hp -= 5;
+
 			break;
 		case VK_CONTROL:
-			//((CMyTankPlayer*)m_pPlayer)->FireBullet();
-			q_Down_Key.push(4);
+
 			break;
 		default:
 			break;
@@ -444,14 +447,14 @@ void CGameFramework::BuildObjects()
 	CMyTankPlayer* pmyPlayer = new CMyTankPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature());
 	// 플레이어 위치를 정해주는 함수입니다. SetPosition에 들어가는 XMFLOAT3값을 수정하면 플레이어 시작 위치가 바뀝니다.
 	// 셋 플레이어 포스를 여기서 해봐여
-	
+
 	pmyPlayer->SetPlayerUpdatedContext(m_pScene->GetTerrain());
 	m_pScene->m_pPlayer = m_pPlayer = pmyPlayer;
 
 	//pmyPlayer->Setplaypos(setpos.x,setpos.y,setpos.z);
 	//pmyPlayer->SetPosition(pmyPlayer->m_pos);
 	m_pCamera = m_pPlayer->GetCamera();
-	
+
 
 	m_pScene->m_pPlayerUpdatedContext = m_pScene->GetTerrain();
 
@@ -488,30 +491,30 @@ void CGameFramework::ProcessInput()
 		// 0 : UP, 1 : DOWN, 2 : LEFT, 3 : RIGHT
 		int direction = -1;
 		DWORD dwDirection = 0;
-		
+
 		if (pKeysBuffer[VK_UP] & 0xF0) {
-			dwDirection |= DIR_FORWARD;
+			//dwDirection |= DIR_FORWARD;
 			direction = 0;
 		}
-		
+
 		if (pKeysBuffer[VK_DOWN] & 0xF0) {
-			dwDirection |= DIR_BACKWARD;
+			//dwDirection |= DIR_BACKWARD;
 			direction = 1;
 		}
-		
+
 		if (pKeysBuffer[VK_LEFT] & 0xF0) {
-			dwDirection |= DIR_LEFT;
+			//dwDirection |= DIR_LEFT;
 			direction = 2;
 		}
-		
+
 		if (pKeysBuffer[VK_RIGHT] & 0xF0) {
-			dwDirection |= DIR_RIGHT;
+			//dwDirection |= DIR_RIGHT;
 			direction = 3;
 		}
 		if (direction != -1)
 			q_Down_Key.push(direction);
 
-		float cxDelta = 0.0f, cyDelta = 0.0f;
+		/*float cxDelta = 0.0f, cyDelta = 0.0f;
 		POINT ptCursorPos;
 		if (GetCapture() == m_hWnd)
 		{
@@ -532,7 +535,7 @@ void CGameFramework::ProcessInput()
 					m_pPlayer->Rotate(cyDelta, cxDelta, 0.0f);
 			}
 			if (dwDirection) m_pPlayer->Move(dwDirection, 5.0f + m_pPlayer->m_vel, true);
-		}
+		}*/
 	}
 	m_pPlayer->Update(m_GameTimer.GetTimeElapsed());
 }
@@ -693,10 +696,11 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position) {
 			others_id = n;
 			break;
 		}
-		m_pScene->m_ppGameObjects[others_id+30]->SetPosition(position);
+		m_pScene->m_ppGameObjects[others_id + 30]->SetPosition(position);
 	}
 }
 
+<<<<<<< HEAD
 
 
 
@@ -734,6 +738,37 @@ float CGameFramework::GetPlayerBulletSize() {
 
 
 
+=======
+void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Right)
+{
+	if (Login_ID == n)
+	{
+		m_pPlayer->SetLook(Look);
+		m_pPlayer->SetRight(Right);
+
+	}
+	else
+	{
+		int others_id = -1;
+		switch (Login_ID) {
+		case 0:
+			others_id = n - 1;
+			break;
+		case 1:
+			others_id = n;
+			if (n == 2) others_id = 1;
+			break;
+		case 2:
+			others_id = n;
+			break;
+		}
+		m_pScene->m_ppGameObjects[others_id + 30]->SetLook(Look.x, Look.y, Look.z);
+		m_pScene->m_ppGameObjects[others_id + 30]->SetRight(Right.x, Right.y, Right.z);
+	}
+
+}
+
+>>>>>>> server
 bool CGameFramework::is_KeyInput_Empty() {
 	return q_Down_Key.empty();
 }
@@ -741,6 +776,27 @@ short CGameFramework::pop_keyvalue() {
 
 	char temp = q_Down_Key.front();
 	q_Down_Key.pop();
+
+	return temp;
+}
+
+float CGameFramework::GetPlayerSpeed()
+{
+	return m_pScene->m_pPlayer->m_speed;
+}
+
+float CGameFramework::GetPlayerBulletSize()
+{
+	return m_pScene->m_pPlayer->m_BulletSize;
+}
+
+bool CGameFramework::is_Item_Collision() {
+	return m_pScene->Is_Item_Collision;
+}
+
+int CGameFramework::GetItemNum() {
+	int temp = m_pScene->q_Item_Num.front();
+	m_pScene->q_Item_Num.pop();
 
 	return temp;
 }
