@@ -15,7 +15,7 @@ TCHAR							szWindowClass[MAX_LOADSTRING];
 CGameFramework					gGameFramework;
 
 DWORD WINAPI ConnecttoServer(LPVOID arg);
-
+DWORD WINAPI recvtoserver(LPVOID arg);
 ATOM MyRegisterClass(HINSTANCE hInstance);
 BOOL InitInstance(HINSTANCE, int);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -50,7 +50,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	}
 
 	HANDLE network_th;
-	network_th = CreateThread(NULL, 0, ConnecttoServer, NULL, 0, NULL);
+	network_th = CreateThread(NULL, 0, ConnecttoServer, NULL, 0, NULL); // 로그인 쓰레드 
+
+
 
 	WaitForSingleObject(conevent, INFINITE);
 	cout << " CONNECT " << endl;
@@ -83,6 +85,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 
 	return((int)msg.wParam);
 }
+//로그인 쓰레드 
 
 DWORD WINAPI ConnecttoServer(LPVOID arg)
 {
@@ -143,41 +146,9 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 		}
 		if (Clients[0].c_id != -1 && Clients[1].c_id != -1 && Clients[2].c_id != -1)
 		{
-			//HANDLE recv_th;
-			//recv_th = CreateThread(NULL, 0, recvtoserver, NULL, 0, NULL);
+			HANDLE recv_th;
+			recv_th = CreateThread(NULL, 0, recvtoserver, NULL, 0, NULL);  // 로그인 완료시 서버와 통신 쓰레드 생성 
 			SetEvent(conevent);
-			break;
-		}
-
-	}
-	// 게임실행 
-	while (true)
-	{
-		while (true)
-		{
-
-			if (!gGameFramework.is_KeyInput_Empty()) {
-
-				char send_keyValue = gGameFramework.pop_keyvalue();									// 키입력 큐에 있는 키값 중 가장 먼저 입력된 키값을
-				CS_MOVE_PACKET keyvalue_pack;
-				keyvalue_pack.type = CS_MOVE_PLAYER;
-				keyvalue_pack.direction = send_keyValue;
-				retval = send(clientsocket, (char*)&keyvalue_pack, sizeof(CS_MOVE_PACKET), 0);		// 서버로 전송합니다.
-
-				cout << "Key: " << keyvalue_pack.direction << endl; //test
-
-				
-			}
-
-		}
-		while (true)
-		{
-
-			recv(clientsocket, recvbuf, BUF_SIZE, 0);
-			SC_MOVE_PACKET* p = reinterpret_cast<SC_MOVE_PACKET*>(&recvbuf);
-			Clients[p->_id].c_pos = p->pos;
-			Clients[p->_id].c_look = p->look;
-			Clients[p->_id]._speed = p->speed;
 			break;
 		}
 
@@ -185,10 +156,47 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 
 };
 
-//DWORD WINAPI recvtoserver(LPVOID arg)
-//{
-//
-//}
+DWORD WINAPI recvtoserver(LPVOID arg)
+{
+
+	int retval;
+	int my_id;
+	SOCKET clientsocket = socket(AF_INET, SOCK_STREAM, 0);
+	char recvbuf[BUF_SIZE];
+	if (clientsocket == INVALID_SOCKET)
+	{
+		return 0;
+	}
+	sockaddr_in clientaddr;
+	clientaddr.sin_family = AF_INET;
+	clientaddr.sin_port = htons(9000);
+	inet_pton(AF_INET, "127.0.0.1", &clientaddr.sin_addr);
+	connect(clientsocket, (sockaddr*)&clientaddr, sizeof(clientaddr));
+	// 게임실행 
+	while (true)
+	{
+		while (true)
+		{
+			recv(clientsocket, recvbuf, BUF_SIZE, 0);
+			switch (recvbuf[1])
+			{
+			case SC_UPDATE_PLAYER:
+			{
+				SC_UPDATE_PACKET* p = reinterpret_cast<SC_UPDATE_PACKET*>(&recvbuf);
+				Clients[p->_id].c_pos = p->pos;
+				Clients[p->_id].c_look = p->look;
+				Clients[p->_id]._speed = p->speed;
+				Clients[p->_id].c_right = p->right;
+				Clients[p->_id]._speed = p->speed;
+				break;
+			}
+
+			}
+		}
+
+	}
+
+}
 
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {

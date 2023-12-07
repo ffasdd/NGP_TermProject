@@ -1,5 +1,11 @@
 ﻿  LabProject07-9-1.cpp
-C:\Users\tlseh\Desktop\NGP_TermProject - 복사본\LabProject07-9-1.cpp(57,6): warning C4101: 'retval' :참조되지 않은 지역 변수입니다.
-C:\Users\tlseh\Desktop\NGP_TermProject - 복사본\LabProject07-9-1.cpp(45,6): warning C4101: 'ret' :참조되지 않은 지역 변수입니다.
-C:\Users\tlseh\Desktop\NGP_TermProject - 복사본\LabProject07-9-1.cpp(161,24): warning C4244: '초기화 중': 'short'에서 'char'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  LabProject07-9-1.vcxproj -> C:\Users\tlseh\Desktop\NGP_TermProject - 복사본\x64\Debug\LabProject07-9-1.exe
+C:\Users\tlseh\Desktop\넷겜플 텀프\NGP_TermProject\LabProject07-9-1.cpp(59,6): warning C4101: 'retval' :참조되지 않은 지역 변수입니다.
+C:\Users\tlseh\Desktop\넷겜플 텀프\NGP_TermProject\LabProject07-9-1.cpp(45,6): warning C4101: 'ret' :참조되지 않은 지역 변수입니다.
+C:\Users\tlseh\Desktop\넷겜플 텀프\NGP_TermProject\LabProject07-9-1.cpp(92,6): warning C4101: 'retval' :참조되지 않은 지역 변수입니다.
+C:\Users\tlseh\Desktop\넷겜플 텀프\NGP_TermProject\LabProject07-9-1.cpp(163,6): warning C4101: 'my_id' :참조되지 않은 지역 변수입니다.
+C:\Users\tlseh\Desktop\넷겜플 텀프\NGP_TermProject\LabProject07-9-1.cpp(162,6): warning C4101: 'retval' :참조되지 않은 지역 변수입니다.
+  Mesh.cpp
+  UILayer.cpp
+  코드를 생성하고 있습니다...
+C:\Users\tlseh\Desktop\넷겜플 텀프\NGP_TermProject\LabProject07-9-1.cpp(157): warning C4715: 'ConnecttoServer': 모든 제어 경로에서 값을 반환하지는 않습니다.
+  LabProject07-9-1.vcxproj -> C:\Users\tlseh\Desktop\넷겜플 텀프\NGP_TermProject\x64\Debug\LabProject07-9-1.exe

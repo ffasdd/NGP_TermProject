@@ -85,10 +85,10 @@ struct CS_LOGIN_PACKET
 	char name[NAME_SIZE];
 };
 
-struct CS_MOVE_PACKET {
+struct CS_EVENT_PACKET {
 	unsigned char size;
 	char	type;
-	char	direction;  // 0 : UP, 1 : DOWN, 2 : LEFT, 3 : RIGHT
+	char	direction;  // 0 : UP, 1 : DOWN, 2 : LEFT, 3 : RIGHT, 4 : LEFT, 5 : RIGHT , 6 : FIREBULLET
 
 };
 
@@ -138,14 +138,14 @@ struct SC_ADD_PLAYER_PACKET
 	int bulletsize;
 	char name[NAME_SIZE];
 };
-struct SC_MOVE_PACKET
+struct SC_UPDATE_PACKET
 {
 	unsigned char size;
 	char type;
 	int _id;
 	XMFLOAT3 pos;
 	XMFLOAT3 look;
-	XMFLOAT3 up;
+	XMFLOAT3 right;
 	int speed;
 };
 struct SC_ROTATE_PACKET
@@ -180,6 +180,3 @@ struct SC_REMOVE_PACKET
 	int id;
 
 };
-
-
-

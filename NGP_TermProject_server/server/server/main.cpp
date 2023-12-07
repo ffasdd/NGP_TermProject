@@ -25,6 +25,7 @@ private:
 	char	recv_buf[BUF_SIZE];
 	
 	XMFLOAT3 Lookvec;
+	XMFLOAT3 Rightvec;
 	XMFLOAT3 m_pos;
 	float m_yaw, m_pitch, m_roll;
 	char name[NAME_SIZE];
@@ -47,6 +48,7 @@ public:
 		Lookvec = { 1.0f, 0.0f, 1.0f };
 		m_pos = { 100.0f,0.0f,100.0f };
 		m_yaw = m_pitch = m_roll = 0.0f;
+		Rightvec = { 1.0f,0.0f,0.0f };
 		m_speed = 10;
 		m_hp = 0;
 		name[0] = 0;
@@ -59,6 +61,7 @@ public:
 	SOCKET getSock() { return m_sock; }
 	int getID() { return m_id; }
 	XMFLOAT3 getPos() { return m_pos; }
+	XMFLOAT3 getRight() { return Rightvec; }
 	float getYaw() { return m_yaw;}
 	float getPitch() { return m_pitch;}
 	float getRoll() { return m_roll;}
@@ -80,6 +83,7 @@ public:
 	void setHp(int hp) { m_hp = hp; }
 	void setName(char* _name) { strcpy_s(name, _name); }
 	void setLook(XMFLOAT3 look) { Lookvec = look; }
+	void setRight(XMFLOAT3 Right) { Rightvec = Right; }
 	void setBulletSize(int bulletsize) { bullet_size = bulletsize; }
 
 public:
@@ -94,9 +98,9 @@ public:
 		send(m_sock, (char*)&packet, sizeof(SC_ADD_PLAYER_PACKET), 0);
 
 	}
-	void sendMovePacket(SC_MOVE_PACKET packet)
+	void sendUpdatePacket(SC_UPDATE_PACKET packet)
 	{
-		send(m_sock, (char*)&packet, sizeof(SC_MOVE_PACKET), 0);
+		send(m_sock, (char*)&packet, sizeof(SC_UPDATE_PACKET), 0);
 	}
 	
 
@@ -236,17 +240,19 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 		if (clients[0].getState() == ST_RUNNING && clients[1].getState() == ST_RUNNING && clients[2].getState() == ST_RUNNING)
 			break;
 			// recv - 키 입력 받아보아요
-	}
+	} 
+
+	
 	// 패킷 수신 
 	while (1)
 	{
 		char recvbuf[BUF_SIZE];
-		recv(client_sock, recvbuf, BUF_SIZE, 0);
+		recv(client_sock, recvbuf, sizeof(CS_EVENT_PACKET), 0);
 		switch (recvbuf[1])
 		{
 		case CS_MOVE_PLAYER:
 		{
-			CS_MOVE_PACKET* p = reinterpret_cast<CS_MOVE_PACKET*>(&recvbuf);
+			CS_EVENT_PACKET* p = reinterpret_cast<CS_EVENT_PACKET*>(&recvbuf);
 			switch (p->direction)
 			{
 			case 0:
@@ -262,7 +268,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 					// getLookVec()의 반환값을 l-value로 저장
 					//auto&& lookVecRef = clients[client_id].getLookVec();
-					XMFLOAT3 lookVecRef = { 1.0f,0.0,1.0f };
+					XMFLOAT3 lookVecRef = { 0.0f,0.0,1.0f };
 					XMVECTOR lookvecVector = XMVector3Normalize(XMLoadFloat3(&lookVecRef));
 					XMStoreFloat3(&lookvec, lookvecVector);
 					//Move_Vertical_Result = calcMove(clients[client_id].getPos(), clients[client_id].getLookVec(), clients[client_id].getSpeed());
@@ -276,136 +282,136 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 					for (auto& pl : clients)
 					{
-					SC_MOVE_PACKET movepacket;
+					SC_UPDATE_PACKET movepacket;
 					movepacket.type = SC_MOVE_PLAYER;
-					movepacket.size = sizeof(SC_MOVE_PACKET);
+					movepacket.size = sizeof(SC_UPDATE);
 					movepacket._id = pl.getID();
 					movepacket.pos = pl.getPos();
 					movepacket.look = pl.getLookVec();
 					movepacket.speed = pl.getSpeed();
-					movepacket.up = { 0, 0, 0 };
-					clients[client_id].sendMovePacket(movepacket);
+					movepacket.right = pl.getRight();
+					clients[client_id].sendUpdatePacket(movepacket);
 					}
 
 
 				}
 				break;
-			case 1:
-				cout << " Down " << endl;
-				{
-					// 여기서 받고 clients 위치 정보 처리 이후 다시 send 
-					// send...
-					// move(dir); 함수 만들어서 후처리 이후에
-					// send(client_sock,...);
-					// client에 넣어서 값 수정할때 m_cs 임계영역 지정해야함 
-					XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
-					// XMFLOAT3 lookVector = clients[client_id].getLookVec();
-					XMFLOAT3 lookVector = { 1.0f,0.0,1.0f };
+			//case 1:
+			//	cout << " Down " << endl;
+			//	{
+			//		// 여기서 받고 clients 위치 정보 처리 이후 다시 send 
+			//		// send...
+			//		// move(dir); 함수 만들어서 후처리 이후에
+			//		// send(client_sock,...);
+			//		// client에 넣어서 값 수정할때 m_cs 임계영역 지정해야함 
+			//		XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
+			//		// XMFLOAT3 lookVector = clients[client_id].getLookVec();
+			//		XMFLOAT3 lookVector = { 1.0f,0.0,1.0f };
 
-					XMFLOAT3 backVector;
-					XMMATRIX rotationMatrix = XMMatrixRotationY(XM_PI); // 180도 회전
-					XMVECTOR backVectorXM = XMVector3Transform(XMLoadFloat3(&lookVector), rotationMatrix);
-					XMStoreFloat3(&backVector, backVectorXM);
-					Move_Vertical_Result = calcMove(clients[client_id].getPos(), backVector, clients[client_id].getSpeed());
+			//		XMFLOAT3 backVector;
+			//		XMMATRIX rotationMatrix = XMMatrixRotationY(XM_PI); // 180도 회전
+			//		XMVECTOR backVectorXM = XMVector3Transform(XMLoadFloat3(&lookVector), rotationMatrix);
+			//		XMStoreFloat3(&backVector, backVectorXM);
+			//		Move_Vertical_Result = calcMove(clients[client_id].getPos(), backVector, clients[client_id].getSpeed());
 
-					EnterCriticalSection(&clients[client_id].m_cs);
-					clients[client_id].setPos(Move_Vertical_Result);
-					LeaveCriticalSection(&clients[client_id].m_cs);
+			//		EnterCriticalSection(&clients[client_id].m_cs);
+			//		clients[client_id].setPos(Move_Vertical_Result);
+			//		LeaveCriticalSection(&clients[client_id].m_cs);
 
-					for (auto& pl : clients)
-					{
-						SC_MOVE_PACKET movepacket;
-						movepacket.type = SC_MOVE_PLAYER;
-						movepacket.size = sizeof(SC_MOVE_PACKET);
-						movepacket._id = pl.getID();
-						movepacket.pos = pl.getPos();
-						movepacket.look = pl.getLookVec();
-						movepacket.speed = pl.getSpeed();
-						movepacket.up = { 0, 0, 0 };
-						clients[client_id].sendMovePacket(movepacket);
-					}
-
-
-				}
-				break;
-			case 2:
-				cout << " Left " << endl;
-				{
-					// 여기서 받고 clients 위치 정보 처리 이후 다시 send 
-					// send...
-					// move(dir); 함수 만들어서 후처리 이후에
-					// send(client_sock,...);
-					// client에 넣어서 값 수정할때 m_cs 임계영역 지정해야함 
-					XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
-					
-					//XMFLOAT3 lookVector = clients[client_id].getLookVec();
-					XMFLOAT3 lookVector = { 1.0f,0.0,1.0f };
-
-					XMFLOAT3 leftVector;
-					XMMATRIX rotationMatrix = XMMatrixRotationY(-XM_PIDIV2); // -90도 회전
-					XMVECTOR leftVectorXM = XMVector3Transform(XMLoadFloat3(&lookVector), rotationMatrix);
-					XMStoreFloat3(&leftVector, leftVectorXM);
-					Move_Vertical_Result = calcMove(clients[client_id].getPos(), leftVector, clients[client_id].getSpeed());
-
-					EnterCriticalSection(&clients[client_id].m_cs);
-					clients[client_id].setPos(Move_Vertical_Result);
-					LeaveCriticalSection(&clients[client_id].m_cs);
-
-					for (auto& pl : clients)
-					{
-						SC_MOVE_PACKET movepacket;
-						movepacket.type = SC_MOVE_PLAYER;
-						movepacket.size = sizeof(SC_MOVE_PACKET);
-						movepacket._id = pl.getID();
-						movepacket.pos = pl.getPos();
-						movepacket.look = pl.getLookVec();
-						movepacket.speed = pl.getSpeed();
-						movepacket.up = { 0, 0, 0 };
-						clients[client_id].sendMovePacket(movepacket);
-					}
+			//		for (auto& pl : clients)
+			//		{
+			//			SC_MOVE_PACKET movepacket;
+			//			movepacket.type = SC_MOVE_PLAYER;
+			//			movepacket.size = sizeof(SC_MOVE_PACKET);
+			//			movepacket._id = pl.getID();
+			//			movepacket.pos = pl.getPos();
+			//			movepacket.look = pl.getLookVec();
+			//			movepacket.speed = pl.getSpeed();
+			//			movepacket.up = { 0, 0, 0 };
+			//			clients[client_id].sendMovePacket(movepacket);
+			//		}
 
 
-				}
-				break;
-			case 3:
-				cout << " Right " << endl;
-				{
-					// 여기서 받고 clients 위치 정보 처리 이후 다시 send 
-					// send...
-					// move(dir); 함수 만들어서 후처리 이후에
-					// send(client_sock,...);
-					// client에 넣어서 값 수정할때 m_cs 임계영역 지정해야함 
-					XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
-					
-					//XMFLOAT3 lookVector = clients[client_id].getLookVec();
-					XMFLOAT3 lookVector = { 1.0f,0.0,1.0f };
+			//	}
+			//	break;
+			//case 2:
+			//	cout << " Left " << endl;
+			//	{
+			//		// 여기서 받고 clients 위치 정보 처리 이후 다시 send 
+			//		// send...
+			//		// move(dir); 함수 만들어서 후처리 이후에
+			//		// send(client_sock,...);
+			//		// client에 넣어서 값 수정할때 m_cs 임계영역 지정해야함 
+			//		XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
+			//		
+			//		//XMFLOAT3 lookVector = clients[client_id].getLookVec();
+			//		XMFLOAT3 lookVector = { 1.0f,0.0,1.0f };
 
-					XMFLOAT3 rightVector;
-					XMMATRIX rotationMatrix = XMMatrixRotationY(XM_PIDIV2); // 90도 회전
-					XMVECTOR rightVectorXM = XMVector3Transform(XMLoadFloat3(&lookVector), rotationMatrix);
-					XMStoreFloat3(&rightVector, rightVectorXM);
-					Move_Vertical_Result = calcMove(clients[client_id].getPos(), rightVector, clients[client_id].getSpeed());
+			//		XMFLOAT3 leftVector;
+			//		XMMATRIX rotationMatrix = XMMatrixRotationY(-XM_PIDIV2); // -90도 회전
+			//		XMVECTOR leftVectorXM = XMVector3Transform(XMLoadFloat3(&lookVector), rotationMatrix);
+			//		XMStoreFloat3(&leftVector, leftVectorXM);
+			//		Move_Vertical_Result = calcMove(clients[client_id].getPos(), leftVector, clients[client_id].getSpeed());
 
-					EnterCriticalSection(&clients[client_id].m_cs);
-					clients[client_id].setPos(Move_Vertical_Result);
-					LeaveCriticalSection(&clients[client_id].m_cs);
+			//		EnterCriticalSection(&clients[client_id].m_cs);
+			//		clients[client_id].setPos(Move_Vertical_Result);
+			//		LeaveCriticalSection(&clients[client_id].m_cs);
 
-					for (auto& pl : clients) // 움직인 내 정보를 모두에게 
-					{
-						SC_MOVE_PACKET movepacket;
-						movepacket.type = SC_MOVE_PLAYER;
-						movepacket.size = sizeof(SC_MOVE_PACKET);
-						movepacket._id =clients[client_id].getID();
-						movepacket.pos = clients[client_id].getPos();
-						movepacket.look = clients[client_id].getLookVec();
-						movepacket.speed = clients[client_id].getSpeed();
-			
-						pl.sendMovePacket(movepacket);
-					}
+			//		for (auto& pl : clients)
+			//		{
+			//			SC_MOVE_PACKET movepacket;
+			//			movepacket.type = SC_MOVE_PLAYER;
+			//			movepacket.size = sizeof(SC_MOVE_PACKET);
+			//			movepacket._id = pl.getID();
+			//			movepacket.pos = pl.getPos();
+			//			movepacket.look = pl.getLookVec();
+			//			movepacket.speed = pl.getSpeed();
+			//			movepacket.up = { 0, 0, 0 };
+			//			clients[client_id].sendMovePacket(movepacket);
+			//		}
 
 
-				}
-				break;
+			//	}
+			//	break;
+			//case 3:
+			//	cout << " Right " << endl;
+			//	{
+			//		// 여기서 받고 clients 위치 정보 처리 이후 다시 send 
+			//		// send...
+			//		// move(dir); 함수 만들어서 후처리 이후에
+			//		// send(client_sock,...);
+			//		// client에 넣어서 값 수정할때 m_cs 임계영역 지정해야함 
+			//		XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
+			//		
+			//		//XMFLOAT3 lookVector = clients[client_id].getLookVec();
+			//		XMFLOAT3 lookVector = { 1.0f,0.0,1.0f };
+
+			//		XMFLOAT3 rightVector;
+			//		XMMATRIX rotationMatrix = XMMatrixRotationY(XM_PIDIV2); // 90도 회전
+			//		XMVECTOR rightVectorXM = XMVector3Transform(XMLoadFloat3(&lookVector), rotationMatrix);
+			//		XMStoreFloat3(&rightVector, rightVectorXM);
+			//		Move_Vertical_Result = calcMove(clients[client_id].getPos(), rightVector, clients[client_id].getSpeed());
+
+			//		EnterCriticalSection(&clients[client_id].m_cs);
+			//		clients[client_id].setPos(Move_Vertical_Result);
+			//		LeaveCriticalSection(&clients[client_id].m_cs);
+
+			//		for (auto& pl : clients) // 움직인 내 정보를 모두에게 
+			//		{
+			//			SC_MOVE_PACKET movepacket;
+			//			movepacket.type = SC_MOVE_PLAYER;
+			//			movepacket.size = sizeof(SC_MOVE_PACKET);
+			//			movepacket._id =clients[client_id].getID();
+			//			movepacket.pos = clients[client_id].getPos();
+			//			movepacket.look = clients[client_id].getLookVec();
+			//			movepacket.speed = clients[client_id].getSpeed();
+			//
+			//			pl.sendMovePacket(movepacket);
+			//		}
+
+
+			//	}
+			//	break;
 			case 4:
 				cout << "Fire" << endl;
 				//break;
