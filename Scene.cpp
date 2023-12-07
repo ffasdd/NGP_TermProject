@@ -82,10 +82,10 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	m_pTerrain->SetPosition(XMFLOAT3(0.0, 0.0, 0.0));
 	m_pTerrain->SetObjectID(0);
 
-	m_nGameObjects = 32;
+	m_nGameObjects = 32 + 150;
 	m_ppGameObjects = new CGameObject * [m_nGameObjects];
 	//%// m_ppGameObjects[0]~m_ppGameObjects[29]는 아이템 객체입니다.
-	for (int i = 0; i < m_nGameObjects; i++)
+	for (int i = 0; i < 30; i++)
 	{
 		m_ppGameObjects[i] = CGameObject::LoadGeometryFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/bullet.bin");
 		m_ppGameObjects[i]->SetScale(7.5f,15.0f,15.0f);
@@ -129,6 +129,21 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	m_ppGameObjects[31]->SetObjectID(0);
 	m_ppGameObjects[31]->SetRimpower(5);
 	m_ppGameObjects[31]->Enemy[1] = pEnemy2;
+
+	// ****총알 생성
+	CGameObject* pBulletModel = CGameObject::LoadGeometryFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/bullet.bin");
+	//CGameObject* pBulletModel = NULL;
+	for (int i = 32; i < m_nGameObjects; i++)
+	{
+		pBulletModel = new CGameObject();
+		pBulletModel->OnInitialize();
+		pBulletModel->SetChild(pBulletModel, true);
+		pBulletModel->SetScale(30.0f, 30.0f, 30.0f);
+		m_ppGameObjects[i] = pBulletModel;
+		m_ppGameObjects[i]->SetObjectID(0);
+		m_ppGameObjects[i]->SetRimpower(5);
+		m_ppGameObjects[i]->m_ppBullets[i - 32] = pBulletModel;
+	}
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);	
 }

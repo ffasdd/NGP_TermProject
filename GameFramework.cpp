@@ -337,11 +337,8 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		case 'E':
 			q_Down_Key.push(5);
 			break;
-		case 'M':
-
-			break;
-		case VK_CONTROL:
-
+		case VK_SPACE:
+			q_Down_Key.push(6);
 			break;
 		default:
 			break;
@@ -380,6 +377,10 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 
 	}
 	return(0);
+}
+
+void CGameFramework::FireBullet(int i)
+{
 }
 
 void CGameFramework::OnDestroy()
@@ -755,4 +756,20 @@ int CGameFramework::GetItemNum() {
 	m_pScene->q_Item_Num.pop();
 
 	return temp;
+}
+
+
+
+void CGameFramework::SetBullets(int i, XMFLOAT3 pos, XMFLOAT3 lookvec, float b_size, bool state)
+{
+	// pos, lookvec, size, state
+	m_pScene->m_ppGameObjects[i + 32]->SetPosition(pos);
+	m_pScene->m_ppGameObjects[i + 32]->SetLook(lookvec.x, lookvec.y, lookvec.z);
+	m_pScene->m_ppGameObjects[i + 32]->SetActive(state);
+	m_pScene->m_ppGameObjects[i + 32]->SetBulletSize(b_size);
+}
+
+void CGameFramework::FireBullet(int i)
+{
+	m_pScene->m_ppGameObjects[i + 32]->MoveForward();
 }

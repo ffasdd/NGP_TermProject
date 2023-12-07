@@ -26,6 +26,7 @@ INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
 SOCKET clientsocket;
 
 array<CLIENT, 3>Clients;
+array<bULLET, 150>Bullets;
 int id = 0;
 HANDLE conevent = CreateEvent(NULL, FALSE, FALSE, NULL);
 HANDLE recvevent = CreateEvent(NULL, FALSE, FALSE, NULL);
@@ -83,27 +84,24 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 				p.size = sizeof(CS_EVENT_PACKET);
 				send(clientsocket, (char*)&p, sizeof(CS_EVENT_PACKET), 0);
 				//SetEvent(recvevent);
-
 			}
-			//if (!gGameFramework.is_Item_Collision()) {
-			//	CS_ITEM_PACKET item_pack;
-			//	item_pack.type = CS_ITEM;
-			//	item_pack.num = gGameFramework.GetItemNum();
-			//	item_pack.p_speed = gGameFramework.GetPlayerSpeed();
-			//	item_pack.p_bulletsize = gGameFramework.GetPlayerBulletSize();
-			//	retval = send(clientsocket, (char*)&item_pack, sizeof(CS_ITEM_PACKET), 0);      // 서버로 전송합니다.
-			//	// cout << item_pack.p_speed << endl; //test
-
-			//	break;
-			//}
 
 			if (gGameFramework.m_pPlayer != NULL) {
 				for (int i = 0; i < 3; i++) {
 					gGameFramework.myFunc_SetPosition(i, Clients[i].c_id, Clients[i].c_pos);
 					gGameFramework.myFunc_SetLookRight(i, Clients[i].c_id, Clients[i].c_look, Clients[i].c_right);
 				}
-			}
+				// **** 총알
+				for (int j = 0; j < 150; j++)
+				{
+					if (Bullets[j].m_state == true)
+						// Bullets의 정보를 m_pScene->m_ppGameObjects에 넘기고싶어요
 
+						// pos, lookvec, size, state
+						gGameFramework.SetBullets(j, Bullets[j].c_pos, Bullets[j].c_look, Bullets[j].bullet_size, Bullets[j].m_state);
+					gGameFramework.FireBullet(j);
+				}
+			}
 			gGameFramework.FrameAdvance();
 		}
 	}
@@ -222,7 +220,10 @@ DWORD WINAPI recvtoserver(LPVOID arg)
 		case SC_FIREBULLET_PLAYER:
 		{
 			SC_FIREBULLET_PACKET* p = reinterpret_cast<SC_FIREBULLET_PACKET*>(&recvbuf);
-
+			Bullets[p->num].m_state = p->m_state;
+			Bullets[p->num].c_pos = p->bpos;
+			Bullets[p->num].bullet_size = p->bulletsize;
+			Bullets[p->num].c_look = p->look;
 		}
 		}
 	}

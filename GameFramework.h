@@ -42,6 +42,7 @@ public:
 	void myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Right);
 	bool is_Item_Collision();
 	int GetItemNum();
+	void SetBullets(int i, XMFLOAT3 pos, XMFLOAT3 lookvec, float b_size, bool state);
 	bool is_KeyInput_Empty();
 
 	short pop_keyvalue();
@@ -65,6 +66,8 @@ public:
 	XMFLOAT3 setpos;
 
 	int Login_ID;
+	void FireBullet(int i);
+
 private:
 	HINSTANCE					m_hInstance;
 	HWND						m_hWnd; 

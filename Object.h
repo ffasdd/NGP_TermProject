@@ -150,6 +150,7 @@ public:
 	CGameObject*					m_ppBullets[BULLETS];
 	CGameObject*					Enemy[Enemy_NUM];
 
+	float m_BulletSize = 5.0;
 	UINT m_nObjectID = 4;
 	FLOAT m_rimpower = 5;
 
@@ -237,6 +238,8 @@ public:
 		CShader* m_pShader = NULL;
 		CMesh** m_ppMeshes = NULL;
 		int m_nMeshes = 0;
+
+		void SetBulletSize(float bulletsize);
 
 };
 
