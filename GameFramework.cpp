@@ -6,8 +6,6 @@
 #include "GameFramework.h"
 #include "UILayer.h"
 
-queue<XMFLOAT3> q_Right;
-queue<XMFLOAT3> q_Look;
 queue<char> q_Down_Key;
 queue<char> q_Up_Key;
 
@@ -290,7 +288,6 @@ void CGameFramework::ChangeSwapChainState()
 	CreateRenderTargetViews();
 }
 
-// **** 사용x
 void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
 	if (m_pScene) m_pScene->OnProcessingMouseMessage(hWnd, nMessageID, wParam, lParam);
@@ -298,13 +295,11 @@ void CGameFramework::OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM
 	{
 	case WM_LBUTTONDOWN:
 	case WM_RBUTTONDOWN:
-		//Is_Mouse_Down = true;
 		::SetCapture(hWnd);
 		::GetCursorPos(&m_ptOldCursorPos);
 		break;
 	case WM_LBUTTONUP:
 	case WM_RBUTTONUP:
-		//Is_Mouse_Down = false;
 		::ReleaseCapture();
 		break;
 	case WM_MOUSEMOVE:
@@ -337,31 +332,17 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		case VK_F5:
 			break;
 		case 'Q':
-			// 플레이어 왼쪽으로 회전
-			m_pPlayer->Rotate(0.0f, -5.0f, 0.0f);
-			q_Down_Key.push(4);
-			q_Look.push(m_pPlayer->GetLook());
-			q_Right.push(m_pPlayer->GetRight());
+			((CMyTankPlayer*)m_pPlayer)->RotateTop(-5.0f);
 			break;
-		case 'E':
-			// 플레이어 오른쪽으로 회전
-			//m_pPlayer->Rotate(0.0f, 5.0f, 0.0f);
-			q_Down_Key.push(5);
-			q_Look.push(m_pPlayer->GetLook());
-			q_Right.push(m_pPlayer->GetRight());
+		case 'W':
+			((CMyTankPlayer*)m_pPlayer)->RotateTop(+5.0f);
 			break;
 		case 'M':
+			((CMyTankPlayer*)m_pPlayer)->m_hp -= 5;
 			break;
-		case 'Z':
-			q_Down_Key.push(4);
-			break;
-		case 'X':
-			q_Down_Key.push(5);
-			break;
-		case VK_SPACE:
-			// 총알 발사
+		case VK_CONTROL:
 			//((CMyTankPlayer*)m_pPlayer)->FireBullet();
-			//q_Down_Key.push(6);
+			q_Down_Key.push(4);
 			break;
 		default:
 			break;
@@ -372,7 +353,6 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 	}
 }
 
-// ****마우스 사용x
 LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam)
 {
 	switch (nMessageID)
@@ -528,36 +508,30 @@ void CGameFramework::ProcessInput()
 			direction = 3;
 		}
 		if (direction != -1)
-		{
 			q_Down_Key.push(direction);
-			q_Look.push(m_pPlayer->GetLook());
-			q_Right.push(m_pPlayer->GetRight());
+
+		float cxDelta = 0.0f, cyDelta = 0.0f;
+		POINT ptCursorPos;
+		if (GetCapture() == m_hWnd)
+		{
+			SetCursor(NULL);
+			GetCursorPos(&ptCursorPos);
+			cxDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
+			cyDelta = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;
+			SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
 		}
 
-		// ****사용x
-		//float cxDelta = 0.0f, cyDelta = 0.0f;
-		//POINT ptCursorPos;
-		//if (GetCapture() == m_hWnd)
-		//{
-		//	SetCursor(NULL);
-		//	GetCursorPos(&ptCursorPos);
-		//	cxDelta = (float)(ptCursorPos.x - m_ptOldCursorPos.x) / 3.0f;
-		//	cyDelta = (float)(ptCursorPos.y - m_ptOldCursorPos.y) / 3.0f;
-		//	SetCursorPos(m_ptOldCursorPos.x, m_ptOldCursorPos.y);
-		//}
-		
-		// ****사용x
-		//if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f))
-		//{
-		//	if (cxDelta || cyDelta)
-		//	{
-		//		if (pKeysBuffer[VK_RBUTTON] & 0xF0)
-		//			m_pPlayer->Rotate(cyDelta, 0.0f, -cxDelta);
-		//		else
-		//			m_pPlayer->Rotate(cyDelta, cxDelta, 0.0f);
-		//	}
-		//	if (dwDirection) m_pPlayer->Move(dwDirection, 5.0f + m_pPlayer->m_vel, true);
-		//}
+		if ((dwDirection != 0) || (cxDelta != 0.0f) || (cyDelta != 0.0f))
+		{
+			if (cxDelta || cyDelta)
+			{
+				if (pKeysBuffer[VK_RBUTTON] & 0xF0)
+					m_pPlayer->Rotate(cyDelta, 0.0f, -cxDelta);
+				else
+					m_pPlayer->Rotate(cyDelta, cxDelta, 0.0f);
+			}
+			if (dwDirection) m_pPlayer->Move(dwDirection, 5.0f + m_pPlayer->m_vel, true);
+		}
 	}
 	m_pPlayer->Update(m_GameTimer.GetTimeElapsed());
 }
@@ -704,6 +678,7 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position) {
 
 	else
 	{
+		// 이 부분들 수정 필요함
 		int others_id = -1;
 		switch (Login_ID) {
 		case 0:
@@ -721,115 +696,14 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position) {
 	}
 }
 
-void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 look, XMFLOAT3 right)
-{
-	if (Login_ID == n)
-	{
-		m_pPlayer->SetLook(look);
-		m_pPlayer->SetRight(right);
-	}
-
-	else
-	{
-		int others_id = -1;
-		switch (Login_ID) {
-		case 0:
-			others_id = n - 1;
-			break;
-		case 1:
-			others_id = n;
-			if (n == 2) others_id = 1;
-			break;
-		case 2:
-			others_id = n;
-			break;
-		}
-		m_pScene->m_ppGameObjects[others_id + 30]->SetLook(look.x,look.y,look.z);
-		m_pScene->m_ppGameObjects[others_id + 30]->SetRight(look.x, look.y, look.z);
-	}
-}
-
-//void CGameFramework::myFunc_SetLook(int n, int id, XMFLOAT3 look, XMFLOAT3 right)
-//{
-//	if (Login_ID == n)
-//	{
-//		m_pPlayer->SetLook(look);
-//	}
-//
-//	else
-//	{
-//		int others_id = -1;
-//		switch (Login_ID) {
-//		case 0:
-//			others_id = n - 1;
-//			break;
-//		case 1:
-//			others_id = n;
-//			if (n == 2) others_id = 1;
-//			break;
-//		case 2:
-//			others_id = n;
-//			break;
-//		}
-//		m_pScene->m_ppGameObjects[others_id + 30]->SetLook(look.x, look.y, look.z);
-//	}
-//}
-
-//void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 look, XMFLOAT3 right)
-//{
-//	if (Login_ID == n)
-//	{
-//		m_pPlayer->SetLook(look);
-//	}
-//
-//	else
-//	{
-//		int others_id = -1;
-//		switch (Login_ID) {
-//		case 0:
-//			others_id = n - 1;
-//			break;
-//		case 1:
-//			others_id = n;
-//			if (n == 2) others_id = 1;
-//			break;
-//		case 2:
-//			others_id = n;
-//			break;
-//		}
-//		m_pScene->m_ppGameObjects[others_id + 30]->SetLook(look.x, look.y, look.z);
-//	}
-//}
-
 bool CGameFramework::is_KeyInput_Empty() {
 	return q_Down_Key.empty();
 }
-
-//bool CGameFramework::is_QE_Empty()
-//{
-//	return Is_QE_Down;
-//}
 
 short CGameFramework::pop_keyvalue() {
 
 	char temp = q_Down_Key.front();
 	q_Down_Key.pop();
-
-	return temp;
-}
-
-XMFLOAT3 CGameFramework::pop_LookValue() {
-
-	XMFLOAT3 temp = q_Look.front();
-	q_Look.pop();
-
-	return temp;
-}
-
-XMFLOAT3 CGameFramework::pop_RightValue() {
-
-	XMFLOAT3 temp = q_Right.front();
-	q_Right.pop();
 
 	return temp;
 }

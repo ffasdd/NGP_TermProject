@@ -72,7 +72,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			if (gGameFramework.m_pPlayer != NULL) {
 				for (int i = 0; i < 3; i++) {
 					gGameFramework.myFunc_SetPosition(i, Clients[i].c_id, Clients[i].c_pos);
-					gGameFramework.myFunc_SetLookRight(i, Clients[i].c_id, Clients[i].c_look, Clients[i].c_right);
 				}
 			}
 
@@ -121,13 +120,11 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id]._hp = p->hp;
 			Clients[my_id]._speed = p->speed;
 			Clients[my_id].c_look = p->Look;
-			Clients[my_id].c_right = p->Right;
 			Clients[my_id].bullet_size = p->bulletsize;
-			SetEvent(conevent);
+			//SetEvent(conevent);
 			break;
 		}
 		case SC_ADD_PLAYER:
-		{
 			SC_ADD_PLAYER_PACKET* p = reinterpret_cast<SC_ADD_PLAYER_PACKET*>(&recvbuf);
 			my_id = p->id;
 			Clients[my_id].c_id = my_id;
@@ -138,7 +135,6 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id].c_pos.y = p->pos.y;
 			Clients[my_id].c_pos.z = p->pos.z;
 			Clients[my_id].c_look = p->Look;
-			Clients[my_id].c_right = p->Right;
 			Clients[my_id].bullet_size = p->bulletsize;
 			strcpy_s(Clients[my_id].name, p->name);
 
@@ -147,70 +143,52 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 		}
 		if (Clients[0].c_id != -1 && Clients[1].c_id != -1 && Clients[2].c_id != -1)
 		{
+			//HANDLE recv_th;
+			//recv_th = CreateThread(NULL, 0, recvtoserver, NULL, 0, NULL);
 			SetEvent(conevent);
 			break;
 		}
 
-		}
 	}
 	// 게임실행 
 	while (true)
 	{
-		if (!gGameFramework.is_KeyInput_Empty()) {
-			// 이동 회전 모두 한번에 처리 합니다
-			char send_keyValue = gGameFramework.pop_keyvalue();									// 키입력 큐에 있는 키값 중 가장 먼저 입력된 키값을
-			CS_MOVE_PACKET keyvalue_pack;
-			keyvalue_pack.type = CS_MOVE_PLAYER;
-			keyvalue_pack.direction = send_keyValue;
-			keyvalue_pack.LookVec = Clients[my_id].c_look;
-			keyvalue_pack.RightVec = Clients[my_id].c_right;
-			retval = send(clientsocket, (char*)&keyvalue_pack, sizeof(CS_MOVE_PACKET), 0);		// 서버로 전송합니다.
-
-			cout << "Key: " << keyvalue_pack.direction << endl; //test
-
-
-			break;
-		}
-		//if (!gGameFramework.is_QE_Empty()) {
-
-		//	CS_ROTATE_PACKET rotPack;
-		//	rotPack.size = sizeof(CS_ROTATE_PACKET);
-		//	rotPack.type = CS_ROTATE_PLAYER;
-		//	rotPack.lookvec = Clients[my_id].c_look;
-		//	send(clientsocket, (char*)&rotPack, sizeof(CS_ROTATE_PACKET), 0);
-		//	break;
-		//}
-
-		for (int i = 0; i < 3; i++)
+		while (true)
 		{
+
+			if (!gGameFramework.is_KeyInput_Empty()) {
+
+				char send_keyValue = gGameFramework.pop_keyvalue();									// 키입력 큐에 있는 키값 중 가장 먼저 입력된 키값을
+				CS_MOVE_PACKET keyvalue_pack;
+				keyvalue_pack.type = CS_MOVE_PLAYER;
+				keyvalue_pack.direction = send_keyValue;
+				retval = send(clientsocket, (char*)&keyvalue_pack, sizeof(CS_MOVE_PACKET), 0);		// 서버로 전송합니다.
+
+				cout << "Key: " << keyvalue_pack.direction << endl; //test
+
+				
+			}
+
+		}
+		while (true)
+		{
+
 			recv(clientsocket, recvbuf, BUF_SIZE, 0);
-			switch (recvbuf[1])
-			{
-			case SC_MOVE_PLAYER:
-			{
-				SC_MOVE_PACKET* p = reinterpret_cast<SC_MOVE_PACKET*>(&recvbuf);
-				Clients[p->_id].c_pos = p->pos;
-				Clients[p->_id].c_look = p->look;
-				Clients[p->_id].c_right = p->right;
-				Clients[p->_id]._speed = p->speed;
-				break;
-			}
-			case SC_ROTATE_PLAYER:
-			{
-				break;
-
-			}
-			default:
-				break;
-
-			}
-
+			SC_MOVE_PACKET* p = reinterpret_cast<SC_MOVE_PACKET*>(&recvbuf);
+			Clients[p->_id].c_pos = p->pos;
+			Clients[p->_id].c_look = p->look;
+			Clients[p->_id]._speed = p->speed;
 			break;
 		}
 
 	}
-	return 0;
+
 };
+
+//DWORD WINAPI recvtoserver(LPVOID arg)
+//{
+//
+//}
 
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {

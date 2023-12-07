@@ -39,16 +39,10 @@ public:
     void FrameAdvance();
 
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
-	void myFunc_SetLookRight(int n, int id, XMFLOAT3 look, XMFLOAT3 right);
 
 	bool is_KeyInput_Empty();
 
-	//bool is_QE_Empty();
 	short pop_keyvalue();
-
-	XMFLOAT3 pop_LookValue();
-
-	XMFLOAT3 pop_RightValue();
 
 	void WaitForGpuComplete();
 	void MoveToNextFrame();
@@ -65,7 +59,6 @@ public:
 	XMFLOAT3 setpos;
 
 	int Login_ID;
-	//bool Is_QE_Down = false;
 private:
 	HINSTANCE					m_hInstance;
 	HWND						m_hWnd; 
