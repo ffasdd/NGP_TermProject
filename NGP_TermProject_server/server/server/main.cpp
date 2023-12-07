@@ -137,7 +137,10 @@ public:
 	{
 		send(m_sock, (char*)&packet, sizeof(SC_ITEM_PACKET), 0);
 	}
-
+	void sendShootPacket(SC_FIREBULLET_PACKET packet)
+	{
+		send(m_sock, (char*)&packet, sizeof(SC_FIREBULLET_PACKET), 0);
+	}
 
 
 };
@@ -478,7 +481,23 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 				break;
 
 			}
-			default: 
+			case 6:
+				cout << " Fire Bullet " << endl;
+				{
+					for (auto& pl : clients)
+					{
+
+					SC_FIREBULLET_PACKET shootpacket;
+					shootpacket.type = SC_FIREBULLET_PLAYER;
+					shootpacket.size = sizeof(SC_FIREBULLET_PACKET);
+					shootpacket.bpos = clients[client_id].getPos();
+					shootpacket.bulletsize = clients[client_id].getBulletSize();
+					shootpacket.look = clients[client_id].getLookVec();
+
+					pl.sendShootPacket(shootpacket);
+					}
+				}
+			default:
 				break;
 			}
 		}
@@ -486,7 +505,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 		{
 			CS_ITEM_PACKET* p = reinterpret_cast<CS_ITEM_PACKET*>(&recvbuf);
 			EnterCriticalSection(&clients[client_id].m_cs);
-			clients[client_id].setSpeed(p->p_speed);
+			//clients[client_id].setSpeed(p->p_speed);
 			clients[client_id].setBulletSize(p->p_bulletsize);
 			LeaveCriticalSection(&clients[client_id].m_cs);
 
@@ -508,7 +527,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			//}
 			break;
 
-			
+
 		}
 		}
 

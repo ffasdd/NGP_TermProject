@@ -312,8 +312,6 @@ void CGameObject::SetLook(float x, float y, float z)
 	m_xmf4x4World._31 = normalizedLook.x;
 	m_xmf4x4World._32 = normalizedLook.y;
 	m_xmf4x4World._33 = normalizedLook.z;
-
-	UpdateTransform(NULL);
 }
 void CGameObject::SetRight(float x, float y, float z)
 {
@@ -324,7 +322,7 @@ void CGameObject::SetRight(float x, float y, float z)
 	m_xmf4x4World._11 = normalizedLook.x;
 	m_xmf4x4World._12 = normalizedLook.y;
 	m_xmf4x4World._13 = normalizedLook.z;
-	UpdateTransform(NULL);
+
 }
 
 void CGameObject::MoveStrafe(float fDistance)

@@ -85,17 +85,17 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 				//SetEvent(recvevent);
 
 			}
-			if (gGameFramework.is_Item_Collision()) {
-				CS_ITEM_PACKET item_pack;
-				item_pack.type = CS_ITEM;
-				item_pack.num = gGameFramework.GetItemNum();
-				item_pack.p_speed = gGameFramework.GetPlayerSpeed();
-				item_pack.p_bulletsize = gGameFramework.GetPlayerBulletSize();
-				retval = send(clientsocket, (char*)&item_pack, sizeof(CS_ITEM_PACKET), 0);      // 서버로 전송합니다.
-				// cout << item_pack.p_speed << endl; //test
+			//if (!gGameFramework.is_Item_Collision()) {
+			//	CS_ITEM_PACKET item_pack;
+			//	item_pack.type = CS_ITEM;
+			//	item_pack.num = gGameFramework.GetItemNum();
+			//	item_pack.p_speed = gGameFramework.GetPlayerSpeed();
+			//	item_pack.p_bulletsize = gGameFramework.GetPlayerBulletSize();
+			//	retval = send(clientsocket, (char*)&item_pack, sizeof(CS_ITEM_PACKET), 0);      // 서버로 전송합니다.
+			//	// cout << item_pack.p_speed << endl; //test
 
-				break;
-			}
+			//	break;
+			//}
 
 			if (gGameFramework.m_pPlayer != NULL) {
 				for (int i = 0; i < 3; i++) {
@@ -217,9 +217,13 @@ DWORD WINAPI recvtoserver(LPVOID arg)
 		case SC_ITEM:
 		{
 			SC_ITEM_PACKET* p = reinterpret_cast<SC_ITEM_PACKET*>(&recvbuf);
+			break;
+		}
+		case SC_FIREBULLET_PLAYER:
+		{
+			SC_FIREBULLET_PACKET* p = reinterpret_cast<SC_FIREBULLET_PACKET*>(&recvbuf);
 
 		}
-
 		}
 	}
 
