@@ -77,6 +77,8 @@ public:
 
 	void ReleaseUploadBuffers();
 
+	queue<int> q_Item_Num;
+
 	CPlayer						*m_pPlayer = NULL;
 	float Ttime;
 	XMFLOAT3					m_xmf3Position;
@@ -90,7 +92,7 @@ public:
 
 	void CheckPlayerByTerrian();
 
-
+	bool Is_Item_Collision = false;
 public:
 	ID3D12RootSignature			*m_pd3dGraphicsRootSignature = NULL;
 

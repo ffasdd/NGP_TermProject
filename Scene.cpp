@@ -7,6 +7,8 @@
 #include <iostream>
 #include <algorithm>
 
+
+
 CScene::CScene()
 {
 }
@@ -375,6 +377,7 @@ void CScene::CheckEnemyByBullet(float time) {
 void CScene::IsCollision(float time) {
 	//%// 아이템과 플레이어 충돌을 확인합니다
 	static float fTimeElapsed = 0.0f;  
+	Is_Item_Collision = false;
 
 	for (int i = 0; i < m_nGameObjects; ++i) {
 		if (m_ppGameObjects[i]->isCollision) {
@@ -382,13 +385,14 @@ void CScene::IsCollision(float time) {
 				// 총알 크기
 				m_pPlayer->SetBulletSize(0.5f);
 				m_ppGameObjects[i]->isCollision = false;
-				m_ppGameObjects[i]->draw = false;
-				//m_ppGameObjects[i] = NULL;
+				m_ppGameObjects[i]->draw = false;	
 			}
 			else {
 				m_pPlayer->SetSpeed(2.f);
 				m_ppGameObjects[i]->draw = false;
 			}
+			q_Item_Num.push(i);
+			Is_Item_Collision = true;
 		}
 		
 	}

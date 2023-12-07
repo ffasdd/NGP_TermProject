@@ -120,26 +120,59 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id]._hp = p->hp;
 			Clients[my_id]._speed = p->speed;
 			Clients[my_id].c_look = p->Look;
+			Clients[my_id].c_right = p->right;
 			Clients[my_id].bullet_size = p->bulletsize;
 			SetEvent(conevent);
 			break;
 		}
 		case SC_ADD_PLAYER:
+		{
 			SC_ADD_PLAYER_PACKET* p = reinterpret_cast<SC_ADD_PLAYER_PACKET*>(&recvbuf);
 			my_id = p->id;
 			Clients[my_id].c_id = my_id;
 			Clients[my_id].m_state = ST_RUNNING;
 			Clients[my_id]._hp = p->hp;
-			Clients[my_id]._speed = p->speed;
 			Clients[my_id].c_pos.x = p->pos.x;
 			Clients[my_id].c_pos.y = p->pos.y;
 			Clients[my_id].c_pos.z = p->pos.z;
 			Clients[my_id].c_look = p->Look;
+			Clients[my_id].c_right = p->right;
 			Clients[my_id].bullet_size = p->bulletsize;
 			strcpy_s(Clients[my_id].name, p->name);
-
-
 			break;
+		}
+		case SC_MOVE_PLAYER:
+		{
+			SC_MOVE_PACKET* p = reinterpret_cast<SC_MOVE_PACKET*>(&recvbuf);
+			Clients[p->_id].c_pos = p->pos;
+			Clients[p->_id].c_look = p->look;
+			Clients[p->_id].c_right = p->right;
+			break;
+		}
+		case SC_ROTATE_PLAYER:
+		{
+			SC_ROTATE_PACKET* p = reinterpret_cast<SC_ROTATE_PACKET*>(&recvbuf);
+			Clients[p->id].c_look = p->look;
+			Clients[p->id].c_right = p->right;
+			break; 
+		}
+		case SC_FIREBULLET_PLAYER:
+		{
+			SC_ROTATE_PACKET* p = reinterpret_cast<SC_ROTATE_PACKET*>(&recvbuf);
+			Clients[p->id].c_look = p->look;
+			Clients[p->id].c_right = p->right;
+			break;
+		}
+		case SC_REMOVE:
+		{
+			SC_REMOVE_PACKET* p = reinterpret_cast<SC_REMOVE_PACKET*>(&recvbuf);
+			Clients[p->id].m_state = ST_EMPTY;
+			break;
+		}
+		case SC_END:
+		{}
+		case SC_UPDATE:
+		{}
 		}
 		if (Clients[0].c_id != -1 && Clients[1].c_id != -1 && Clients[2].c_id != -1)
 		{
@@ -153,13 +186,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 	{
 		while (true)
 		{
-			// 이렇게 하면 매 프레임 전송 되는거겠졍...?
-			CS_ITEM_PACKET item_pack;
-			item_pack.p_speed = gGameFramework.GetPlayerSpeed();
-			item_pack.p_bulletsize = gGameFramework.GetPlayerBulletSize();
-			retval = send(clientsocket, (char*)&item_pack, sizeof(CS_ITEM_PACKET), 0);		// 서버로 전송합니다.
-			cout << item_pack.p_speed << endl; //test
-			
+			// CS_MOVE_PACKET
 			if (!gGameFramework.is_KeyInput_Empty()) {
 
 				char send_keyValue = gGameFramework.pop_keyvalue();									// 키입력 큐에 있는 키값 중 가장 먼저 입력된 키값을
@@ -172,17 +199,26 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 
 				break;
 			}
-		}
-		while (true)
-		{	
-				recv(clientsocket, recvbuf, BUF_SIZE, 0);
-				SC_MOVE_PACKET* p = reinterpret_cast<SC_MOVE_PACKET*>(&recvbuf);
-				Clients[p->_id].c_pos = p->pos;
-				Clients[p->_id].c_look = p->look;
-				Clients[p->_id]._speed = p->speed;
-				break;
-		}
 
+			// CS_ROTATE_PACKET
+
+			// CS_FIREBULLET_PACKET
+
+			// CS_ITEM_PACKET
+			if (gGameFramework.is_Item_Collision()) {
+				CS_ITEM_PACKET item_pack;
+				item_pack.type = CS_ITEM;
+				item_pack.num = gGameFramework.GetItemNum();
+				item_pack.p_speed = gGameFramework.GetPlayerSpeed();
+				item_pack.p_bulletsize = gGameFramework.GetPlayerBulletSize();
+				retval = send(clientsocket, (char*)&item_pack, sizeof(CS_ITEM_PACKET), 0);		// 서버로 전송합니다.
+				// cout << item_pack.p_speed << endl; //test
+
+				break;
+			}
+
+			// CS_STATE_PACKET
+		}
 	}
 	return 0;
 };

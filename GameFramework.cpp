@@ -697,6 +697,25 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position) {
 	}
 }
 
+
+
+
+
+
+
+
+
+bool CGameFramework::is_Item_Collision() {
+	return m_pScene->Is_Item_Collision;
+}
+
+int CGameFramework::GetItemNum() {
+	int temp = m_pScene->q_Item_Num.front();
+	m_pScene->q_Item_Num.pop();
+
+	return temp;
+}
+
 float CGameFramework::GetPlayerSpeed() {
 	return m_pScene->m_pPlayer->m_speed;
 }
@@ -705,10 +724,19 @@ float CGameFramework::GetPlayerBulletSize() {
 	return m_pScene->m_pPlayer->m_BulletSize;
 }
 
+
+
+
+
+
+
+
+
+
+
 bool CGameFramework::is_KeyInput_Empty() {
 	return q_Down_Key.empty();
 }
-
 short CGameFramework::pop_keyvalue() {
 
 	char temp = q_Down_Key.front();

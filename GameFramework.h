@@ -45,6 +45,10 @@ public:
 
 	bool is_KeyInput_Empty();
 
+	bool is_Item_Collision();
+
+	int GetItemNum();
+
 	short pop_keyvalue();
 
 	void WaitForGpuComplete();
