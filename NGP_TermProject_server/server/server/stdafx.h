@@ -167,9 +167,11 @@ struct SC_FIREBULLET_PACKET
 {
 	unsigned char size;
 	char type;
+	bool m_state;
+	int num;
 	XMFLOAT3 bpos;
-	XMFLOAT3 look;
 	int bulletsize;
+	XMFLOAT3 look;
 
 };
 struct SC_COLLIDER_PACKET

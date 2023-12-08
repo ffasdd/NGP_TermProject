@@ -147,6 +147,7 @@ public:
 
 array<CLIENT, MAX_USER> clients;
 int client_id = 0;
+int bullet_num = 0;
 HANDLE hEvent;
 
 //Debug
@@ -484,18 +485,24 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			case 6:
 				cout << " Fire Bullet " << endl;
 				{
+				
 					for (auto& pl : clients)
 					{
-
 					SC_FIREBULLET_PACKET shootpacket;
 					shootpacket.type = SC_FIREBULLET_PLAYER;
 					shootpacket.size = sizeof(SC_FIREBULLET_PACKET);
+					shootpacket.m_state = true;
+					shootpacket.num = bullet_num;
 					shootpacket.bpos = clients[client_id].getPos();
 					shootpacket.bulletsize = clients[client_id].getBulletSize();
 					shootpacket.look = clients[client_id].getLookVec();
 
 					pl.sendShootPacket(shootpacket);
 					}
+					EnterCriticalSection(&clients[client_id].m_cs);
+					bullet_num += 1;
+					LeaveCriticalSection(&clients[client_id].m_cs);
+					break;
 				}
 			default:
 				break;

@@ -94,12 +94,11 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 				// **** 총알
 				for (int j = 0; j < 150; j++)
 				{
-					if (Bullets[j].m_state == true)
-						// Bullets의 정보를 m_pScene->m_ppGameObjects에 넘기고싶어요
-
-						// pos, lookvec, size, state
-						gGameFramework.SetBullets(j, Bullets[j].c_pos, Bullets[j].c_look, Bullets[j].bullet_size, Bullets[j].m_state);
-					gGameFramework.FireBullet(j);
+					if (Bullets[j].m_state == true) {
+						gGameFramework.SetBullets(j+32, Bullets[j].c_pos, Bullets[j].c_look, Bullets[j].bullet_size, Bullets[j].m_state);
+						gGameFramework.FireBullet(j+32);
+					}
+						
 				}
 			}
 			gGameFramework.FrameAdvance();
@@ -173,6 +172,8 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 		}
 		if (Clients[0].c_id != -1 && Clients[1].c_id != -1 && Clients[2].c_id != -1)
 		{
+			for (int i = 0; i < 150; ++i)
+				Bullets[i].m_state = false;
 			Sleep(10);
 			SetEvent(conevent);
 
