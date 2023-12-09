@@ -161,7 +161,7 @@ void CGameObject::Move(XMFLOAT3& vDirection, float fSpeed)
 }
 void CGameObject::Animate(float fTimeElapsed, XMFLOAT4X4 *pxmf4x4Parent)
 {
-	if (m_fMovingSpeed != 0.0f) Move(m_xmf3MovingDirection, m_fMovingSpeed* fTimeElapsed);		//--//
+	if (m_fMovingSpeed != 0.0f) Move(m_xmf3MovingDirection, m_fMovingSpeed * fTimeElapsed);		//--//
 
 	if (m_pSibling) m_pSibling->Animate(fTimeElapsed, pxmf4x4Parent);
 	if (m_pChild) m_pChild->Animate(fTimeElapsed, &m_xmf4x4World);
@@ -344,9 +344,7 @@ void CGameObject::MoveUp(float fDistance)
 void CGameObject::MoveForward(float fDistance)
 {
 	XMFLOAT3 xmf3Position = GetPosition();
-	XMVECTOR lookvecVector = XMVector3Normalize(XMLoadFloat3(&GetLook()));
-	XMFLOAT3 xmf3Look;
-	XMStoreFloat3(&xmf3Look, lookvecVector);
+	XMFLOAT3 xmf3Look = GetLook();
 	xmf3Position = Vector3::Add(xmf3Position, xmf3Look, fDistance);
 	CGameObject::SetPosition(xmf3Position);
 }
@@ -388,15 +386,6 @@ void CGameObject::Reset()
 	m_fRotationAngle = 0.0f;
 
 	m_bActive = false;
-}
-
-void CGameObject::SetBulletSize(float bulletsize)
-{
-	m_BulletSize = bulletsize;
-}
-void CGameObject::MoveBool()
-{
-	
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //

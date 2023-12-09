@@ -229,7 +229,7 @@ CMyTankPlayer::CMyTankPlayer(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList
 		pBulletObject = new CBulletObject(m_fBulletEffectiveRange);
 		pBulletObject->SetChild(pBulletModel,true);
 		pBulletObject->SetRotationSpeed(0.0f);
-		pBulletObject->SetMovingSpeed(5.0);
+		pBulletObject->SetMovingSpeed(500.0);
 		pBulletObject->SetActive(false);
 		m_ppBullets[i] = pBulletObject;
 

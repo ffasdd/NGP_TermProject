@@ -131,7 +131,6 @@ public:
 	void SetMovingSpeed(float fSpeed) { m_fMovingSpeed = fSpeed; }
 	XMFLOAT3 m_xmf3MovingDirection = XMFLOAT3(0.0f, 1.0f, 0.0f);
 	void SetMovingDirection(const XMFLOAT3& xmf3MovingDirection);
-
 	bool draw = true;
 	bool isCollision = false;
 	char							m_pstrFrameName[64];
@@ -151,7 +150,6 @@ public:
 	CGameObject*					m_ppBullets[BULLETS];
 	CGameObject*					Enemy[Enemy_NUM];
 
-	float m_BulletSize = 5.0;
 	UINT m_nObjectID = 4;
 	FLOAT m_rimpower = 5;
 
@@ -225,8 +223,7 @@ public:
 
 	void SetFirePosition(XMFLOAT3 xmf3FirePosition);
 	void Reset();
-	void SetBulletSize(float bulletsize);
-	void MoveBool();
+
 public:
 	static MATERIALSLOADINFO *LoadMaterialsInfoFromFile(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, FILE *pInFile);
 	static CMeshLoadInfo *LoadMeshInfoFromFile(FILE *pInFile);
@@ -240,8 +237,6 @@ public:
 		CShader* m_pShader = NULL;
 		CMesh** m_ppMeshes = NULL;
 		int m_nMeshes = 0;
-
-
 
 };
 

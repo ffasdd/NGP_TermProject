@@ -31,7 +31,6 @@ XMFLOAT3 RotateLook(XMFLOAT3& lookVector, float rotationAngleInDegrees)
 
 	return lookVector;
 }
-
 XMFLOAT3 Rotateright(XMFLOAT3& lookVector, XMFLOAT3& rightVector)
 {
 	// 현재의 up 벡터 (보통 (0, 1, 0)으로 가정)를 사용하여 right 벡터 계산
@@ -47,7 +46,17 @@ XMFLOAT3 Rotateright(XMFLOAT3& lookVector, XMFLOAT3& rightVector)
 
 enum { ST_EMPTY, ST_RUNNING };
 
+// 상수로 충돌 감지 임계값 정의
+const float COLLISION_THRESHOLD = 1.0f;
 
+// 두 점 간의 거리를 계산하는 함수
+float calculateDistance(const XMFLOAT3& point1, const XMFLOAT3& point2) {
+	float dx = point1.x - point2.x;
+	float dy = point1.y - point2.y;
+	float dz = point1.z - point2.z;
+	return sqrt(dx * dx + dy * dy + dz * dz);
+
+}
 class CLIENT
 {
 private:
@@ -69,7 +78,7 @@ private:
 
 public:
 	CRITICAL_SECTION m_cs;
-
+	BoundingOrientedBox m_oobb;
 	CLIENT()
 	{
 		m_id = -1;
@@ -82,6 +91,7 @@ public:
 		m_speed = 10;
 		m_hp = 0;
 		name[0] = 0;
+		m_oobb = { m_pos,XMFLOAT3(20.0f,20.0f,20.0f),XMFLOAT4{0,0,0,1.0f} };
 		InitializeCriticalSection(&m_cs);
 
 	}
@@ -105,7 +115,7 @@ public:
 
 	void setSocket(SOCKET socket) { m_sock = socket; }
 	void setID(int c_id) { m_id = c_id; }
-	void setPos(XMFLOAT3 pos) { m_pos = pos; }
+	void setPos(XMFLOAT3 pos) { m_pos = pos; m_oobb = { m_pos, XMFLOAT3(20.0f, 20.0f, 20.0f), XMFLOAT4{ 0,0,0,1.0f } };}
 	void setYaw(float yaw) { m_yaw = yaw; }
 	void setPitch(float pitch) { m_pitch = pitch; }
 	void setRoll(float roll) { m_roll = roll; }
@@ -147,7 +157,6 @@ public:
 
 array<CLIENT, MAX_USER> clients;
 int client_id = 0;
-int bullet_num = 0;
 HANDLE hEvent;
 
 //Debug
@@ -191,6 +200,27 @@ void err_display(int errcode)
 }
 
 
+DWORD WINAPI ProcessCollider(LPVOID arg)
+{
+	int m_client_id = (int)arg;
+	//이 쓰레드는 클라이언트간 충돌하는지 확인한다. 
+	// 계속 돌아가면서 충돌을 감지 한다. 
+	// 내 아이디와 다른 클라의 아이디 내 클라 아이디는 어떻게 확인 ? 
+	// 쓰레드를 따로 생성한 이유? 이렇게 하지 않으면 키입력을 받고 나서야 충돌했는지 보낸다. 
+
+	while (true)
+	{
+		for (auto& pl : clients)
+		{
+			if (pl.getID() == m_client_id) continue; // 나 자신과의 충돌은 검사하지 않음 
+			if (clients[m_client_id].m_oobb.Intersects(pl.m_oobb))
+			{
+				cout << " Collide " << m_client_id << " and  " << pl.getID() << " !! " << endl;
+			}
+		}
+	}
+}
+
 DWORD WINAPI ProcessClient(LPVOID arg)
 {
 	int retval;
@@ -206,7 +236,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	int client_id = 0;
 	for (int i = 0; i < MAX_USER; ++i)
 	{
-		if (clients[i].getState() == ST_EMPTY) //체크를 어떻게?  
+		if (clients[i].getState() == ST_EMPTY)   
 		{
 			//0 
 			client_id = i;
@@ -284,6 +314,9 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	}
 
 
+	HANDLE cThread;
+	cThread = CreateThread(NULL, 0, ProcessCollider, (LPVOID)client_id, 0, NULL);
+
 	// 패킷 수신 
 	while (1)
 	{
@@ -294,8 +327,11 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 		case CS_MOVE_PLAYER:
 		{
 			CS_EVENT_PACKET* p = reinterpret_cast<CS_EVENT_PACKET*>(&recvbuf);
+			// 충돌 처리를 위해 클라이언트의 새로운 위치 계산
 			switch (p->direction)
 			{
+		
+		
 			case 0:
 				cout << " Up " << endl;
 				{
@@ -303,7 +339,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 					XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
 
 					Move_Vertical_Result = calcMove(clients[client_id].getPos(), clients[client_id].getLookVec(), clients[client_id].getSpeed());
-
+					
 					EnterCriticalSection(&clients[client_id].m_cs);
 					clients[client_id].setPos(Move_Vertical_Result);
 					LeaveCriticalSection(&clients[client_id].m_cs);
@@ -355,8 +391,6 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 						movepacket.right = clients[client_id].getRight();
 						pl.sendUpdatePacket(movepacket);
 					}
-
-
 				}
 				break;
 			case 2:
@@ -485,57 +519,50 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			case 6:
 				cout << " Fire Bullet " << endl;
 				{
-				
 					for (auto& pl : clients)
 					{
+
 					SC_FIREBULLET_PACKET shootpacket;
 					shootpacket.type = SC_FIREBULLET_PLAYER;
 					shootpacket.size = sizeof(SC_FIREBULLET_PACKET);
-					shootpacket.m_state = true;
-					shootpacket.num = bullet_num;
 					shootpacket.bpos = clients[client_id].getPos();
 					shootpacket.bulletsize = clients[client_id].getBulletSize();
 					shootpacket.look = clients[client_id].getLookVec();
 
 					pl.sendShootPacket(shootpacket);
 					}
-					EnterCriticalSection(&clients[client_id].m_cs);
-					bullet_num += 1;
-					LeaveCriticalSection(&clients[client_id].m_cs);
-					break;
 				}
-			default:
-				break;
+		
 			}
 		}
-		case CS_ITEM:
-		{
-			CS_ITEM_PACKET* p = reinterpret_cast<CS_ITEM_PACKET*>(&recvbuf);
-			EnterCriticalSection(&clients[client_id].m_cs);
-			//clients[client_id].setSpeed(p->p_speed);
-			clients[client_id].setBulletSize(p->p_bulletsize);
-			LeaveCriticalSection(&clients[client_id].m_cs);
+		//case CS_ITEM:
+		//{
+		//	CS_ITEM_PACKET* p = reinterpret_cast<CS_ITEM_PACKET*>(&recvbuf);
+		//	EnterCriticalSection(&clients[client_id].m_cs);
+		//	clients[client_id].setSpeed(p->p_speed);
+		//	clients[client_id].setBulletSize(p->p_bulletsize);
+		//	LeaveCriticalSection(&clients[client_id].m_cs);
 
-			for (auto& pl : clients)
-			{
-				SC_ITEM_PACKET itempacket;
-				itempacket.num = p->num;
+		//	for (auto& pl : clients)
+		//	{
+		//		SC_ITEM_PACKET itempacket;
+		//		itempacket.num = p->num;
 
-				pl.sendItemPacket(itempacket);
+		//		pl.sendItemPacket(itempacket);
 
-			}
-			//for (auto& pl : clients)
-			//{
-			//	SC_ITEM_PACKET itempacket;
-			//	itempacket.type = SC_ITEM;
-			//	itempacket.size = sizeof(SC_ITEM_PACKET);
-			//	itempacket.num = p->num;
-			//	pl.sendItemPacket(itempacket);
-			//}
-			break;
+		//	}
+		//	//for (auto& pl : clients)
+		//	//{
+		//	//	SC_ITEM_PACKET itempacket;
+		//	//	itempacket.type = SC_ITEM;
+		//	//	itempacket.size = sizeof(SC_ITEM_PACKET);
+		//	//	itempacket.num = p->num;
+		//	//	pl.sendItemPacket(itempacket);
+		//	//}
+		//	break;
 
 
-		}
+		//}
 		}
 
 	}

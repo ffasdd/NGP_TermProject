@@ -82,10 +82,10 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	m_pTerrain->SetPosition(XMFLOAT3(0.0, 0.0, 0.0));
 	m_pTerrain->SetObjectID(0);
 
-	m_nGameObjects = 182;
+	m_nGameObjects = 32;
 	m_ppGameObjects = new CGameObject * [m_nGameObjects];
 	//%// m_ppGameObjects[0]~m_ppGameObjects[29]는 아이템 객체입니다.
-	for (int i = 0; i < 30; i++)
+	for (int i = 0; i < m_nGameObjects; i++)
 	{
 		m_ppGameObjects[i] = CGameObject::LoadGeometryFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/bullet.bin");
 		m_ppGameObjects[i]->SetScale(7.5f,15.0f,15.0f);
@@ -129,20 +129,6 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	m_ppGameObjects[31]->SetObjectID(0);
 	m_ppGameObjects[31]->SetRimpower(5);
 	m_ppGameObjects[31]->Enemy[1] = pEnemy2;
-
-	// ****총알 생성
-	CGameObject* pBulletModel = CGameObject::LoadGeometryFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/bullet.bin");
-	//CGameObject* pBulletModel = NULL;
-	for (int i = 32; i < m_nGameObjects; i++)
-	{
-		m_ppGameObjects[i] = pBulletModel;
-		m_ppGameObjects[i]->SetMovingSpeed(1.0f);
-		m_ppGameObjects[i]->SetActive(false);
-		m_ppGameObjects[i]->SetObjectID(0);
-
-		m_ppGameObjects[i]->SetRimpower(2.0);
-
-	}
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);	
 }
@@ -390,7 +376,7 @@ void CScene::IsCollision(float time) {
 	//%// 아이템과 플레이어 충돌을 확인합니다
 	static float fTimeElapsed = 0.0f;  
 	Is_Item_Collision = false;
-	for (int i = 0; i < 30; ++i) {
+	for (int i = 0; i < m_nGameObjects; ++i) {
 		if (m_ppGameObjects[i]->isCollision) {
 			if (m_ppGameObjects[i]->type) {
 				// 총알 크기
@@ -503,12 +489,20 @@ void CScene::AnimateObjects(float fTimeElapsed)
 {
 	m_fElapsedTime = fTimeElapsed;
 
+	for (int i = 0; i < m_nGameObjects; i++)
+	{
+		m_ppGameObjects[i]->Animate(fTimeElapsed, NULL);
+	}
+
 	if (m_pLights)
 	{
 		m_pLights[1].m_xmf3Position = m_pPlayer->GetPosition();
 		m_pLights[1].m_xmf3Direction = m_pPlayer->GetLookVector();
 	}
 
+	for (int i = 30; i < 32; ++i) {
+		// m_ppGameObjects[i]->SetPosition();
+	}
 	// 예나언니 여기서 주석처리 안된 함수만 확인해줭
 	CheckPlayerByItem();
 	CheckPlayerByEnemy();
@@ -517,17 +511,8 @@ void CScene::AnimateObjects(float fTimeElapsed)
 	//CheckPlayerByObjectLen();
 	IsCollision(fTimeElapsed);
 
-	
-
-	for (int i = 32; i < m_nGameObjects; ++i) {
-		if (m_ppGameObjects[i]->m_bActive)
-		{
-			m_ppGameObjects[i]->Animate(1.0f);
-			
-		}
-	}
-
 	OnPlayerUpdateCallback(fTimeElapsed);
+
 }
 
 void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera)
@@ -543,23 +528,13 @@ void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera
 	pd3dCommandList->SetGraphicsRootConstantBufferView(2, d3dcbLightsGpuVirtualAddress); //Lights
 
 	if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera);
-	for (int i = 0; i < 32; ++i)
+	for (int i = 0; i < m_nGameObjects; ++i)
 	{
 		if (m_ppGameObjects[i]->draw)
 		{
 			m_ppGameObjects[i]->Animate(m_fElapsedTime, NULL);
 			m_ppGameObjects[i]->UpdateTransform(NULL);
 			m_ppGameObjects[i]->Render(pd3dCommandList, pCamera);
-		}
-	}
-	for (int i = 32; i < m_nGameObjects; ++i) {
-		if (m_ppGameObjects[i]->m_bActive)
-		{
-			if (m_ppGameObjects[i]) {
-				m_ppGameObjects[i]->UpdateTransform(NULL);
-				m_ppGameObjects[i]->Render(pd3dCommandList, pCamera);
-			}
-			
 		}
 	}
 }

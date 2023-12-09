@@ -337,8 +337,11 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		case 'E':
 			q_Down_Key.push(5);
 			break;
-		case VK_SPACE:
-			q_Down_Key.push(6);
+		case 'M':
+
+			break;
+		case VK_CONTROL:
+
 			break;
 		default:
 			break;
@@ -378,8 +381,6 @@ LRESULT CALLBACK CGameFramework::OnProcessingWindowMessage(HWND hWnd, UINT nMess
 	}
 	return(0);
 }
-
-
 
 void CGameFramework::OnDestroy()
 {
@@ -538,10 +539,11 @@ void CGameFramework::AnimateObjects()
 {
 	float fTimeElapsed = m_GameTimer.GetTimeElapsed();
 
-	if (m_pScene) m_pScene->AnimateObjects(fTimeElapsed);
+	//**** 지워도 지장 없길래 일단 지워둠
+	//if (m_pScene) m_pScene->AnimateObjects(fTimeElapsed);
 
 	// 총알 날아가는 애니메이션 그리는 부분
-	//if (m_pPlayer) m_pPlayer->Animate(fTimeElapsed, NULL);
+	if (m_pPlayer) m_pPlayer->Animate(fTimeElapsed, NULL);
 }
 
 void CGameFramework::WaitForGpuComplete()
@@ -753,38 +755,4 @@ int CGameFramework::GetItemNum() {
 	m_pScene->q_Item_Num.pop();
 
 	return temp;
-}
-
-void CGameFramework::SetBullets(int i, XMFLOAT3 pos, XMFLOAT3 lookvec, float b_size, bool state)
-{
-	// pos, lookvec, size, state
-	m_pScene->m_ppGameObjects[i]->SetPosition(pos);
-	m_pScene->m_ppGameObjects[i]->SetLook(lookvec.x, lookvec.y, lookvec.z);
-	m_pScene->m_ppGameObjects[i]->SetScale(b_size, b_size, b_size);
-	m_pScene->m_ppGameObjects[i]->SetActive(state);
-}
-
-void CGameFramework::FireBullet(int i)
-{
-	CGameObject* pBulletObject = NULL;
-	for (int i = 0; i < 150; i++)
-	{
-		if (!m_pScene->m_ppGameObjects[i]->m_bActive)
-		{
-
-			pBulletObject = m_pScene->m_ppGameObjects[i];
-			pBulletObject->Reset();
-			break;
-		}
-	}
-	XMFLOAT3 xmf3Position = pBulletObject->GetPosition();
-	XMFLOAT3 xmf3Direction = pBulletObject->GetLook();
-	// pBulletObject->m_xmf4x4Transform = pBulletObjectm_xmf4x4World;
-	// XMFLOAT3 xmf3FirePosition = Vector3::Add(xmf3Position, Vector3::ScalarProduct(xmf3Direction, 10.0f, true));
-
-	pBulletObject->SetFirePosition(xmf3Position);
-	pBulletObject->SetMovingDirection(xmf3Direction);
-	//m_pScene->m_ppGameObjects[i]->SetScale(m_pScene->m_ppGameObjects[i]->m_BulletSize, m_pScene->m_ppGameObjects[i]->m_BulletSize, m_pScene->m_ppGameObjects[i]->m_BulletSize);
-	//m_pScene->m_ppGameObjects[i]->SetActive(true);
-	
 }

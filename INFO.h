@@ -32,12 +32,13 @@ public:
 	}
 
 };
+
 // **** ÃÑ¾Ë Å¬·¡½º
 class bULLET
 {
 public:
 	int c_id;      // ÃÑ¾Ë ÀÎµ¦½º
-	bool m_state;
+	int m_state;
 	XMFLOAT3 c_pos;
 	//XMFLOAT3 c_right;
 	//XMFLOAT3 c_up;
@@ -54,7 +55,6 @@ public:
 	{
 		c_id = -1;
 		c_pos = { 0.0f,0.0f,0.0f };
-		m_state = false;
 		//c_right = { 0.0f,0.0f,0.0f };
 		//c_up = { 0.0f,0.0f,0.0f };
 		c_look = { 0.0f,0.0f,0.0f };
