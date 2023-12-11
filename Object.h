@@ -232,11 +232,16 @@ public:
 	static CGameObject *LoadGeometryFromFile(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, ID3D12RootSignature *pd3dGraphicsRootSignature, char *pstrFileName);
 
 	static void PrintFrameInfo(CGameObject *pGameObject, CGameObject *pParent);
-	protected:
 
-		CShader* m_pShader = NULL;
-		CMesh** m_ppMeshes = NULL;
-		int m_nMeshes = 0;
+	float m_BulletSize = 5.0;
+	void SetBulletSize(float bulletsize);
+
+protected:
+	CShader* m_pShader = NULL;
+	CMesh** m_ppMeshes = NULL;
+	int m_nMeshes = 0;
+
+	
 
 };
 

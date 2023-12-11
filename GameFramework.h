@@ -42,6 +42,8 @@ public:
 	void myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Right);
 	bool is_Item_Collision();
 	int GetItemNum();
+	void SetBullets(int i, XMFLOAT3 pos, XMFLOAT3 lookvec, float b_size, bool state);
+	void FireBullet(int i);
 	bool is_KeyInput_Empty();
 
 	short pop_keyvalue();
