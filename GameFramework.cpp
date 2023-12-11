@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "GameFramework.h"
 #include "UILayer.h"
+#include <iostream>
 
 queue<char> q_Down_Key;
 queue<char> q_Up_Key;
@@ -338,7 +339,10 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 			q_Down_Key.push(5);
 			break;
 		case VK_SPACE:
-			q_Down_Key.push(6);
+			if (fired_bnum < 50) {
+				q_Down_Key.push(6);
+				++fired_bnum;
+			}
 			break;
 		default:
 			break;
@@ -757,6 +761,7 @@ int CGameFramework::GetItemNum() {
 
 void CGameFramework::SetBullets(int i, XMFLOAT3 pos, XMFLOAT3 lookvec, float b_size, bool state)
 {
+	cout << "setbullets" << endl;
 	// pos, lookvec, size, state
 	m_pScene->m_ppGameObjects[i]->SetPosition(pos);
 	m_pScene->m_ppGameObjects[i]->SetLook(lookvec.x, lookvec.y, lookvec.z);
@@ -766,24 +771,14 @@ void CGameFramework::SetBullets(int i, XMFLOAT3 pos, XMFLOAT3 lookvec, float b_s
 
 void CGameFramework::FireBullet(int i)
 {
-	CGameObject* pBulletObject = NULL;
-	for (int i = 0; i < 150; i++)
-	{
-		if (!m_pScene->m_ppGameObjects[i]->m_bActive)
-		{
-
-			pBulletObject = m_pScene->m_ppGameObjects[i];
-			pBulletObject->Reset();
-			break;
-		}
-	}
-	XMFLOAT3 xmf3Position = pBulletObject->GetPosition();
-	XMFLOAT3 xmf3Direction = pBulletObject->GetLook();
+	cout << "FireBullet " << i << endl;
+	XMFLOAT3 xmf3Position = m_pScene->m_ppGameObjects[i]->GetPosition();
+	XMFLOAT3 xmf3Direction = m_pScene->m_ppGameObjects[i]->GetLook();
 	// pBulletObject->m_xmf4x4Transform = pBulletObjectm_xmf4x4World;
 	// XMFLOAT3 xmf3FirePosition = Vector3::Add(xmf3Position, Vector3::ScalarProduct(xmf3Direction, 10.0f, true));
 
-	pBulletObject->SetFirePosition(xmf3Position);
-	pBulletObject->SetMovingDirection(xmf3Direction);
+	m_pScene->m_ppGameObjects[i]->SetFirePosition(xmf3Position);
+	m_pScene->m_ppGameObjects[i]->SetMovingDirection(xmf3Direction);
 	//m_pScene->m_ppGameObjects[i]->SetScale(m_pScene->m_ppGameObjects[i]->m_BulletSize, m_pScene->m_ppGameObjects[i]->m_BulletSize, m_pScene->m_ppGameObjects[i]->m_BulletSize);
 	//m_pScene->m_ppGameObjects[i]->SetActive(true);
 	

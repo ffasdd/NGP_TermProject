@@ -65,6 +65,8 @@ public:
 	CPlayer* m_pPlayer = NULL;
 	XMFLOAT3 setpos;
 
+	int fired_bnum = 0;
+
 	int Login_ID;
 	void FireBullet(int i);
 

@@ -91,15 +91,15 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 					gGameFramework.myFunc_SetPosition(i, Clients[i].c_id, Clients[i].c_pos);
 					gGameFramework.myFunc_SetLookRight(i, Clients[i].c_id, Clients[i].c_look, Clients[i].c_right);
 				}
-				// **** ÃÑ¾Ë
-				for (int j = 0; j < 150; j++)
-				{
-					if (Bullets[j].m_state == true) {
-						gGameFramework.SetBullets(j+32, Bullets[j].c_pos, Bullets[j].c_look, Bullets[j].bullet_size, Bullets[j].m_state);
-						gGameFramework.FireBullet(j+32);
-					}
-						
+			}
+			// **** ÃÑ¾Ë
+			for (int j = 0; j < 150; j++)
+			{
+				if (Bullets[j].m_state == true) {
+					gGameFramework.SetBullets(j + 32, Bullets[j].c_pos, Bullets[j].c_look, Bullets[j].bullet_size, Bullets[j].m_state);
+					gGameFramework.FireBullet(j + 32);
 				}
+
 			}
 			gGameFramework.FrameAdvance();
 		}
