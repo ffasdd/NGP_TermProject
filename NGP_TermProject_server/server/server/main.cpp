@@ -44,6 +44,14 @@ XMFLOAT3 Rotateright(XMFLOAT3& lookVector, XMFLOAT3& rightVector)
 	return rightVector;
 }
 
+
+
+//bool ForwardCollide() {};
+//bool BackCollide() {};
+//bool LeftCollide() {};
+//bool RightCollide() {};
+
+
 enum { ST_EMPTY, ST_RUNNING };
 
 // 상수로 충돌 감지 임계값 정의
@@ -75,6 +83,19 @@ private:
 
 	// 총알 관련 추가 
 	int bullet_size;
+
+public:
+	// 충돌 체크 
+
+
+	bool forwardcol;
+	bool backcol;
+	bool leftcol;
+	bool rightcol;
+
+
+	XMFLOAT3 prevpos;
+
 
 public:
 	CRITICAL_SECTION m_cs;
@@ -115,7 +136,7 @@ public:
 
 	void setSocket(SOCKET socket) { m_sock = socket; }
 	void setID(int c_id) { m_id = c_id; }
-	void setPos(XMFLOAT3 pos) { m_pos = pos; m_oobb = { m_pos, XMFLOAT3(20.0f, 20.0f, 20.0f), XMFLOAT4{ 0,0,0,1.0f } };}
+	void setPos(XMFLOAT3 pos) { m_pos = pos; m_oobb = { m_pos, XMFLOAT3(30.0f, 30.0f, 30.0f), XMFLOAT4{ 0,0,0,1.0f } }; }
 	void setYaw(float yaw) { m_yaw = yaw; }
 	void setPitch(float pitch) { m_pitch = pitch; }
 	void setRoll(float roll) { m_roll = roll; }
@@ -210,13 +231,52 @@ DWORD WINAPI ProcessCollider(LPVOID arg)
 
 	while (true)
 	{
+
 		for (auto& pl : clients)
 		{
 			if (pl.getID() == m_client_id) continue; // 나 자신과의 충돌은 검사하지 않음 
 			if (clients[m_client_id].m_oobb.Intersects(pl.m_oobb))
 			{
 				cout << " Collide " << m_client_id << " and  " << pl.getID() << " !! " << endl;
+				if (pl.getPos().z > clients[m_client_id].getPos().z)
+				{
+					// 상대방 객체가 나보다 앞에 있다는 뜻,
+					EnterCriticalSection(&clients[m_client_id].m_cs);
+					clients[m_client_id].forwardcol = true;
+					LeaveCriticalSection(&clients[m_client_id].m_cs);
+					Sleep(10);
+				}
+				if (pl.getPos().z < clients[m_client_id].getPos().z)
+				{
+					// 상대방 객체가 나보다 뒤에 있다는 뜻,
+
+					EnterCriticalSection(&clients[m_client_id].m_cs);
+					clients[m_client_id].backcol = true;
+					LeaveCriticalSection(&clients[m_client_id].m_cs);
+					Sleep(10);
+				}
+				if (pl.getPos().x > clients[m_client_id].getPos().x)
+				{
+					// 상대방 객체가 나보다 우측에 있다는 뜻,
+
+					EnterCriticalSection(&clients[m_client_id].m_cs);
+					clients[m_client_id].rightcol = true;
+					LeaveCriticalSection(&clients[m_client_id].m_cs);
+					Sleep(10);
+				}
+
+				if (pl.getPos().x < clients[m_client_id].getPos().x)
+				{
+					// 상대방 객체가 나보다 좌측에 있다는 뜻,
+
+					EnterCriticalSection(&clients[m_client_id].m_cs);
+					clients[m_client_id].leftcol = true;
+					LeaveCriticalSection(&clients[m_client_id].m_cs);
+					Sleep(10);
+				}
+	
 			}
+
 		}
 	}
 }
@@ -236,7 +296,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	int client_id = 0;
 	for (int i = 0; i < MAX_USER; ++i)
 	{
-		if (clients[i].getState() == ST_EMPTY)   
+		if (clients[i].getState() == ST_EMPTY)
 		{
 			//0 
 			client_id = i;
@@ -324,14 +384,17 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 		recv(client_sock, recvbuf, sizeof(CS_EVENT_PACKET), 0);
 		switch (recvbuf[1])
 		{
+
+
 		case CS_MOVE_PLAYER:
 		{
 			CS_EVENT_PACKET* p = reinterpret_cast<CS_EVENT_PACKET*>(&recvbuf);
+			clients[client_id].prevpos = clients[client_id].getPos();
 			// 충돌 처리를 위해 클라이언트의 새로운 위치 계산
 			switch (p->direction)
 			{
-		
-		
+
+
 			case 0:
 				cout << " Up " << endl;
 				{
@@ -339,26 +402,32 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 					XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
 
 					Move_Vertical_Result = calcMove(clients[client_id].getPos(), clients[client_id].getLookVec(), clients[client_id].getSpeed());
-					
-					EnterCriticalSection(&clients[client_id].m_cs);
-					clients[client_id].setPos(Move_Vertical_Result);
-					LeaveCriticalSection(&clients[client_id].m_cs);
 
-
-					for (auto& pl : clients)
+					if (clients[client_id].forwardcol == false)
 					{
-						SC_UPDATE_PACKET movepacket;
-						movepacket.type = SC_UPDATE_PLAYER;
-						movepacket.size = sizeof(SC_UPDATE_PLAYER);
-						movepacket._id = clients[client_id].getID();
-						movepacket.pos = clients[client_id].getPos();
-						movepacket.look = clients[client_id].getLookVec();
-						movepacket.speed = clients[client_id].getSpeed();
-						movepacket.right = clients[client_id].getRight();
-						pl.sendUpdatePacket(movepacket);
+
+						EnterCriticalSection(&clients[client_id].m_cs);
+						clients[client_id].setPos(Move_Vertical_Result);
+						LeaveCriticalSection(&clients[client_id].m_cs);
+
+
+						for (auto& pl : clients)
+						{
+							SC_UPDATE_PACKET movepacket;
+							movepacket.type = SC_UPDATE_PLAYER;
+							movepacket.size = sizeof(SC_UPDATE_PLAYER);
+							movepacket._id = clients[client_id].getID();
+							movepacket.pos = clients[client_id].getPos();
+							movepacket.look = clients[client_id].getLookVec();
+							movepacket.speed = clients[client_id].getSpeed();
+							movepacket.right = clients[client_id].getRight();
+							pl.sendUpdatePacket(movepacket);
+						}
+
+
 					}
-
-
+					else
+						clients[client_id].forwardcol = false;
 				}
 				break;
 			case 1:
@@ -374,22 +443,26 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 					XMStoreFloat3(&backVector, backVectorXM);
 					Move_Vertical_Result = calcMove(clients[client_id].getPos(), backVector, clients[client_id].getSpeed());
 
-					EnterCriticalSection(&clients[client_id].m_cs);
-					clients[client_id].setPos(Move_Vertical_Result);
-					LeaveCriticalSection(&clients[client_id].m_cs);
-
-
-					for (auto& pl : clients)
+					if (clients[client_id].backcol == false)
 					{
-						SC_UPDATE_PACKET movepacket;
-						movepacket.type = SC_UPDATE_PLAYER;
-						movepacket.size = sizeof(SC_UPDATE_PLAYER);
-						movepacket._id = clients[client_id].getID();
-						movepacket.pos = clients[client_id].getPos();
-						movepacket.look = clients[client_id].getLookVec();
-						movepacket.speed = clients[client_id].getSpeed();
-						movepacket.right = clients[client_id].getRight();
-						pl.sendUpdatePacket(movepacket);
+						clients[client_id].forwardcol = true;
+						EnterCriticalSection(&clients[client_id].m_cs);
+						clients[client_id].setPos(Move_Vertical_Result);
+						LeaveCriticalSection(&clients[client_id].m_cs);
+
+
+						for (auto& pl : clients)
+						{
+							SC_UPDATE_PACKET movepacket;
+							movepacket.type = SC_UPDATE_PLAYER;
+							movepacket.size = sizeof(SC_UPDATE_PLAYER);
+							movepacket._id = clients[client_id].getID();
+							movepacket.pos = clients[client_id].getPos();
+							movepacket.look = clients[client_id].getLookVec();
+							movepacket.speed = clients[client_id].getSpeed();
+							movepacket.right = clients[client_id].getRight();
+							pl.sendUpdatePacket(movepacket);
+						}
 					}
 				}
 				break;
@@ -407,24 +480,28 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 					Move_Vertical_Result = calcMove(clients[client_id].getPos(), leftVector, clients[client_id].getSpeed());
 
-					EnterCriticalSection(&clients[client_id].m_cs);
-					clients[client_id].setPos(Move_Vertical_Result);
-					LeaveCriticalSection(&clients[client_id].m_cs);
-
-
-					for (auto& pl : clients)
+					if (clients[client_id].leftcol == false)
 					{
-						SC_UPDATE_PACKET movepacket;
-						movepacket.type = SC_UPDATE_PLAYER;
-						movepacket.size = sizeof(SC_UPDATE_PLAYER);
-						movepacket._id = clients[client_id].getID();
-						movepacket.pos = clients[client_id].getPos();
-						movepacket.look = clients[client_id].getLookVec();
-						movepacket.speed = clients[client_id].getSpeed();
-						movepacket.right = clients[client_id].getRight();
-						pl.sendUpdatePacket(movepacket);
-					}
 
+						EnterCriticalSection(&clients[client_id].m_cs);
+						clients[client_id].setPos(Move_Vertical_Result);
+						LeaveCriticalSection(&clients[client_id].m_cs);
+
+
+						for (auto& pl : clients)
+						{
+							SC_UPDATE_PACKET movepacket;
+							movepacket.type = SC_UPDATE_PLAYER;
+							movepacket.size = sizeof(SC_UPDATE_PLAYER);
+							movepacket._id = clients[client_id].getID();
+							movepacket.pos = clients[client_id].getPos();
+							movepacket.look = clients[client_id].getLookVec();
+							movepacket.speed = clients[client_id].getSpeed();
+							movepacket.right = clients[client_id].getRight();
+							pl.sendUpdatePacket(movepacket);
+						}
+
+					}
 				}
 				break;
 			case 3:
@@ -436,24 +513,27 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 					Move_Vertical_Result = calcMove(clients[client_id].getPos(), rightVector, clients[client_id].getSpeed());
 
-					EnterCriticalSection(&clients[client_id].m_cs);
-					clients[client_id].setPos(Move_Vertical_Result);
-					LeaveCriticalSection(&clients[client_id].m_cs);
+					if (clients[client_id].rightcol == false) {
 
-					for (auto& pl : clients) // 움직인 내 정보를 모두에게 
-					{
-						SC_UPDATE_PACKET movepacket;
-						movepacket.type = SC_UPDATE_PLAYER;
-						movepacket.size = sizeof(SC_UPDATE_PLAYER);
-						movepacket._id = clients[client_id].getID();
-						movepacket.pos = clients[client_id].getPos();
-						movepacket.look = clients[client_id].getLookVec();
-						movepacket.speed = clients[client_id].getSpeed();
-						movepacket.right = clients[client_id].getRight();
-						pl.sendUpdatePacket(movepacket);
+						EnterCriticalSection(&clients[client_id].m_cs);
+						clients[client_id].setPos(Move_Vertical_Result);
+						LeaveCriticalSection(&clients[client_id].m_cs);
+
+						for (auto& pl : clients) // 움직인 내 정보를 모두에게 
+						{
+							SC_UPDATE_PACKET movepacket;
+							movepacket.type = SC_UPDATE_PLAYER;
+							movepacket.size = sizeof(SC_UPDATE_PLAYER);
+							movepacket._id = clients[client_id].getID();
+							movepacket.pos = clients[client_id].getPos();
+							movepacket.look = clients[client_id].getLookVec();
+							movepacket.speed = clients[client_id].getSpeed();
+							movepacket.right = clients[client_id].getRight();
+							pl.sendUpdatePacket(movepacket);
+						}
+
+
 					}
-
-
 				}
 				break;
 			case 4:
@@ -522,17 +602,17 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 					for (auto& pl : clients)
 					{
 
-					SC_FIREBULLET_PACKET shootpacket;
-					shootpacket.type = SC_FIREBULLET_PLAYER;
-					shootpacket.size = sizeof(SC_FIREBULLET_PACKET);
-					shootpacket.bpos = clients[client_id].getPos();
-					shootpacket.bulletsize = clients[client_id].getBulletSize();
-					shootpacket.look = clients[client_id].getLookVec();
+						SC_FIREBULLET_PACKET shootpacket;
+						shootpacket.type = SC_FIREBULLET_PLAYER;
+						shootpacket.size = sizeof(SC_FIREBULLET_PACKET);
+						shootpacket.bpos = clients[client_id].getPos();
+						shootpacket.bulletsize = clients[client_id].getBulletSize();
+						shootpacket.look = clients[client_id].getLookVec();
 
-					pl.sendShootPacket(shootpacket);
+						pl.sendShootPacket(shootpacket);
 					}
 				}
-		
+
 			}
 		}
 		//case CS_ITEM:
