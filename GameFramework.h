@@ -38,7 +38,7 @@ public:
     void FrameAdvance();
 
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
-	void myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Right);
+	void myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Right, int rotnum);
 	void delete_item(int i);
 	void delete_player(int i);
 	XMFLOAT3 calcmove(XMFLOAT3 pos, XMFLOAT3 look);
@@ -76,7 +76,7 @@ public:
 	int fired_bnum = 0;
 
 	int Login_ID;
-
+	int a;
 private:
 	HINSTANCE					m_hInstance;
 	HWND						m_hWnd; 

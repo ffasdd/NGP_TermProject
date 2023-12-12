@@ -106,7 +106,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			if (gGameFramework.m_pPlayer != NULL) {
 				for (int i = 0; i < 3; i++) {
 					gGameFramework.myFunc_SetPosition(i, Clients[i].c_id, Clients[i].c_pos);
-					gGameFramework.myFunc_SetLookRight(i, Clients[i].c_id, Clients[i].c_look, Clients[i].c_right);
+					gGameFramework.myFunc_SetLookRight(i, Clients[i].c_id, Clients[i].c_look, Clients[i].c_right, Clients[i].rotNum);
 				}
 			}
 			// **** ÃÑ¾Ë
@@ -165,6 +165,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id].c_look = p->Look;
 			Clients[my_id].c_right = p->Right;
 			Clients[my_id].bullet_power = p->bulletpower;
+			Clients[my_id].rotNum = p->rotNum;
 			//SetEvent(conevent);
 			break;
 		}
@@ -181,9 +182,8 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id].c_look = p->Look;
 			Clients[my_id].c_right = p->Right;
 			Clients[my_id].bullet_power = p->bulletpower;
+			Clients[my_id].rotNum = p->rotNum;
 			strcpy_s(Clients[my_id].name, p->name);
-
-
 			break;
 		}
 		if (Clients[0].c_id != -1 && Clients[1].c_id != -1 && Clients[2].c_id != -1)
@@ -227,6 +227,10 @@ DWORD WINAPI recvtoserver(LPVOID arg)
 			Clients[p->_id].c_look = p->look;
 			Clients[p->_id]._speed = p->speed;
 			Clients[p->_id].c_right = p->right;
+			Clients[p->_id].rotNum = p->rotNum;
+			Clients[p->_id].c_id = p->_id;
+			if (p->rotNum != 2)
+				gGameFramework.a = 0;
 			break;
 		}
 		case SC_ITEM:

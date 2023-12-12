@@ -18,6 +18,9 @@ public:
 	// 총알 
 	int bullet_power;
 	int bnum;
+
+	// 회전 -> 왼쪽 회전 : 0, 오른쪽 회전 : 1, 회전x : 2
+	int rotNum;
 public:
 	CLIENT()
 	{
@@ -31,6 +34,7 @@ public:
 		name[0] = 0;
 		bullet_power = 10;
 		bnum = 0;
+		rotNum = 2;
 	}
 
 };

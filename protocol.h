@@ -88,7 +88,7 @@ struct SC_LOGIN_PACKET
 	XMFLOAT3 Look;
 	XMFLOAT3 Right;
 	char name[NAME_SIZE];
-
+	int rotNum;
 
 };
 struct SC_ADD_PLAYER_PACKET
@@ -103,6 +103,7 @@ struct SC_ADD_PLAYER_PACKET
 	int speed;
 	int bulletpower;
 	char name[NAME_SIZE];
+	int rotNum;
 };
 struct SC_UPDATE_PACKET
 {
@@ -115,6 +116,7 @@ struct SC_UPDATE_PACKET
 	int speed;
 	int bulletpower;
 	int bnum;
+	int rotNum;
 };
 struct SC_ITEM_PACKET {
 	unsigned char size;

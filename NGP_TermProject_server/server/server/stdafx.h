@@ -150,6 +150,9 @@ struct SC_UPDATE_PACKET
 	int speed;
 	int bulletpower;
 	int bnum;
+
+	// 0이면 왼쪽, 1이면 오른쪽 회전, 2이면 회전x
+	int rotNum;
 };
 struct SC_ITEM_PACKET {
 	unsigned char size;

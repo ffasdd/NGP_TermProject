@@ -713,7 +713,7 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position) {
 	}
 }
 
-void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Right)
+void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Right,int rotnum)
 {
 	if (Login_ID == n)
 	{
@@ -722,21 +722,21 @@ void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 
 	}
 	else
 	{
-		int others_id = -1;
-		switch (Login_ID) {
-		case 0:
-			others_id = n - 1;
-			break;
-		case 1:
-			others_id = n;
-			if (n == 2) others_id = 1;
-			break;
-		case 2:
-			others_id = n;
-			break;
+		// 왼쪽 회전인 경우
+		if (rotnum == 0 && a == 0)
+		{
+			m_pScene->m_ppGameObjects[id + 30]->Rotate(0.f, -10.f, 0.f);
+			std::cout << "좌회전" << std::endl;
+			++a;
+
 		}
-		m_pScene->m_ppGameObjects[others_id + 30]->SetLook(Look.x, Look.y, Look.z);
-		m_pScene->m_ppGameObjects[others_id + 30]->SetRight(Right.x, Right.y, Right.z);
+		// 오른쪽 회전인 경우
+		else if (rotnum == 1 && a == 0)
+		{
+			m_pScene->m_ppGameObjects[id + 30]->Rotate(0.f, +10.f, 0.f);
+			std::cout << "우회전" << std::endl;
+			++a;
+		}
 	}
 
 }
