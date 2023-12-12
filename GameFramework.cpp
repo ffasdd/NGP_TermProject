@@ -724,6 +724,11 @@ void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 
 	}
 
 }
+
+void CGameFramework::delete_item(int i) {
+	cout << "delete_item " << i << endl;
+	m_pScene->m_ppGameObjects[i]->draw = false;
+}
 XMFLOAT3 CGameFramework::calcmove( XMFLOAT3 pos, XMFLOAT3 look)
 {
 	float acc = 10.0f;
@@ -755,6 +760,19 @@ short CGameFramework::pop_keyvalue() {
 
 	return temp;
 }
+
+bool CGameFramework::is_Item_Empty() {
+	return m_pScene->q_Item_Num.empty();
+}
+
+short CGameFramework::pop_itemvalue() {
+
+	char temp = m_pScene->q_Item_Num.front();
+	m_pScene->q_Item_Num.pop();
+
+	return temp;
+}
+
 
 float CGameFramework::GetPlayerSpeed()
 {

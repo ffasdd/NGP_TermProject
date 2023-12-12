@@ -39,6 +39,7 @@ public:
 
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
 	void myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Right);
+	void delete_item(int i);
 	XMFLOAT3 calcmove(XMFLOAT3 pos, XMFLOAT3 look);
 	void bullet_setposition(int num, XMFLOAT3 pos, XMFLOAT3 look, float bsize);
 	bool is_Item_Collision();
@@ -46,6 +47,9 @@ public:
 	bool is_KeyInput_Empty();
 
 	short pop_keyvalue();
+
+	bool is_Item_Empty();
+	short pop_itemvalue();
 
 
 	float GetPlayerSpeed();

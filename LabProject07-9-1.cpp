@@ -87,6 +87,16 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 				send(clientsocket, (char*)&p, sizeof(CS_EVENT_PACKET), 0);
 				//SetEvent(recvevent);
 			}
+			if (!gGameFramework.is_Item_Empty())
+			{
+				char send_itemvalue = gGameFramework.pop_itemvalue();
+				CS_ITEM_PACKET p;
+				p.type = CS_ITEM;
+				p.size = sizeof(CS_ITEM_PACKET);
+				p.num = send_itemvalue;
+				send(clientsocket, (char*)&p, sizeof(CS_ITEM_PACKET), 0);
+				//SetEvent(recvevent);
+			}
 
 			if (gGameFramework.m_pPlayer != NULL) {
 				for (int i = 0; i < 3; i++) {
@@ -215,6 +225,7 @@ DWORD WINAPI recvtoserver(LPVOID arg)
 		case SC_ITEM:
 		{
 			SC_ITEM_PACKET* p = reinterpret_cast<SC_ITEM_PACKET*>(&recvbuf);
+			gGameFramework.delete_item(p->num);
 			break;
 		}
 		case SC_FIREBULLET_PLAYER:
@@ -228,9 +239,6 @@ DWORD WINAPI recvtoserver(LPVOID arg)
 		}
 		}
 	}
-
-
-
 }
 
 ATOM MyRegisterClass(HINSTANCE hInstance)

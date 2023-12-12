@@ -561,14 +561,12 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 		case CS_ITEM:
 		{
 			CS_ITEM_PACKET* p = reinterpret_cast<CS_ITEM_PACKET*>(&recvbuf);
-			EnterCriticalSection(&clients[client_id].m_cs);
-			//clients[client_id].setSpeed(p->p_speed);
-			clients[client_id].setBulletSize(p->p_bulletsize);
-			LeaveCriticalSection(&clients[client_id].m_cs);
-
+			cout << "Item num" << p->num << endl;
 			for (auto& pl : clients)
 			{
 				SC_ITEM_PACKET itempacket;
+				itempacket.type = SC_ITEM;
+				itempacket.size = sizeof(SC_ITEM_PACKET);
 				itempacket.num = p->num;
 
 				pl.sendItemPacket(itempacket);
