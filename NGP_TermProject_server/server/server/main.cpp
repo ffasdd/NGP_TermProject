@@ -231,6 +231,10 @@ DWORD WINAPI ProcessCollider(LPVOID arg)
 
 	while (true)
 	{
+		clients[client_id].forwardcol = false;
+		clients[client_id].backcol = false;
+		clients[client_id].leftcol = false;
+		clients[client_id].rightcol = false;
 		Sleep(10);
 
 		for (auto& pl : clients)
@@ -241,6 +245,7 @@ DWORD WINAPI ProcessCollider(LPVOID arg)
 				cout << " Collide " << m_client_id << " and  " << pl.getID() << " !! " << endl;
 				if (pl.getPos().z > clients[m_client_id].getPos().z)
 				{
+					XMFLOAT3 prevpos = clients[m_client_id].getPos();
 					// 상대방 객체가 나보다 앞에 있다는 뜻,
 					EnterCriticalSection(&clients[m_client_id].m_cs);
 					clients[m_client_id].forwardcol = true;
@@ -337,6 +342,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	packet.Look = clients[client_id].getLookVec();
 	packet.bulletsize = clients[client_id].getBulletSize();
 	packet.Right = clients[client_id].getRight();
+
 	if (client_id == 0)
 		strcpy_s(packet.name, "SDY");
 	if (client_id == 1)
@@ -384,25 +390,17 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	{
 		char recvbuf[BUF_SIZE];
 		recv(client_sock, recvbuf, sizeof(CS_EVENT_PACKET), 0);
+
 		switch (recvbuf[1])
 		{
-
-
 		case CS_MOVE_PLAYER:
 		{
 			CS_EVENT_PACKET* p = reinterpret_cast<CS_EVENT_PACKET*>(&recvbuf);
 			clients[client_id].prevpos = clients[client_id].getPos();
 
-			clients[client_id].forwardcol = false;
-			clients[client_id].backcol = false;
-			clients[client_id].leftcol = false;
-			clients[client_id].rightcol = false;
-
 			// 충돌 처리를 위해 클라이언트의 새로운 위치 계산
 			switch (p->direction)
 			{
-
-
 			case 0:
 				cout << " Up " << endl;
 				{
@@ -434,8 +432,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 
 					}
-		/*			else
-						clients[client_id].forwardcol = false;*/
+				
 				}
 				break;
 			case 1:
@@ -479,11 +476,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			case 2:
 				cout << " Left " << endl;
 				{
-					// 여기서 받고 clients 위치 정보 처리 이후 다시 send 
-					// send...
-					// move(dir); 함수 만들어서 후처리 이후에
-					// send(client_sock,...);
-					// client에 넣어서 값 수정할때 m_cs 임계영역 지정해야함 
+		
 					XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
 					XMFLOAT3 rightVector = clients[client_id].getRight();
 					XMFLOAT3 leftVector = XMFLOAT3(-rightVector.x, rightVector.y, -rightVector.z);
@@ -629,34 +622,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 			}
 		}
-		//case CS_ITEM:
-		//{
-		//	CS_ITEM_PACKET* p = reinterpret_cast<CS_ITEM_PACKET*>(&recvbuf);
-		//	EnterCriticalSection(&clients[client_id].m_cs);
-		//	clients[client_id].setSpeed(p->p_speed);
-		//	clients[client_id].setBulletSize(p->p_bulletsize);
-		//	LeaveCriticalSection(&clients[client_id].m_cs);
 
-		//	for (auto& pl : clients)
-		//	{
-		//		SC_ITEM_PACKET itempacket;
-		//		itempacket.num = p->num;
-
-		//		pl.sendItemPacket(itempacket);
-
-		//	}
-		//	//for (auto& pl : clients)
-		//	//{
-		//	//	SC_ITEM_PACKET itempacket;
-		//	//	itempacket.type = SC_ITEM;
-		//	//	itempacket.size = sizeof(SC_ITEM_PACKET);
-		//	//	itempacket.num = p->num;
-		//	//	pl.sendItemPacket(itempacket);
-		//	//}
-		//	break;
-
-
-		//}
 		}
 
 	}
