@@ -74,6 +74,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		}
 		else
 		{
+			cout << Clients[0]._speed << endl;
 			// 값 전달해주기
 			if (!gGameFramework.is_KeyInput_Empty())
 			{
@@ -109,7 +110,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			{
 				if (Bullets[j].m_state == true) {
 					Bullets[j].c_pos = gGameFramework.calcmove(Bullets[j].c_pos, Bullets[j].c_look);
-					gGameFramework.bullet_setposition(Bullets[j].bnum, Bullets[j].c_pos, Bullets[j].c_look, Bullets[j].bullet_size);
+					gGameFramework.bullet_setposition(Bullets[j].bnum, Bullets[j].c_pos, Bullets[j].c_look, Bullets[j].bullet_power, Bullets[j].who);
 				}
 			}
 			gGameFramework.FrameAdvance();
@@ -159,6 +160,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id]._speed = p->speed;
 			Clients[my_id].c_look = p->Look;
 			Clients[my_id].c_right = p->Right;
+			Clients[my_id].bullet_power = p->bulletpower;
 			//SetEvent(conevent);
 			break;
 		}
@@ -174,6 +176,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id].c_pos.z = p->pos.z;
 			Clients[my_id].c_look = p->Look;
 			Clients[my_id].c_right = p->Right;
+			Clients[my_id].bullet_power = p->bulletpower;
 			strcpy_s(Clients[my_id].name, p->name);
 
 
@@ -233,9 +236,10 @@ DWORD WINAPI recvtoserver(LPVOID arg)
 			SC_FIREBULLET_PACKET* p = reinterpret_cast<SC_FIREBULLET_PACKET*>(&recvbuf);
 			Bullets[p->num].m_state = p->m_state;
 			Bullets[p->num].c_pos = p->bpos;
-			Bullets[p->num].bullet_size = p->bulletsize;
+			Bullets[p->num].bullet_power = p->bulletpower;
 			Bullets[p->num].c_look = p->look;
 			Bullets[p->num].bnum = p->num;
+			Bullets[p->num].who = p->who;
 		}
 		}
 	}

@@ -16,7 +16,7 @@ public:
 	char name[20];
 
 	// √—æÀ 
-	int bullet_size;
+	int bullet_power;
 	int bnum;
 public:
 	CLIENT()
@@ -29,7 +29,7 @@ public:
 		_hp = 0;
 		_speed = 0;
 		name[0] = 0;
-		bullet_size = 0;
+		bullet_power = 10;
 		bnum = 0;
 	}
 
@@ -45,11 +45,11 @@ public:
 	//XMFLOAT3 c_up;
 	XMFLOAT3 c_look;
 	int _speed;
-
+	int who;
 	//char name[20];
 
 	// √—æÀ ªÁ¿Ã¡Ó
-	float bullet_size;
+	float bullet_power;
 	int bnum; 
 public:
 	bULLET()
@@ -63,7 +63,7 @@ public:
 		//_hp = 0;
 		_speed = 0;
 		//name[0] = 0;
-		bullet_size = 1.0;
+		bullet_power = 10.0;
 		bnum = 0;
 	}
 };

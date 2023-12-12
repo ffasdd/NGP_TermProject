@@ -674,6 +674,7 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position) {
 
 	if (Login_ID == n)
 	{
+		m_pPlayer->Setid(Login_ID);
 		m_pPlayer->SetPosition(position);
 	}
 
@@ -726,26 +727,30 @@ void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 
 }
 
 void CGameFramework::delete_item(int i) {
-	cout << "delete_item " << i << endl;
+	//cout << "delete_item " << i << endl;
 	m_pScene->m_ppGameObjects[i]->draw = false;
 }
+
 XMFLOAT3 CGameFramework::calcmove( XMFLOAT3 pos, XMFLOAT3 look)
 {
-	float acc = 10.0f;
-
+	float acc = 10.0f; 
+	
 	pos.x = pos.x + look.x * acc;
 	pos.y = 30.0f;
 	pos.z = pos.z + look.z * acc;
 
 	return pos;
 }
-void CGameFramework::bullet_setposition(int num, XMFLOAT3 pos, XMFLOAT3 look, float bsize)
+
+void CGameFramework::bullet_setposition(int num, XMFLOAT3 pos, XMFLOAT3 look, float bpower, int who)
 {
 	//cout << num << "," << pos.x << "," << pos.z << "," << bsize << endl;
 	// m_pScene->m_ppGameObjects[num + 32]->SetLook(look.x, look.y, look.z);
 	m_pScene->m_ppGameObjects[num + 32]->draw = true;
+	m_pScene->m_ppGameObjects[num + 32]->SetBulletPower(bpower);
 	//m_pScene->m_ppGameObjects[num + 32]->SetScale(bsize, bsize, bsize);
 	m_pScene->m_ppGameObjects[num + 32]->SetPosition(pos.x, pos.y, pos.z);
+	m_pScene->m_ppGameObjects[num + 32]->whofired(who);
 
 }
 

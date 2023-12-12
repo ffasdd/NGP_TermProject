@@ -151,7 +151,7 @@ public:
 	CGameObject*					m_ppBullets[BULLETS];
 	CGameObject*					Enemy[Enemy_NUM];
 
-	float m_BulletSize = 5.0;
+	float m_BulletPower = 5.0;
 	UINT m_nObjectID = 4;
 	FLOAT m_rimpower = 5;
 
@@ -191,6 +191,7 @@ public:
 	XMFLOAT3 GetRight();
 
 	float m_time = 0.0;
+	int firedid;
 	float GetTime(float time);
 
 	void SetRight(float x, float y, float z);
@@ -225,8 +226,10 @@ public:
 
 	void SetFirePosition(XMFLOAT3 xmf3FirePosition);
 	void Reset();
-	void SetBulletSize(float bulletsize);
-	void MoveBool();
+	void SetBulletPower(float bulletsize);
+	float GetBulletPower();
+	void whofired(int who);
+	int getwhofired();
 public:
 	static MATERIALSLOADINFO *LoadMaterialsInfoFromFile(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList, FILE *pInFile);
 	static CMeshLoadInfo *LoadMeshInfoFromFile(FILE *pInFile);

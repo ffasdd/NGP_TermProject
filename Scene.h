@@ -70,7 +70,7 @@ public:
 	void IsCollision(float fTimeElapsed);
 	void OnPlayerUpdateCallback(float fTimeElapsed);
 
-	void CheckPlayerByObjectLen();
+	void CheckPlayerByBullets();
 
     void AnimateObjects(float fTimeElapsed);
     void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera=NULL);

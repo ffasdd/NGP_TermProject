@@ -398,12 +398,12 @@ void CScene::IsCollision(float time) {
 				m_ppGameObjects[i]->isCollision = false;
 				m_ppGameObjects[i]->draw = false;
 				//m_ppGameObjects[i] = NULL;
-				cout << "충돌 총알" << endl;
+				//cout << "충돌 총알" << endl;
 			}
 			else {
 				m_pPlayer->SetSpeed(2.f);
 				m_ppGameObjects[i]->draw = false;
-				cout << "충돌 스피드" << endl;
+				//cout << "충돌 스피드" << endl;
 			}
 			q_Item_Num.push(i);
 			Is_Item_Collision = true;
@@ -483,17 +483,30 @@ void CScene::CheckPlayerByTerrian() {
 	m_pPlayer->SetPosition(p_pos);
 }
 
-void CScene::CheckPlayerByObjectLen() {
-	// 플레이어와 오브젝트들의 거리를 체크해서 이동에 대한 bool 값 전달
-	//%// 현재 사용 안함
-	for (int i = 0; i < m_nGameObjects; ++i) {
-		float dis = getdistance(m_ppGameObjects[i]->GetPosition(), ((CMyTankPlayer*)m_pPlayer)->GetPosition());
-
-		if (dis <= 200.0f) {
-			m_ppGameObjects[i]->followP = true;
-		}
+void CScene::CheckPlayerByBullets() {
+	//%// 나랑 총알 충돌체크중
+	for (int i = 32; i < m_nGameObjects; ++i)
+	{
+		if (m_ppGameObjects[i]->getwhofired() == m_pPlayer->Getid())
+			break;
 		else
-			m_ppGameObjects[i]->followP = false;
+		{
+			XMFLOAT3 b_pos = m_ppGameObjects[i]->GetPosition();
+			XMFLOAT3 p_pos = m_pPlayer->GetPosition();
+
+			XMFLOAT2 OtherLT = XMFLOAT2(b_pos.x - 10, b_pos.z - 10);
+			XMFLOAT2 OtherRB = XMFLOAT2(b_pos.x + 10, b_pos.z + 10);
+			XMFLOAT2 ObjectLT = XMFLOAT2(p_pos.x - 10, p_pos.z -10);
+			XMFLOAT2 ObjectRB = XMFLOAT2(p_pos.x + 10, p_pos.z + 10);
+
+			XMFLOAT2 LenXY = CheckIntersectRect(OtherLT, OtherRB, ObjectLT, ObjectRB);
+			if (LenXY.x || LenXY.y)
+			{
+				m_pPlayer->m_hp -= m_ppGameObjects[i]->GetBulletPower();
+				break;
+			}
+		}
+		
 	}
 
 	
@@ -515,7 +528,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 	CheckPlayerByEnemy();
 	CheckPlayerByTerrian();
 	//CheckEnemyByBullet(fTimeElapsed);
-	//CheckPlayerByObjectLen();
+	CheckPlayerByBullets();
 	IsCollision(fTimeElapsed);
 
 	

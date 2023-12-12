@@ -1,8 +1,6 @@
 // 패킷 정리
-
-
 constexpr int PORT_NUM = 9000;
-constexpr int BUF_SIZE = 512;
+constexpr int BUF_SIZE = 1000;
 constexpr int NAME_SIZE = 20;
 constexpr int MAX_ITEM = 30;
 // Client to Server Packet type
@@ -12,7 +10,6 @@ constexpr char CS_ROTATE_PLAYER = 2;
 constexpr char CS_FIREBULLET_PLAYER = 3;
 constexpr char CS_REMOVE = 4;
 constexpr char CS_ITEM = 5;
-
 // Server to Client Packet type
 
 constexpr char SC_LOGIN_PLAYER = 1;
@@ -25,7 +22,6 @@ constexpr char SC_END = 7;
 constexpr char SC_UPDATE = 8;
 constexpr char SC_ADD_PLAYER = 9;
 constexpr char SC_ITEM = 10;
-
 
 
 
@@ -77,7 +73,7 @@ struct CS_ITEM_PACKET
 	char type;
 	int num;
 	float p_speed;
-	float p_bulletsize;
+	float p_bulletpower;
 };
 
 struct SC_LOGIN_PACKET
@@ -88,7 +84,7 @@ struct SC_LOGIN_PACKET
 	int id;
 	int hp;
 	int speed;
-	int bulletsize;
+	int bulletpower;
 	XMFLOAT3 Look;
 	XMFLOAT3 Right;
 	char name[NAME_SIZE];
@@ -105,7 +101,7 @@ struct SC_ADD_PLAYER_PACKET
 	int id;
 	int hp;
 	int speed;
-	int bulletsize;
+	int bulletpower;
 	char name[NAME_SIZE];
 };
 struct SC_UPDATE_PACKET
@@ -117,7 +113,7 @@ struct SC_UPDATE_PACKET
 	XMFLOAT3 look;
 	XMFLOAT3 right;
 	int speed;
-	int bulletsize;
+	int bulletpower;
 	int bnum;
 };
 struct SC_ITEM_PACKET {
@@ -140,9 +136,9 @@ struct SC_FIREBULLET_PACKET
 	bool m_state;
 	int num;
 	XMFLOAT3 bpos;
-	int bulletsize;
+	int bulletpower;
 	XMFLOAT3 look;
-
+	int who;
 };
 struct SC_COLLIDER_PACKET
 {
@@ -159,4 +155,3 @@ struct SC_REMOVE_PACKET
 	int id;
 
 };
-

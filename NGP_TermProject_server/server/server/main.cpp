@@ -65,7 +65,7 @@ private:
 	float m_speed;
 
 	// 총알 관련 추가 
-	int bullet_size;
+	int bullet_power;
 	int bnum;
 
 public:
@@ -85,7 +85,7 @@ public:
 		name[0] = 0;
 		InitializeCriticalSection(&m_cs);
 		bnum = -1;
-
+		bullet_power =10;
 	}
 	~CLIENT() {}
 
@@ -102,7 +102,7 @@ public:
 	char getState() { return m_state; }
 	int getHp() { return m_hp; }
 	char* getName() { return name; }
-	int getBulletSize() { return bullet_size; }
+	int getBulletPower() { return bullet_power; }
 	int getBulletNum() { return bnum; }
 	XMFLOAT3 getLookVec() { return Lookvec; }
 
@@ -112,13 +112,13 @@ public:
 	void setYaw(float yaw) { m_yaw = yaw; }
 	void setPitch(float pitch) { m_pitch = pitch; }
 	void setRoll(float roll) { m_roll = roll; }
-	void setSpeed(float Speed) { m_speed = Speed; }
+	void setSpeed(float Speed) { m_speed += Speed; }
 	void setState(char state) { m_state = state; }
 	void setHp(int hp) { m_hp = hp; }
 	void setName(char* _name) { strcpy_s(name, _name); }
 	void setLook(XMFLOAT3 look) { Lookvec = look; }
 	void setRight(XMFLOAT3 Right) { Rightvec = Right; }
-	void setBulletSize(int bulletsize) { bullet_size = bulletsize; }
+	void setBulletPower(int bulletpower) { bullet_power += bulletpower; }
 
 public:
 	// Network
@@ -297,7 +297,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			switch (p->direction)
 			{
 			case 0:
-				cout << " Up " << endl;
+				//cout << " Up " << endl;
 				{
 
 					XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
@@ -334,7 +334,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 				}
 				break;
 			case 1:
-				cout << " Down " << endl;
+				//cout << " Down " << endl;
 				{
 
 					XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
@@ -372,7 +372,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 				}
 				break;
 			case 2:
-				cout << " Left " << endl;
+				//cout << " Left " << endl;
 				{
 					// 여기서 받고 clients 위치 정보 처리 이후 다시 send 
 					// send...
@@ -413,7 +413,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 				}
 				break;
 			case 3:
-				cout << " Right " << endl;
+				//cout << " Right " << endl;
 				{
 
 					XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
@@ -531,8 +531,9 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 			}
 			case 6:
-				cout << " Fire Bullet " << endl;
+				//cout << " Fire Bullet " << endl;
 				{
+
 					for (auto& pl : clients)
 					{
 					SC_FIREBULLET_PACKET shootpacket;
@@ -540,9 +541,10 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 					shootpacket.size = sizeof(SC_FIREBULLET_PACKET);
 					shootpacket.m_state = true;
 					shootpacket.bpos = clients[client_id].getPos();
-					shootpacket.bulletsize = clients[client_id].getBulletSize();
+					shootpacket.bulletpower = clients[client_id].getBulletPower();
 					shootpacket.look = clients[client_id].getLookVec();
 					shootpacket.num = fired_bnum;
+					shootpacket.who = client_id;
 
 					pl.sendShootPacket(shootpacket);
 					}
@@ -558,10 +560,20 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 				break;
 			}
 		}
+		break;
 		case CS_ITEM:
 		{
 			CS_ITEM_PACKET* p = reinterpret_cast<CS_ITEM_PACKET*>(&recvbuf);
-			cout << "Item num" << p->num << endl;
+			//%// i의 값이 짝수면 type을 false로, 홀수일땐 true로 설정했습니다.
+		    //%// m_ppGameObjects[i]->type이 false -> 속도 증가 / true -> 총알 커지는 아이템 입니다.
+			int item_num = (p->num) % 2;
+			if (item_num) {
+				clients[client_id].setSpeed(2.0f);
+			}
+			else {
+				clients[client_id].setBulletPower(5.0);
+			}
+
 			for (auto& pl : clients)
 			{
 				SC_ITEM_PACKET itempacket;
@@ -584,6 +596,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 
 		}
+		break;
 		}
 
 	}

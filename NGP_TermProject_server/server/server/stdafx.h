@@ -108,7 +108,7 @@ struct CS_ITEM_PACKET
 	char type;
 	int num;
 	float p_speed;
-	float p_bulletsize;
+	float p_bulletpower;
 };
 
 struct SC_LOGIN_PACKET
@@ -119,7 +119,7 @@ struct SC_LOGIN_PACKET
 	int id;
 	int hp;
 	int speed;
-	int bulletsize;
+	int bulletpower;
 	XMFLOAT3 Look;
 	XMFLOAT3 Right;
 	char name[NAME_SIZE];
@@ -136,7 +136,7 @@ struct SC_ADD_PLAYER_PACKET
 	int id;
 	int hp;
 	int speed;
-	int bulletsize;
+	int bulletpower;
 	char name[NAME_SIZE];
 };
 struct SC_UPDATE_PACKET
@@ -148,7 +148,7 @@ struct SC_UPDATE_PACKET
 	XMFLOAT3 look;
 	XMFLOAT3 right;
 	int speed;
-	int bulletsize;
+	int bulletpower;
 	int bnum;
 };
 struct SC_ITEM_PACKET {
@@ -171,9 +171,9 @@ struct SC_FIREBULLET_PACKET
 	bool m_state;
 	int num;
 	XMFLOAT3 bpos;
-	int bulletsize;
+	int bulletpower;
 	XMFLOAT3 look;
-
+	int who;
 };
 struct SC_COLLIDER_PACKET
 {

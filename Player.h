@@ -40,7 +40,7 @@ public:
 	int							m_hp;
 	float m_BulletSize = 5.0;
 	float m_speed = 20.0;
-
+	int m_id;
 	float						m_vel;
 	CPlayer();
 	virtual ~CPlayer();
@@ -49,6 +49,7 @@ public:
 	XMFLOAT3 GetLookVector() { return(m_xmf3Look); }
 	XMFLOAT3 GetUpVector() { return(m_xmf3Up); }
 	XMFLOAT3 GetRightVector() { return(m_xmf3Right); }
+	int Getid() { return(m_id); }
 
 	void SetFriction(float fFriction) { m_fFriction = fFriction; }
 	void SetGravity(const XMFLOAT3& xmf3Gravity) { m_xmf3Gravity = xmf3Gravity; }
@@ -58,6 +59,7 @@ public:
 	void SetPosition(const XMFLOAT3& xmf3Position) { Move(XMFLOAT3(xmf3Position.x - m_xmf3Position.x, xmf3Position.y - m_xmf3Position.y, xmf3Position.z - m_xmf3Position.z), false); }
 	void SetLook(const XMFLOAT3& xmf3Look) { m_xmf3Look = xmf3Look; }
 	void SetRight(const XMFLOAT3& xmf3Right) { m_xmf3Right = xmf3Right; }
+	void Setid(int id) {m_id=id; }
 
 
 	const XMFLOAT3& GetVelocity() const { return(m_xmf3Velocity); }

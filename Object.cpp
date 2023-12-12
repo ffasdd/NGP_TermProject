@@ -390,13 +390,22 @@ void CGameObject::Reset()
 	m_bActive = false;
 }
 
-void CGameObject::SetBulletSize(float bulletsize)
+void CGameObject::SetBulletPower(float bulletp)
 {
-	m_BulletSize = bulletsize;
+	m_BulletPower = bulletp;
 }
-void CGameObject::MoveBool()
+
+float CGameObject::GetBulletPower()
 {
-	
+	return m_BulletPower;
+}
+void CGameObject::whofired(int who)
+{
+	firedid = who;
+}
+int CGameObject::getwhofired()
+{
+	return firedid;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //

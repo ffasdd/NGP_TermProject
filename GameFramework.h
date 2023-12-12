@@ -41,7 +41,7 @@ public:
 	void myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Right);
 	void delete_item(int i);
 	XMFLOAT3 calcmove(XMFLOAT3 pos, XMFLOAT3 look);
-	void bullet_setposition(int num, XMFLOAT3 pos, XMFLOAT3 look, float bsize);
+	void bullet_setposition(int num, XMFLOAT3 pos, XMFLOAT3 look, float bpower, int who);
 	bool is_Item_Collision();
 	int GetItemNum();
 	bool is_KeyInput_Empty();
