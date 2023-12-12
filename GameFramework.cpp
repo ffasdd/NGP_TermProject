@@ -685,7 +685,7 @@ void CGameFramework::FrameAdvance()
 	::SetWindowText(m_hWnd, m_pszFrameRate);
 }
 
-void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position) {
+void CGameFramework::obj_SetPosition(int n, int id, XMFLOAT3 position) {
 
 	if (Login_ID == n)
 	{
@@ -713,7 +713,7 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position) {
 	}
 }
 
-void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Right,int rotnum)
+void CGameFramework::obj_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Right,int rotnum)
 {
 	if (Login_ID == n)
 	{

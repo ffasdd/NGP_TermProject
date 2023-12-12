@@ -105,8 +105,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			}
 			if (gGameFramework.m_pPlayer != NULL) {
 				for (int i = 0; i < 3; i++) {
-					gGameFramework.myFunc_SetPosition(i, Clients[i].c_id, Clients[i].c_pos);
-					gGameFramework.myFunc_SetLookRight(i, Clients[i].c_id, Clients[i].c_look, Clients[i].c_right, Clients[i].rotNum);
+					gGameFramework.obj_SetPosition(i, Clients[i].c_id, Clients[i].c_pos);
+					gGameFramework.obj_SetLookRight(i, Clients[i].c_id, Clients[i].c_look, Clients[i].c_right, Clients[i].rotNum);
 				}
 			}
 			// **** ÃÑ¾Ë

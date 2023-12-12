@@ -37,8 +37,8 @@ public:
     void AnimateObjects();
     void FrameAdvance();
 
-	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
-	void myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Right, int rotnum);
+	void obj_SetPosition(int n, int id, XMFLOAT3 position);
+	void obj_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Right, int rotnum);
 	void delete_item(int i);
 	void delete_player(int i);
 	XMFLOAT3 calcmove(XMFLOAT3 pos, XMFLOAT3 look);
