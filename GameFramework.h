@@ -8,7 +8,6 @@
 #include "Scene.h"
 #include "Network.h"
 
-// 예나언니 여기도 UI
 class UILayer;
 
 class CGameFramework
@@ -44,7 +43,6 @@ public:
 	void bullet_setposition(int num, XMFLOAT3 pos, XMFLOAT3 look, float bsize);
 	bool is_Item_Collision();
 	int GetItemNum();
-	void SetBullets(int i, XMFLOAT3 pos, XMFLOAT3 lookvec, float b_size, bool state);
 	bool is_KeyInput_Empty();
 
 	short pop_keyvalue();
@@ -70,7 +68,6 @@ public:
 	int fired_bnum = 0;
 
 	int Login_ID;
-	void FireBullet(int i);
 
 private:
 	HINSTANCE					m_hInstance;

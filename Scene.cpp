@@ -398,10 +398,12 @@ void CScene::IsCollision(float time) {
 				m_ppGameObjects[i]->isCollision = false;
 				m_ppGameObjects[i]->draw = false;
 				//m_ppGameObjects[i] = NULL;
+				cout << "충돌 총알" << endl;
 			}
 			else {
 				m_pPlayer->SetSpeed(2.f);
 				m_ppGameObjects[i]->draw = false;
+				cout << "충돌 스피드" << endl;
 			}
 			q_Item_Num.push(i);
 			Is_Item_Collision = true;
