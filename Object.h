@@ -118,6 +118,10 @@ public:
 	CGameObject();
     virtual ~CGameObject();
 
+protected:
+	XMFLOAT3					m_xmf3Look;
+	XMFLOAT3					m_xmf3Right;
+
 public:
 	bool m_bActive = false;
 	float m_fMovingSpeed = 0.0f;
@@ -191,8 +195,8 @@ public:
 	float m_time = 0.0;
 	float GetTime(float time);
 
-	void SetRight(float x, float y, float z);
-	void SetLook(float x, float y, float z);
+	void SetLook(const XMFLOAT3& xmf3Look) { m_xmf3Look = xmf3Look; }
+	void SetRight(const XMFLOAT3& xmf3Right) { m_xmf3Right = xmf3Right; }
 	void SetPosition(float x, float y, float z);
 	void SetTarget(XMFLOAT3 xmf3TargetPosition);
 	void SetPosition(XMFLOAT3 xmf3Position);

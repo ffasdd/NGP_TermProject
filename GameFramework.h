@@ -39,7 +39,7 @@ public:
     void FrameAdvance();
 
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
-	void myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Right);
+	void myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Right, int rotNum);
 	bool is_Item_Collision();
 	int GetItemNum();
 	bool is_KeyInput_Empty();
