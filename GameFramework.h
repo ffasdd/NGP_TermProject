@@ -45,11 +45,12 @@ public:
 	bool is_Item_Collision();
 	int GetItemNum();
 	void SetBullets(int i, XMFLOAT3 pos, XMFLOAT3 lookvec, float b_size, bool state);
+	void FireBullet(int i);
 	bool is_KeyInput_Empty();
 
 	short pop_keyvalue();
 
-
+	//void SetPlayerSpeed(float _speed) {m_pScene->m_pPlayer->m_speed = _speed; }
 	float GetPlayerSpeed();
 	float GetPlayerBulletSize();
 
@@ -70,8 +71,6 @@ public:
 	int fired_bnum = 0;
 
 	int Login_ID;
-	void FireBullet(int i);
-
 private:
 	HINSTANCE					m_hInstance;
 	HWND						m_hWnd; 
