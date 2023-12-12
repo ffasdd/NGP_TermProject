@@ -40,10 +40,12 @@ public:
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
 	void myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Right);
 	void delete_item(int i);
+	void delete_player(int i);
 	XMFLOAT3 calcmove(XMFLOAT3 pos, XMFLOAT3 look);
 	void bullet_setposition(int num, XMFLOAT3 pos, XMFLOAT3 look, float bpower, int who);
 	bool is_Item_Collision();
 	int GetItemNum();
+	bool Is_dead();
 	bool is_KeyInput_Empty();
 
 	short pop_keyvalue();
@@ -59,6 +61,8 @@ public:
 	void MoveToNextFrame();
 
 	void UpdateUI();
+
+	void Gameover();
 
 	void OnProcessingMouseMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 	void OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);

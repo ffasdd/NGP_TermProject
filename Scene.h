@@ -73,6 +73,7 @@ public:
 	void CheckPlayerByBullets();
 
     void AnimateObjects(float fTimeElapsed);
+	void dead();
     void Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera=NULL);
 
 	void ReleaseUploadBuffers();
@@ -91,7 +92,7 @@ public:
 	void Move(const XMFLOAT3& xmf3Shift, bool bVelocity = false);
 
 	void CheckPlayerByTerrian();
-
+	bool gameover = false;
 
 public:
 	ID3D12RootSignature			*m_pd3dGraphicsRootSignature = NULL;

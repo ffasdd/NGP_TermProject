@@ -144,6 +144,10 @@ public:
 	{
 		send(m_sock, (char*)&packet, sizeof(SC_FIREBULLET_PACKET), 0);
 	}
+	void sendRemovePacket(SC_REMOVE_PACKET packet)
+	{
+		send(m_sock, (char*)&packet, sizeof(SC_REMOVE_PACKET), 0);
+	}
 
 
 };
@@ -584,17 +588,22 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 				pl.sendItemPacket(itempacket);
 
 			}
-			//for (auto& pl : clients)
-			//{
-			//	SC_ITEM_PACKET itempacket;
-			//	itempacket.type = SC_ITEM;
-			//	itempacket.size = sizeof(SC_ITEM_PACKET);
-			//	itempacket.num = p->num;
-			//	pl.sendItemPacket(itempacket);
-			//}
-			break;
+		}
+		break;
+		case CS_REMOVE:
+		{
+			CS_REMOVE_PACKET* p = reinterpret_cast<CS_REMOVE_PACKET*>(&recvbuf);
 
+			for (auto& pl : clients)
+			{
+				SC_REMOVE_PACKET removepacket;
+				removepacket.type = SC_REMOVE;
+				removepacket.size = sizeof(SC_REMOVE_PACKET);
+				removepacket.id = client_id;
 
+				pl.sendRemovePacket(removepacket);
+
+			}
 		}
 		break;
 		}

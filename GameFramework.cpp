@@ -422,18 +422,13 @@ void CGameFramework::BuildObjects()
 	m_pUILayer = new UILayer(m_nSwapChainBuffers, 2, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
 
 	ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
-	IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"¸¼Àº °íµñ", m_nWndClientHeight / 25.0f);
-	D2D1_RECT_F d2dRect = D2D1::RectF((float)m_nWndClientWidth - 230.0f, m_nWndClientHeight - 75.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
+	IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"¸¼Àº °íµñ", m_nWndClientHeight / 10.0f);
+	D2D1_RECT_F d2dRect = D2D1::RectF((float)m_nWndClientWidth / 2.0f, m_nWndClientHeight / 2.0f, (float)m_nWndClientWidth / 2.0f, (float)m_nWndClientHeight / 2.0f);
 
 	WCHAR pstrOutputText[256];
-	wcscpy_s(pstrOutputText, 256, L"°ÔÀÓ ½ÃÀÛ\n");
+	wcscpy_s(pstrOutputText, 256, L"  \n");
 	m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
 
-	// pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
-	// pdwTextFormat = m_pUILayer->CreateTextFormat(L"¸¼Àº °íµñ", m_nWndClientHeight / 25.0f);
-	// d2dRect = D2D1::RectF((float)m_nWndClientWidth - 250.0f, 15.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
-	// 
-	// m_pUILayer->UpdateTextOutputs(1, NULL, &d2dRect, pdwTextFormat, pd2dBrush);
 	////////////////////////////////////////////////////////////////////////////////////////
 
 	m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
@@ -586,6 +581,23 @@ void CGameFramework::UpdateUI()
 	//IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"¸¼Àº °íµñ", m_nWndClientHeight / 25.0f);
 	//m_pUILayer->DrawRect(2, &rect);
 	m_pUILayer->UpdateTextOutputs(1, NULL, &rect, NULL, pd2dBrush);
+
+}
+
+void CGameFramework::Gameover() {
+	
+
+	ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
+	IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"¸¼Àº °íµñ", m_nWndClientHeight / 10.0f);
+	D2D1_RECT_F d2dRect = D2D1::RectF(
+		(float)m_nWndClientWidth / 4.0f,   // ¿ŞÂÊ
+		(float)m_nWndClientHeight / 4.0f,  // À§
+		(float)m_nWndClientWidth * 3.0f / 4.0f,   // ¿À¸¥ÂÊ
+		(float)m_nWndClientHeight * 3.0f / 4.0f  // ¾Æ·¡
+	);
+	WCHAR pstrOutputText[256];
+	wcscpy_s(pstrOutputText, 256, L"°ÔÀÓ ¿À¹ö\n");
+	m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
 }
 
 
@@ -600,6 +612,9 @@ void CGameFramework::FrameAdvance()
 	AnimateObjects();
 
 	UpdateUI();
+
+	if (m_pScene->gameover)
+		Gameover();
 
 	HRESULT hResult = m_pd3dCommandAllocator->Reset();
 	hResult = m_pd3dCommandList->Reset(m_pd3dCommandAllocator, NULL);
@@ -731,6 +746,32 @@ void CGameFramework::delete_item(int i) {
 	m_pScene->m_ppGameObjects[i]->draw = false;
 }
 
+void CGameFramework::delete_player(int n) {
+	if (Login_ID == n)
+	{
+		m_pScene->dead();
+	}
+
+	else
+	{
+		// ÀÌ ºÎºĞµé ¼öÁ¤ ÇÊ¿äÇÔ
+		int others_id = -1;
+		switch (Login_ID) {
+		case 0:
+			others_id = n - 1;
+			break;
+		case 1:
+			others_id = n;
+			if (n == 2) others_id = 1;
+			break;
+		case 2:
+			others_id = n;
+			break;
+		}
+		m_pScene->m_ppGameObjects[others_id + 30]->draw = false;
+	}
+}
+
 XMFLOAT3 CGameFramework::calcmove( XMFLOAT3 pos, XMFLOAT3 look)
 {
 	float acc = 10.0f; 
@@ -778,7 +819,6 @@ short CGameFramework::pop_itemvalue() {
 	return temp;
 }
 
-
 float CGameFramework::GetPlayerSpeed()
 {
 	return m_pScene->m_pPlayer->m_speed;
@@ -798,4 +838,8 @@ int CGameFramework::GetItemNum() {
 	m_pScene->q_Item_Num.pop();
 
 	return temp;
+}
+
+bool CGameFramework::Is_dead() {
+	return m_pPlayer->is_dead;
 }

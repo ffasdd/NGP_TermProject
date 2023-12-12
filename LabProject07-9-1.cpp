@@ -74,7 +74,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		}
 		else
 		{
-			cout << Clients[0]._speed << endl;
 			// 값 전달해주기
 			if (!gGameFramework.is_KeyInput_Empty())
 			{
@@ -98,7 +97,12 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 				send(clientsocket, (char*)&p, sizeof(CS_ITEM_PACKET), 0);
 				//SetEvent(recvevent);
 			}
-
+			if (gGameFramework.Is_dead()) {
+				CS_REMOVE_PACKET p;
+				p.type = CS_REMOVE;
+				p.size = sizeof(CS_REMOVE_PACKET);
+				send(clientsocket, (char*)&p, sizeof(CS_REMOVE_PACKET), 0);
+			}
 			if (gGameFramework.m_pPlayer != NULL) {
 				for (int i = 0; i < 3; i++) {
 					gGameFramework.myFunc_SetPosition(i, Clients[i].c_id, Clients[i].c_pos);
@@ -240,6 +244,17 @@ DWORD WINAPI recvtoserver(LPVOID arg)
 			Bullets[p->num].c_look = p->look;
 			Bullets[p->num].bnum = p->num;
 			Bullets[p->num].who = p->who;
+			break;
+		}
+		case SC_REMOVE:
+		{
+			SC_REMOVE_PACKET* p = reinterpret_cast<SC_REMOVE_PACKET*>(&recvbuf);
+			XMFLOAT3 deadpos = XMFLOAT3(-9999.0, -9999.0, -9999.0);
+
+			Clients[p->id].c_pos = deadpos;
+			gGameFramework.delete_player(p->id);
+			// Clients[p->id].m_state = false;
+			break;
 		}
 		}
 	}

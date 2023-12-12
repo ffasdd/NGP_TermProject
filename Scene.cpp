@@ -505,6 +505,10 @@ void CScene::CheckPlayerByBullets() {
 				m_pPlayer->m_hp -= m_ppGameObjects[i]->GetBulletPower();
 				break;
 			}
+			if (m_pPlayer->m_hp < 0)
+			{
+				m_pPlayer->is_dead = true;
+			}
 		}
 		
 	}
@@ -544,7 +548,7 @@ void CScene::AnimateObjects(float fTimeElapsed)
 	OnPlayerUpdateCallback(fTimeElapsed);
 }
 
-void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera)
+void CScene::Render(ID3D12GraphicsCommandList* pd3dCommandList, CCamera* pCamera)
 {
 	pd3dCommandList->SetGraphicsRootSignature(m_pd3dGraphicsRootSignature);
 
@@ -566,4 +570,10 @@ void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera
 			m_ppGameObjects[i]->Render(pd3dCommandList, pCamera);
 		}
 	}
+
+}
+void CScene::dead()
+{
+	
+	gameover = true;
 }

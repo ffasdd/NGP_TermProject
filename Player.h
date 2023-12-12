@@ -36,7 +36,7 @@ protected:
 	CCamera						*m_pCamera = NULL;
 
 public:
-
+	bool is_dead = false;
 	int							m_hp;
 	float m_BulletSize = 5.0;
 	float m_speed = 20.0;
