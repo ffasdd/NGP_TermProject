@@ -231,6 +231,7 @@ DWORD WINAPI ProcessCollider(LPVOID arg)
 
 	while (true)
 	{
+		Sleep(10);
 
 		for (auto& pl : clients)
 		{
@@ -277,6 +278,7 @@ DWORD WINAPI ProcessCollider(LPVOID arg)
 	
 			}
 
+
 		}
 	}
 }
@@ -313,7 +315,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	}
 	EnterCriticalSection(&clients[client_id].m_cs);
 	clients[client_id].setID(client_id); // 0 
-	XMFLOAT3 clientPos{ 300.f * (client_id + 1) ,0.0f,100.0f * (client_id + 1) };
+	XMFLOAT3 clientPos{ 300.f * (client_id + 1) ,8.0f,100.0f * (client_id + 1) };
 	XMFLOAT3 clientLook{ 0.0f,0.0f,1.0f };
 	XMFLOAT3 clientRight{ 1.0f,0.0f,0.0f };
 	clients[client_id].setPos(clientPos);
@@ -390,6 +392,12 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 		{
 			CS_EVENT_PACKET* p = reinterpret_cast<CS_EVENT_PACKET*>(&recvbuf);
 			clients[client_id].prevpos = clients[client_id].getPos();
+
+			clients[client_id].forwardcol = false;
+			clients[client_id].backcol = false;
+			clients[client_id].leftcol = false;
+			clients[client_id].rightcol = false;
+
 			// 충돌 처리를 위해 클라이언트의 새로운 위치 계산
 			switch (p->direction)
 			{
@@ -426,8 +434,8 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 
 					}
-					else
-						clients[client_id].forwardcol = false;
+		/*			else
+						clients[client_id].forwardcol = false;*/
 				}
 				break;
 			case 1:
@@ -464,6 +472,8 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 							pl.sendUpdatePacket(movepacket);
 						}
 					}
+					//else
+					//	clients[client_id].backcol = false;
 				}
 				break;
 			case 2:
@@ -502,6 +512,8 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 						}
 
 					}
+					//else
+					//	clients[client_id].leftcol = false;
 				}
 				break;
 			case 3:
@@ -534,6 +546,8 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 
 					}
+					//else
+					//	clients[client_id].rightcol = false;
 				}
 				break;
 			case 4:
