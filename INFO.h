@@ -17,6 +17,7 @@ public:
 
 	// √—æÀ 
 	int bullet_size;
+	int bnum;
 public:
 	CLIENT()
 	{
@@ -29,6 +30,7 @@ public:
 		_speed = 0;
 		name[0] = 0;
 		bullet_size = 0;
+		bnum = 0;
 	}
 
 };
@@ -48,7 +50,7 @@ public:
 
 	// √—æÀ ªÁ¿Ã¡Ó
 	float bullet_size;
-
+	int bnum; 
 public:
 	bULLET()
 	{
@@ -61,6 +63,7 @@ public:
 		//_hp = 0;
 		_speed = 0;
 		//name[0] = 0;
-		bullet_size = 0;
+		bullet_size = 1.0;
+		bnum = 0;
 	}
 };

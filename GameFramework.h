@@ -40,6 +40,8 @@ public:
 
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
 	void myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Right);
+	XMFLOAT3 calcmove(XMFLOAT3 pos, XMFLOAT3 look);
+	void bullet_setposition(int num, XMFLOAT3 pos, XMFLOAT3 look, float bsize);
 	bool is_Item_Collision();
 	int GetItemNum();
 	void SetBullets(int i, XMFLOAT3 pos, XMFLOAT3 lookvec, float b_size, bool state);

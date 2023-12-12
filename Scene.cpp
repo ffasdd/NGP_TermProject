@@ -131,16 +131,16 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	m_ppGameObjects[31]->Enemy[1] = pEnemy2;
 
 	// ****총알 생성
-	CGameObject* pBulletModel = CGameObject::LoadGeometryFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/bullet.bin");
-	//CGameObject* pBulletModel = NULL;
+	
 	for (int i = 32; i < m_nGameObjects; i++)
-	{
-		m_ppGameObjects[i] = pBulletModel;
-		m_ppGameObjects[i]->SetMovingSpeed(1.0f);
-		m_ppGameObjects[i]->SetActive(false);
+	{	
+		CGameObject* bulletobj = CGameObject::LoadGeometryFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/bullet.bin");;
+		bulletobj->SetScale(10.0f, 20.0f, 20.0f);
+		m_ppGameObjects[i] = bulletobj;
+		m_ppGameObjects[i]->draw = false;
 		m_ppGameObjects[i]->SetObjectID(0);
-
 		m_ppGameObjects[i]->SetRimpower(2.0);
+		//m_ppGameObjects[i]->SetPosition(-10.0f, -10.0f, -10.0f);
 
 	}
 
@@ -509,7 +509,6 @@ void CScene::AnimateObjects(float fTimeElapsed)
 		m_pLights[1].m_xmf3Direction = m_pPlayer->GetLookVector();
 	}
 
-	// 예나언니 여기서 주석처리 안된 함수만 확인해줭
 	CheckPlayerByItem();
 	CheckPlayerByEnemy();
 	CheckPlayerByTerrian();
@@ -519,13 +518,13 @@ void CScene::AnimateObjects(float fTimeElapsed)
 
 	
 
-	for (int i = 32; i < m_nGameObjects; ++i) {
-		if (m_ppGameObjects[i]->m_bActive)
-		{
-			m_ppGameObjects[i]->Animate(1.0f);
-			
-		}
-	}
+	//for (int i = 32; i < m_nGameObjects; ++i) {
+	//	if (m_ppGameObjects[i]->m_bActive)
+	//	{
+	//		m_ppGameObjects[i]->Animate(1.0f);
+	//		
+	//	}
+	//}
 
 	OnPlayerUpdateCallback(fTimeElapsed);
 }
@@ -543,23 +542,13 @@ void CScene::Render(ID3D12GraphicsCommandList *pd3dCommandList, CCamera *pCamera
 	pd3dCommandList->SetGraphicsRootConstantBufferView(2, d3dcbLightsGpuVirtualAddress); //Lights
 
 	if (m_pTerrain) m_pTerrain->Render(pd3dCommandList, pCamera);
-	for (int i = 0; i < 32; ++i)
+	for (int i = 0; i < m_nGameObjects; ++i)
 	{
 		if (m_ppGameObjects[i]->draw)
 		{
 			m_ppGameObjects[i]->Animate(m_fElapsedTime, NULL);
 			m_ppGameObjects[i]->UpdateTransform(NULL);
 			m_ppGameObjects[i]->Render(pd3dCommandList, pCamera);
-		}
-	}
-	for (int i = 32; i < m_nGameObjects; ++i) {
-		if (m_ppGameObjects[i]->m_bActive)
-		{
-			if (m_ppGameObjects[i]) {
-				m_ppGameObjects[i]->UpdateTransform(NULL);
-				m_ppGameObjects[i]->Render(pd3dCommandList, pCamera);
-			}
-			
 		}
 	}
 }

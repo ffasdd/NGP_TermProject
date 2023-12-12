@@ -6,9 +6,9 @@ XMFLOAT3 calcMove(XMFLOAT3 vec1, XMFLOAT3 vec2, float Accelerator)
 {
 	float acc = Accelerator;
 
-	vec1.x = vec1.x + vec2.x * Accelerator;
-	vec1.y = vec1.y + vec2.y * Accelerator;
-	vec1.z = vec1.z + vec2.z * Accelerator;
+	vec1.x = vec1.x + vec2.x * acc;
+	vec1.y = vec1.y + vec2.y * acc;
+	vec1.z = vec1.z + vec2.z * acc;
 
 	return vec1;
 }
@@ -47,7 +47,7 @@ XMFLOAT3 Rotateright(XMFLOAT3& lookVector, XMFLOAT3& rightVector)
 
 enum { ST_EMPTY, ST_RUNNING };
 
-
+int fired_bnum =0;
 class CLIENT
 {
 private:
@@ -66,6 +66,7 @@ private:
 
 	// 총알 관련 추가 
 	int bullet_size;
+	int bnum;
 
 public:
 	CRITICAL_SECTION m_cs;
@@ -83,6 +84,7 @@ public:
 		m_hp = 0;
 		name[0] = 0;
 		InitializeCriticalSection(&m_cs);
+		bnum = -1;
 
 	}
 	~CLIENT() {}
@@ -101,6 +103,7 @@ public:
 	int getHp() { return m_hp; }
 	char* getName() { return name; }
 	int getBulletSize() { return bullet_size; }
+	int getBulletNum() { return bnum; }
 	XMFLOAT3 getLookVec() { return Lookvec; }
 
 	void setSocket(SOCKET socket) { m_sock = socket; }
@@ -230,7 +233,6 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	clients[client_id].setHp(100);
 	clients[client_id].setSpeed(5.0f);
 	clients[client_id].setLook(clientLook);
-	clients[client_id].setBulletSize(5);
 	clients[client_id].setRight(clientRight);
 
 	LeaveCriticalSection(&clients[client_id].m_cs);
@@ -243,7 +245,6 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	packet.speed = clients[client_id].getSpeed();
 	packet.hp = clients[client_id].getHp();
 	packet.Look = clients[client_id].getLookVec();
-	packet.bulletsize = clients[client_id].getBulletSize();
 	packet.Right = clients[client_id].getRight();
 	if (client_id == 0)
 		strcpy_s(packet.name, "SDY");
@@ -274,7 +275,6 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 				p.speed = clients[client_id].getSpeed();
 				p.Look = clients[client_id].getLookVec();
 				p.Right = clients[client_id].getRight();
-				p.bulletsize = clients[client_id].getBulletSize();
 				pl.sendAddPakcet(p);
 			}
 		}
@@ -302,7 +302,15 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 					XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
 
-					Move_Vertical_Result = calcMove(clients[client_id].getPos(), clients[client_id].getLookVec(), clients[client_id].getSpeed());
+					XMFLOAT3 xm3look = clients[client_id].getLookVec();
+					
+					XMVECTOR vector = XMLoadFloat3(&xm3look);
+					vector = XMVector3Normalize(vector);
+
+					XMFLOAT3 normalizedVec;
+					XMStoreFloat3(&normalizedVec, vector);
+
+					Move_Vertical_Result = calcMove(clients[client_id].getPos(), normalizedVec, clients[client_id].getSpeed());
 
 					EnterCriticalSection(&clients[client_id].m_cs);
 					clients[client_id].setPos(Move_Vertical_Result);
@@ -331,10 +339,14 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 					XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
 					XMFLOAT3 lookVector = clients[client_id].getLookVec();
+					XMVECTOR vector = XMLoadFloat3(&lookVector);
+					vector = XMVector3Normalize(vector);
 
+					XMFLOAT3 normalizedVec;
+					XMStoreFloat3(&normalizedVec, vector);
 					XMFLOAT3 backVector;
 					XMMATRIX rotationMatrix = XMMatrixRotationY(XM_PI); // 180도 회전
-					XMVECTOR backVectorXM = XMVector3Transform(XMLoadFloat3(&lookVector), rotationMatrix);
+					XMVECTOR backVectorXM = XMVector3Transform(XMLoadFloat3(&normalizedVec), rotationMatrix);
 					XMStoreFloat3(&backVector, backVectorXM);
 					Move_Vertical_Result = calcMove(clients[client_id].getPos(), backVector, clients[client_id].getSpeed());
 
@@ -369,7 +381,14 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 					// client에 넣어서 값 수정할때 m_cs 임계영역 지정해야함 
 					XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
 					XMFLOAT3 rightVector = clients[client_id].getRight();
-					XMFLOAT3 leftVector = XMFLOAT3(-rightVector.x, rightVector.y, -rightVector.z);
+
+					XMVECTOR vector = XMLoadFloat3(&rightVector);
+					vector = XMVector3Normalize(vector);
+
+					XMFLOAT3 normalizedVec;
+					XMStoreFloat3(&normalizedVec, vector);
+
+					XMFLOAT3 leftVector = XMFLOAT3(-normalizedVec.x, normalizedVec.y, -normalizedVec.z);
 
 					Move_Vertical_Result = calcMove(clients[client_id].getPos(), leftVector, clients[client_id].getSpeed());
 
@@ -400,7 +419,13 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 					XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
 					XMFLOAT3 rightVector = clients[client_id].getRight();
 
-					Move_Vertical_Result = calcMove(clients[client_id].getPos(), rightVector, clients[client_id].getSpeed());
+					XMVECTOR vector = XMLoadFloat3(&rightVector);
+					vector = XMVector3Normalize(vector);
+
+					XMFLOAT3 normalizedVec;
+					XMStoreFloat3(&normalizedVec, vector);
+
+					Move_Vertical_Result = calcMove(clients[client_id].getPos(), normalizedVec, clients[client_id].getSpeed());
 
 					EnterCriticalSection(&clients[client_id].m_cs);
 					clients[client_id].setPos(Move_Vertical_Result);
@@ -425,17 +450,30 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			case 4:
 			{
 
-				cout << "Left" << endl;
+				cout << "Left turn" << endl;
 
-				XMFLOAT3 lookVector = clients[client_id].getLookVec();
 				XMFLOAT3 rightVector = clients[client_id].getRight();
 
+				XMFLOAT3 xm3look = clients[client_id].getLookVec();
+
+				XMVECTOR vector = XMLoadFloat3(&xm3look);
+				vector = XMVector3Normalize(vector);
+
+				XMFLOAT3 lookVector;
+				XMStoreFloat3(&lookVector, vector);
+
+				vector = XMLoadFloat3(&rightVector);
+				vector = XMVector3Normalize(vector);
+
+				XMFLOAT3 NormalizedrightVector;
+				XMStoreFloat3(&NormalizedrightVector, vector);
+
 				lookVector = RotateLook(lookVector, -10.0f);
-				rightVector = Rotateright(lookVector, rightVector);
+				NormalizedrightVector = Rotateright(lookVector, NormalizedrightVector);
 
 				EnterCriticalSection(&clients[client_id].m_cs);
 				clients[client_id].setLook(lookVector);
-				clients[client_id].setRight(rightVector);
+				clients[client_id].setRight(NormalizedrightVector);
 				LeaveCriticalSection(&clients[client_id].m_cs);
 
 				for (auto& pl : clients) // 움직인 내 정보를 모두에게 
@@ -454,17 +492,27 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			}
 			case 5:
 			{
-				cout << " Right " << endl;
-				XMFLOAT3 lookVector = clients[client_id].getLookVec();
+				cout << " Right turn" << endl;
 				XMFLOAT3 rightVector = clients[client_id].getRight();
+				XMFLOAT3 xm3look = clients[client_id].getLookVec();
+				XMVECTOR vector = XMLoadFloat3(&xm3look);
+				vector = XMVector3Normalize(vector);
+
+				XMFLOAT3 lookVector;
+				XMStoreFloat3(&lookVector, vector);
+				//
+				vector = XMLoadFloat3(&rightVector);
+				vector = XMVector3Normalize(vector);
+
+				XMFLOAT3 NormalizedrightVector;
+				XMStoreFloat3(&NormalizedrightVector, vector);
 
 				lookVector = RotateLook(lookVector, 10.0f);
-				rightVector = Rotateright(lookVector, rightVector);
-
+				NormalizedrightVector = Rotateright(lookVector, NormalizedrightVector);
 
 				EnterCriticalSection(&clients[client_id].m_cs);
 				clients[client_id].setLook(lookVector);
-				clients[client_id].setRight(rightVector);
+				clients[client_id].setRight(NormalizedrightVector);
 				LeaveCriticalSection(&clients[client_id].m_cs);
 
 				for (auto& pl : clients) // 움직인 내 정보를 모두에게 
@@ -485,23 +533,25 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			case 6:
 				cout << " Fire Bullet " << endl;
 				{
-				
 					for (auto& pl : clients)
 					{
 					SC_FIREBULLET_PACKET shootpacket;
 					shootpacket.type = SC_FIREBULLET_PLAYER;
 					shootpacket.size = sizeof(SC_FIREBULLET_PACKET);
 					shootpacket.m_state = true;
-					shootpacket.num = bullet_num;
 					shootpacket.bpos = clients[client_id].getPos();
 					shootpacket.bulletsize = clients[client_id].getBulletSize();
 					shootpacket.look = clients[client_id].getLookVec();
+					shootpacket.num = fired_bnum;
 
 					pl.sendShootPacket(shootpacket);
 					}
 					EnterCriticalSection(&clients[client_id].m_cs);
-					bullet_num += 1;
+					fired_bnum++;
 					LeaveCriticalSection(&clients[client_id].m_cs);
+
+					cout << fired_bnum << endl;
+					
 					break;
 				}
 			default:

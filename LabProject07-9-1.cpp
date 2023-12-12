@@ -78,10 +78,12 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			if (!gGameFramework.is_KeyInput_Empty())
 			{
 				char send_keyvalue = gGameFramework.pop_keyvalue();
+				int bulletnum = gGameFramework.fired_bnum;
 				CS_EVENT_PACKET p;
 				p.type = CS_EVENT;
 				p.direction = send_keyvalue;
 				p.size = sizeof(CS_EVENT_PACKET);
+				p.bnum = bulletnum;
 				send(clientsocket, (char*)&p, sizeof(CS_EVENT_PACKET), 0);
 				//SetEvent(recvevent);
 			}
@@ -96,10 +98,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			for (int j = 0; j < 150; j++)
 			{
 				if (Bullets[j].m_state == true) {
-					gGameFramework.SetBullets(j + 32, Bullets[j].c_pos, Bullets[j].c_look, Bullets[j].bullet_size, Bullets[j].m_state);
-					gGameFramework.FireBullet(j + 32);
+					Bullets[j].c_pos = gGameFramework.calcmove(Bullets[j].c_pos, Bullets[j].c_look);
+					gGameFramework.bullet_setposition(Bullets[j].bnum, Bullets[j].c_pos, Bullets[j].c_look, Bullets[j].bullet_size);
 				}
-
 			}
 			gGameFramework.FrameAdvance();
 		}
@@ -148,7 +149,6 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id]._speed = p->speed;
 			Clients[my_id].c_look = p->Look;
 			Clients[my_id].c_right = p->Right;
-			Clients[my_id].bullet_size = p->bulletsize;
 			//SetEvent(conevent);
 			break;
 		}
@@ -164,7 +164,6 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id].c_pos.z = p->pos.z;
 			Clients[my_id].c_look = p->Look;
 			Clients[my_id].c_right = p->Right;
-			Clients[my_id].bullet_size = p->bulletsize;
 			strcpy_s(Clients[my_id].name, p->name);
 
 
@@ -225,6 +224,7 @@ DWORD WINAPI recvtoserver(LPVOID arg)
 			Bullets[p->num].c_pos = p->bpos;
 			Bullets[p->num].bullet_size = p->bulletsize;
 			Bullets[p->num].c_look = p->look;
+			Bullets[p->num].bnum = p->num;
 		}
 		}
 	}

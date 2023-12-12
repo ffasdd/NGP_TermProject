@@ -703,7 +703,6 @@ void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 
 	{
 		m_pPlayer->SetLook(Look);
 		m_pPlayer->SetRight(Right);
-
 	}
 	else
 	{
@@ -723,6 +722,25 @@ void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 
 		m_pScene->m_ppGameObjects[others_id + 30]->SetLook(Look.x, Look.y, Look.z);
 		m_pScene->m_ppGameObjects[others_id + 30]->SetRight(Right.x, Right.y, Right.z);
 	}
+
+}
+XMFLOAT3 CGameFramework::calcmove( XMFLOAT3 pos, XMFLOAT3 look)
+{
+	float acc = 10.0f;
+
+	pos.x = pos.x + look.x * acc;
+	pos.y = 30.0f;
+	pos.z = pos.z + look.z * acc;
+
+	return pos;
+}
+void CGameFramework::bullet_setposition(int num, XMFLOAT3 pos, XMFLOAT3 look, float bsize)
+{
+	//cout << num << "," << pos.x << "," << pos.z << "," << bsize << endl;
+	// m_pScene->m_ppGameObjects[num + 32]->SetLook(look.x, look.y, look.z);
+	m_pScene->m_ppGameObjects[num + 32]->draw = true;
+	//m_pScene->m_ppGameObjects[num + 32]->SetScale(bsize, bsize, bsize);
+	m_pScene->m_ppGameObjects[num + 32]->SetPosition(pos.x, pos.y, pos.z);
 
 }
 
@@ -757,29 +775,4 @@ int CGameFramework::GetItemNum() {
 	m_pScene->q_Item_Num.pop();
 
 	return temp;
-}
-
-void CGameFramework::SetBullets(int i, XMFLOAT3 pos, XMFLOAT3 lookvec, float b_size, bool state)
-{
-	cout << "setbullets" << endl;
-	// pos, lookvec, size, state
-	m_pScene->m_ppGameObjects[i]->SetPosition(pos);
-	m_pScene->m_ppGameObjects[i]->SetLook(lookvec.x, lookvec.y, lookvec.z);
-	m_pScene->m_ppGameObjects[i]->SetScale(b_size, b_size, b_size);
-	m_pScene->m_ppGameObjects[i]->SetActive(state);
-}
-
-void CGameFramework::FireBullet(int i)
-{
-	cout << "FireBullet " << i << endl;
-	XMFLOAT3 xmf3Position = m_pScene->m_ppGameObjects[i]->GetPosition();
-	XMFLOAT3 xmf3Direction = m_pScene->m_ppGameObjects[i]->GetLook();
-	// pBulletObject->m_xmf4x4Transform = pBulletObjectm_xmf4x4World;
-	// XMFLOAT3 xmf3FirePosition = Vector3::Add(xmf3Position, Vector3::ScalarProduct(xmf3Direction, 10.0f, true));
-
-	m_pScene->m_ppGameObjects[i]->SetFirePosition(xmf3Position);
-	m_pScene->m_ppGameObjects[i]->SetMovingDirection(xmf3Direction);
-	//m_pScene->m_ppGameObjects[i]->SetScale(m_pScene->m_ppGameObjects[i]->m_BulletSize, m_pScene->m_ppGameObjects[i]->m_BulletSize, m_pScene->m_ppGameObjects[i]->m_BulletSize);
-	//m_pScene->m_ppGameObjects[i]->SetActive(true);
-	
 }
