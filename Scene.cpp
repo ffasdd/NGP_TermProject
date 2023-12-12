@@ -84,34 +84,34 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 
 	m_nGameObjects = 32;
 	m_ppGameObjects = new CGameObject * [m_nGameObjects];
-	//%// m_ppGameObjects[0]~m_ppGameObjects[29]´Â ¾ÆÀÌÅÛ °´Ã¼ÀÔ´Ï´Ù.
+	//%// m_ppGameObjects[0]~m_ppGameObjects[29]ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½Ô´Ï´ï¿½.
 	for (int i = 0; i < m_nGameObjects; i++)
 	{
 		m_ppGameObjects[i] = CGameObject::LoadGeometryFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/bullet.bin");
 		m_ppGameObjects[i]->SetScale(7.5f,15.0f,15.0f);
-		//%// objecID 0¹ø°ú 1¹øÀº °¢°¢ ÅÍ·¹ÀÎ°ú ÇÃ·¹ÀÌ¾î¿¡°Ô ÇÒ´çµÇ¾îÀÖ½À´Ï´Ù -> Shaders.hlsl¿¡¼­ È®ÀÎ °¡´É
-		//%// °¢ ¾ÆÀÌÅÛÀÇ »öÀ» ObjectIDÀÇ È¦Â¦ ¿©ºÎ¿¡ µû¶ó ³ª´©¾îÁÖ±â ¶§¹®¿¡ 2¸¦ ´õÇØ¼­ ¿µÇâÀÌ ¾È°¡°Ô Ã³¸®ÇØµÎ¾ú½À´Ï´Ù.
+		//%// objecID 0ï¿½ï¿½ï¿½ï¿½ 1ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Í·ï¿½ï¿½Î°ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î¿¡ï¿½ï¿½ ï¿½Ò´ï¿½Ç¾ï¿½ï¿½Ö½ï¿½ï¿½Ï´ï¿½ -> Shaders.hlslï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		//%// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ObjectIDï¿½ï¿½ È¦Â¦ ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 2ï¿½ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½È°ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ï¿½ØµÎ¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.
 		m_ppGameObjects[i]->SetObjectID(i+2);
 
-		//%// iÀÇ °ªÀÌ Â¦¼ö¸é typeÀ» false·Î, È¦¼öÀÏ¶© true·Î ¼³Á¤Çß½À´Ï´Ù.
-		//%// m_ppGameObjects[i]->typeÀÌ false -> ¼Óµµ Áõ°¡ / true -> ÃÑ¾Ë Ä¿Áö´Â ¾ÆÀÌÅÛ ÀÔ´Ï´Ù.
-		//%// ¼Óµµ Áõ°¡ ¾ÆÀÌÅÛÀº »¡°£»ö
-		//%// ÃÑ¾Ë Å©±â Ä¿Áö´Â ¾ÆÀÌÅÛÀº ÆÄ¶õ»öÀÔ´Ï´Ù
+		//%// iï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Â¦ï¿½ï¿½ï¿½ï¿½ typeï¿½ï¿½ falseï¿½ï¿½, È¦ï¿½ï¿½ï¿½Ï¶ï¿½ trueï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.
+		//%// m_ppGameObjects[i]->typeï¿½ï¿½ false -> ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½ / true -> ï¿½Ñ¾ï¿½ Ä¿ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô´Ï´ï¿½.
+		//%// ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		//%// ï¿½Ñ¾ï¿½ Å©ï¿½ï¿½ Ä¿ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½
 		if (i % 2 == 0)
 			m_ppGameObjects[i]->type = false;
 		else
 			m_ppGameObjects[i]->type = true;
 
-		//%// »öÀ» ÁøÇÏ°Ô º¸ÀÌ°Ô ÇÏ·Á°í Rimpower¸¦ Á¶ÀýÇØµ×½À´Ï´Ù
+		//%// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½Ì°ï¿½ ï¿½Ï·ï¿½ï¿½ï¿½ Rimpowerï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Øµ×½ï¿½ï¿½Ï´ï¿½
 		m_ppGameObjects[i]->SetRimpower(0.1); 
 		
-		//%// ·£´ýÇÑ À§Ä¡¿¡ »Ñ·ÁÁöµµ·Ï °ªÀ» ¼öÁ¤Çß½À´Ï´Ù. ÃßÈÄ ¸Ê Å©±â°¡ Á¤ÇØÁö¸é ´Ù½Ã ¼öÁ¤ÇÒ ¿¹Á¤ÀÔ´Ï´Ù
+		//%// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Ñ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Å©ï¿½â°¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½
 		XMFLOAT3 xmf3SponPosition = XMFLOAT3(0.0f + rand() % 5000, 0.0f, 0.0f + rand() % 5000);
 		m_ppGameObjects[i]->SetPosition(xmf3SponPosition.x, 0.0, xmf3SponPosition.z);
 	}
 
-	// **** »ó´ë¹æ set position
-	////%// ÀûÀ» ±×¸®´Â ºÎºÐÀÔ´Ï´Ù. ÇÃ·¹ÀÌ¾î¿Í ¸¶Âù°¡Áö·Î SetPosition ÇÔ¼ö·Î À§Ä¡¸¦ ÁöÁ¤ÇÕ´Ï´Ù.
+	// **** ï¿½ï¿½ï¿½ï¿½ set position
+	////%// ï¿½ï¿½ï¿½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½ ï¿½Îºï¿½ï¿½Ô´Ï´ï¿½. ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ SetPosition ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 	CGameObject* pEnemy1 = CGameObject::LoadGeometryFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/tank.bin");
 	pEnemy1->SetScale(1.0f, 1.0f, 1.0f);
 	//pEnemy1->SetPosition(1000.0f, 0.0f, 300.0f);
@@ -129,6 +129,20 @@ void CScene::BuildObjects(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *p
 	m_ppGameObjects[31]->SetObjectID(0);
 	m_ppGameObjects[31]->SetRimpower(5);
 	m_ppGameObjects[31]->Enemy[1] = pEnemy2;
+
+	// ****ï¿½Ñ¾ï¿½ ï¿½ï¿½ï¿½ï¿½
+	
+	for (int i = 32; i < m_nGameObjects; i++)
+	{	
+		CGameObject* bulletobj = CGameObject::LoadGeometryFromFile(pd3dDevice, pd3dCommandList, m_pd3dGraphicsRootSignature, "Model/bullet.bin");;
+		bulletobj->SetScale(10.0f, 20.0f, 20.0f);
+		m_ppGameObjects[i] = bulletobj;
+		m_ppGameObjects[i]->draw = false;
+		m_ppGameObjects[i]->SetObjectID(0);
+		m_ppGameObjects[i]->SetRimpower(2.0);
+		//m_ppGameObjects[i]->SetPosition(-10.0f, -10.0f, -10.0f);
+
+	}
 
 	CreateShaderVariables(pd3dDevice, pd3dCommandList);	
 }
@@ -193,7 +207,7 @@ ID3D12RootSignature *CScene::CreateGraphicsRootSignature(ID3D12Device *pd3dDevic
 
 void CScene::CreateShaderVariables(ID3D12Device *pd3dDevice, ID3D12GraphicsCommandList *pd3dCommandList)
 {
-	UINT ncbElementBytes = ((sizeof(LIGHTS) + 255) & ~255); //256ÀÇ ¹è¼ö
+	UINT ncbElementBytes = ((sizeof(LIGHTS) + 255) & ~255); //256ï¿½ï¿½ ï¿½ï¿½ï¿½
 	m_pd3dcbLights = ::CreateBufferResource(pd3dDevice, pd3dCommandList, NULL, ncbElementBytes, D3D12_HEAP_TYPE_UPLOAD, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER, NULL);
 
 	m_pd3dcbLights->Map(0, NULL, (void **)&m_pcbMappedLights);
@@ -281,7 +295,7 @@ bool CScene::TCheckIntersectRect(XMFLOAT2 OtherLT, XMFLOAT2 OtherRB, XMFLOAT2 Ob
 }
 
 void CScene::CheckPlayerByItem() {
-	//%// °´Ã¼¿Í ¾ÆÀÌÅÛ ÃÑµ¹Ã¼Å© °Ë»çÁß
+	//%// ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñµï¿½Ã¼Å© ï¿½Ë»ï¿½ï¿½ï¿½
 	for (int i = 0; i < 30; ++i)
 	{
 		XMFLOAT3 e_pos = m_ppGameObjects[i]->GetPosition();
@@ -349,7 +363,7 @@ void CScene::CheckPlayerByEnemy() {
 }
 
 void CScene::CheckEnemyByBullet(float time) {
-	//%// ÇöÀç »ç¿ë ¾ÈÇÔ
+	//%// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	CGameObject** ppBullets = ((CMyTankPlayer*)m_pPlayer)->m_ppBullets;
 	for (int i = 0; i < Enemy_NUM; ++i)
 	{
@@ -371,15 +385,15 @@ void CScene::CheckEnemyByBullet(float time) {
 	}
 }
 
-// ÇÃ·¹ÀÌ¾î¿Í ¾ÆÀÌÅÛ Ãæµ¹ Ã¼Å©
+// ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½æµ¹ Ã¼Å©
 void CScene::IsCollision(float time) {
-	//%// ¾ÆÀÌÅÛ°ú ÇÃ·¹ÀÌ¾î Ãæµ¹À» È®ÀÎÇÕ´Ï´Ù
+	//%// ï¿½ï¿½ï¿½ï¿½ï¿½Û°ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½æµ¹ï¿½ï¿½ È®ï¿½ï¿½ï¿½Õ´Ï´ï¿½
 	static float fTimeElapsed = 0.0f;  
 	Is_Item_Collision = false;
 	for (int i = 0; i < m_nGameObjects; ++i) {
 		if (m_ppGameObjects[i]->isCollision) {
 			if (m_ppGameObjects[i]->type) {
-				// ÃÑ¾Ë Å©±â
+				// ï¿½Ñ¾ï¿½ Å©ï¿½ï¿½
 				m_pPlayer->SetBulletSize(0.5f);
 				m_ppGameObjects[i]->isCollision = false;
 				m_ppGameObjects[i]->draw = false;
@@ -402,7 +416,7 @@ float getdistance(XMFLOAT3& a, XMFLOAT3& b) {
 
 void CScene::OnPlayerUpdateCallback(float fTimeElapsed)
 {
-	//%// ÅÍ·¹ÀÎ À§Ä¡¿¡ ¸Â°Ô °¢ °´Ã¼ÀÇ y°ª ¼öÁ¤ ÇÔ¼ö
+	//%// ï¿½Í·ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Â°ï¿½ ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ yï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
 	CHeightMapTerrain* pTerrain = (CHeightMapTerrain*)m_pPlayerUpdatedContext;
 	for (int i = 0; i < m_nGameObjects; ++i)
 	{
@@ -432,35 +446,35 @@ void CScene::Move(const XMFLOAT3& xmf3Shift, bool bUpdateVelocity)
 }
 
 void CScene::CheckPlayerByTerrian() {
-	//%// °´Ã¼°¡ ÅÍ·¹ÀÎ ¹ÛÀ» ¹þ¾î³ªÁö ¸øÇÏ°Ô ÇØ¿ë
-	// ÇÃ·¹ÀÌ¾îÀÇ ÇöÀç À§Ä¡¸¦ ¾ò¾î¿É´Ï´Ù.
+	//%// ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Í·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½î³ªï¿½ï¿½ ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½Ø¿ï¿½
+	// ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½É´Ï´ï¿½.
 	XMFLOAT3 p_pos = m_pPlayer->GetPosition();
 
-	// ÇÃ·¹ÀÌ¾î°¡ ¹Ù¶óº¸´Â ¹æÇâ º¤ÅÍ¸¦ ¾ò¾î¿É´Ï´Ù.
+	// ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½Ù¶óº¸´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½É´Ï´ï¿½.
 	XMFLOAT3 lookVector = m_pPlayer->GetLookVector();
 
-	// X ÁÂÇ¥°¡ Á¤ÇØÁø ¹üÀ§¸¦ ¹þ¾î³ª¸é ¼öÁ¤
+	// X ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½î³ªï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	if (p_pos.x < 0 || p_pos.x > 5140) {
-		// ÇÃ·¹ÀÌ¾î°¡ ¹Ù¶óº¸´Â ¹Ý´ë ¹æÇâÀ¸·Î 10 ´ÜÀ§¸¸Å­ ÀÌµ¿
+		// ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½Ù¶óº¸´ï¿½ ï¿½Ý´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 10 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å­ ï¿½Ìµï¿½
 		XMFLOAT3 oppositeDirectionX = XMFLOAT3(-lookVector.x, 0.0f, 0.0f);
 		XMVECTOR oppositeDirectionVectorX = XMVector3Normalize(XMLoadFloat3(&oppositeDirectionX));
 		XMVECTOR playerPosVectorX = XMLoadFloat3(&p_pos);
 		playerPosVectorX -= 10.0f * oppositeDirectionVectorX;
 
-		// X ÁÂÇ¥¸¦ 5140ÀÇ ¹üÀ§ ³»·Î Å¬·¥ÇÎÇÕ´Ï´Ù.
+		// X ï¿½ï¿½Ç¥ï¿½ï¿½ 5140ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 		playerPosVectorX = XMVectorClamp(playerPosVectorX, XMVectorSet(0, 0, 0, 0), XMVectorSet(5140, 0, 5140, 0));
 		XMStoreFloat3(&p_pos, playerPosVectorX);
 	}
 
-	// Z ÁÂÇ¥°¡ Á¤ÇØÁø ¹üÀ§¸¦ ¹þ¾î³ª¸é ¼öÁ¤
+	// Z ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½î³ªï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	if (p_pos.z < 0 || p_pos.z > 5140) {
-		// ÇÃ·¹ÀÌ¾î°¡ ¹Ù¶óº¸´Â ¹Ý´ë ¹æÇâÀ¸·Î 10 ´ÜÀ§¸¸Å­ ÀÌµ¿
+		// ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½Ù¶óº¸´ï¿½ ï¿½Ý´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 10 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å­ ï¿½Ìµï¿½
 		XMFLOAT3 oppositeDirectionZ = XMFLOAT3(0.0f, 0.0f, -lookVector.z);
 		XMVECTOR oppositeDirectionVectorZ = XMVector3Normalize(XMLoadFloat3(&oppositeDirectionZ));
 		XMVECTOR playerPosVectorZ = XMLoadFloat3(&p_pos);
 		playerPosVectorZ -= 10.0f * oppositeDirectionVectorZ;
 
-		// Z ÁÂÇ¥¸¦ 5140ÀÇ ¹üÀ§ ³»·Î Å¬·¥ÇÎÇÕ´Ï´Ù.
+		// Z ï¿½ï¿½Ç¥ï¿½ï¿½ 5140ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 		playerPosVectorZ = XMVectorClamp(playerPosVectorZ, XMVectorSet(0, 0, 0, 0), XMVectorSet(5140, 0, 5140, 0));
 		XMStoreFloat3(&p_pos, playerPosVectorZ);
 	}
@@ -468,8 +482,8 @@ void CScene::CheckPlayerByTerrian() {
 }
 
 void CScene::CheckPlayerByObjectLen() {
-	// ÇÃ·¹ÀÌ¾î¿Í ¿ÀºêÁ§Æ®µéÀÇ °Å¸®¸¦ Ã¼Å©ÇØ¼­ ÀÌµ¿¿¡ ´ëÇÑ bool °ª Àü´Þ
-	//%// ÇöÀç »ç¿ë ¾ÈÇÔ
+	// ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ï¿½ï¿½ Ã¼Å©ï¿½Ø¼ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ bool ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	//%// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	for (int i = 0; i < m_nGameObjects; ++i) {
 		float dis = getdistance(m_ppGameObjects[i]->GetPosition(), ((CMyTankPlayer*)m_pPlayer)->GetPosition());
 
@@ -500,16 +514,22 @@ void CScene::AnimateObjects(float fTimeElapsed)
 		m_pLights[1].m_xmf3Direction = m_pPlayer->GetLookVector();
 	}
 
-	for (int i = 30; i < 32; ++i) {
-		// m_ppGameObjects[i]->SetPosition();
-	}
-	// ¿¹³ª¾ð´Ï ¿©±â¼­ ÁÖ¼®Ã³¸® ¾ÈµÈ ÇÔ¼ö¸¸ È®ÀÎÇØ¢a
 	CheckPlayerByItem();
 	CheckPlayerByEnemy();
 	CheckPlayerByTerrian();
 	//CheckEnemyByBullet(fTimeElapsed);
 	//CheckPlayerByObjectLen();
 	IsCollision(fTimeElapsed);
+
+	
+
+	//for (int i = 32; i < m_nGameObjects; ++i) {
+	//	if (m_ppGameObjects[i]->m_bActive)
+	//	{
+	//		m_ppGameObjects[i]->Animate(1.0f);
+	//		
+	//	}
+	//}
 
 	OnPlayerUpdateCallback(fTimeElapsed);
 

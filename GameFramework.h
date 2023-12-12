@@ -40,6 +40,8 @@ public:
 
 	void myFunc_SetPosition(int n, int id, XMFLOAT3 position);
 	void myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 Right);
+	XMFLOAT3 calcmove(XMFLOAT3 pos, XMFLOAT3 look);
+	void bullet_setposition(int num, XMFLOAT3 pos, XMFLOAT3 look, float bsize);
 	bool is_Item_Collision();
 	int GetItemNum();
 	bool is_KeyInput_Empty();
@@ -63,6 +65,8 @@ public:
 
 	CPlayer* m_pPlayer = NULL;
 	XMFLOAT3 setpos;
+
+	int fired_bnum = 0;
 
 	int Login_ID;
 private:

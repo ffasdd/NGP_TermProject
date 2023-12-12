@@ -48,7 +48,7 @@ struct CS_EVENT_PACKET {
 	unsigned char size;
 	char	type;
 	char	direction;  // 0 : UP, 1 : DOWN, 2 : LEFT, 3 : RIGHT, 4 : LEFT, 5 : RIGHT , 6 : FIREBULLET
-
+	int bnum;
 };
 
 struct CS_ROTATE_PACKET
@@ -118,6 +118,7 @@ struct SC_UPDATE_PACKET
 	XMFLOAT3 right;
 	int speed;
 	int bulletsize;
+	int bnum;
 };
 struct SC_ITEM_PACKET {
 	unsigned char size;

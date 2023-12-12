@@ -1,4 +1,4 @@
-// ¼­¹ö ½ÇÇà ¸ÞÀÎºÎºÐ, 
+// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ÎºÎºï¿½, 
 
 #include"stdafx.h"
 
@@ -6,39 +6,39 @@ XMFLOAT3 calcMove(XMFLOAT3 vec1, XMFLOAT3 vec2, float Accelerator)
 {
 	float acc = Accelerator;
 
-	vec1.x = vec1.x + vec2.x * Accelerator;
-	vec1.y = vec1.y + vec2.y * Accelerator;
-	vec1.z = vec1.z + vec2.z * Accelerator;
+	vec1.x = vec1.x + vec2.x * acc;
+	vec1.y = vec1.y + vec2.y * acc;
+	vec1.z = vec1.z + vec2.z * acc;
 
 	return vec1;
 }
 XMFLOAT3 RotateLook(XMFLOAT3& lookVector, float rotationAngleInDegrees)
 {
-	// °¢µµ¸¦ ¶óµð¾ÈÀ¸·Î º¯È¯
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 	float angleInRadians = DirectX::XMConvertToRadians(rotationAngleInDegrees);
 
-	// ÇöÀç ·è º¤ÅÍ¸¦ XMVECTOR·Î º¯È¯
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Í¸ï¿½ XMVECTORï¿½ï¿½ ï¿½ï¿½È¯
 	XMVECTOR lookVectorXM = XMLoadFloat3(&lookVector);
 
-	// YÃàÀ» Áß½ÉÀ¸·Î ÁÖ¾îÁø °¢µµ¸¸Å­ È¸ÀüÇÏ´Â Çà·ÄÀ» »ý¼º
+	// Yï¿½ï¿½ï¿½ï¿½ ï¿½ß½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å­ È¸ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	XMMATRIX rotationMatrix = XMMatrixRotationY(angleInRadians);
 
-	// È¸Àü Àû¿ë
+	// È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	XMVECTOR rotatedLookVectorXM = XMVector3TransformCoord(lookVectorXM, rotationMatrix);
 
-	// °á°ú¸¦ XMFLOAT3·Î º¯È¯ÇÏ¿© ÀúÀå
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ XMFLOAT3ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½
 	XMStoreFloat3(&lookVector, rotatedLookVectorXM);
 
 	return lookVector;
 }
 XMFLOAT3 Rotateright(XMFLOAT3& lookVector, XMFLOAT3& rightVector)
 {
-	// ÇöÀçÀÇ up º¤ÅÍ (º¸Åë (0, 1, 0)À¸·Î °¡Á¤)¸¦ »ç¿ëÇÏ¿© right º¤ÅÍ °è»ê
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ up ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ (0, 1, 0)ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ right ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 	XMVECTOR upVector = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	XMVECTOR rotatedLookVectorXM = XMLoadFloat3(&lookVector);
 	XMVECTOR rightVectorXM = XMVector3Cross(upVector, rotatedLookVectorXM);
 
-	// °á°ú¸¦ XMFLOAT3·Î º¯È¯ÇÏ¿© ÀúÀå
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ XMFLOAT3ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½
 	XMStoreFloat3(&rightVector, rightVectorXM);
 
 	return rightVector;
@@ -54,17 +54,7 @@ XMFLOAT3 Rotateright(XMFLOAT3& lookVector, XMFLOAT3& rightVector)
 
 enum { ST_EMPTY, ST_RUNNING };
 
-// »ó¼ö·Î Ãæµ¹ °¨Áö ÀÓ°è°ª Á¤ÀÇ
-const float COLLISION_THRESHOLD = 1.0f;
-
-// µÎ Á¡ °£ÀÇ °Å¸®¸¦ °è»êÇÏ´Â ÇÔ¼ö
-float calculateDistance(const XMFLOAT3& point1, const XMFLOAT3& point2) {
-	float dx = point1.x - point2.x;
-	float dy = point1.y - point2.y;
-	float dz = point1.z - point2.z;
-	return sqrt(dx * dx + dy * dy + dz * dz);
-
-}
+int fired_bnum =0;
 class CLIENT
 {
 private:
@@ -81,11 +71,12 @@ private:
 	int m_hp;
 	float m_speed;
 
-	// ÃÑ¾Ë °ü·Ã Ãß°¡ 
+	// ï¿½Ñ¾ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ 
 	int bullet_size;
+	int bnum;
 
 public:
-	// Ãæµ¹ Ã¼Å© 
+	// ï¿½æµ¹ Ã¼Å© 
 
 
 	bool forwardcol;
@@ -114,6 +105,7 @@ public:
 		name[0] = 0;
 		m_oobb = { m_pos,XMFLOAT3(20.0f,20.0f,20.0f),XMFLOAT4{0,0,0,1.0f} };
 		InitializeCriticalSection(&m_cs);
+		bnum = -1;
 
 	}
 	~CLIENT() {}
@@ -132,6 +124,7 @@ public:
 	int getHp() { return m_hp; }
 	char* getName() { return name; }
 	int getBulletSize() { return bullet_size; }
+	int getBulletNum() { return bnum; }
 	XMFLOAT3 getLookVec() { return Lookvec; }
 
 	void setSocket(SOCKET socket) { m_sock = socket; }
@@ -194,7 +187,7 @@ void err_quit(const char* msg)
 	exit(1);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â
+// ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 void err_display(const char* msg)
 {
 	LPVOID lpMsgBuf;
@@ -207,7 +200,7 @@ void err_display(const char* msg)
 	LocalFree(lpMsgBuf);
 }
 
-// ¼ÒÄÏ ÇÔ¼ö ¿À·ù Ãâ·Â
+// ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 void err_display(int errcode)
 {
 	LPVOID lpMsgBuf;
@@ -216,7 +209,7 @@ void err_display(int errcode)
 		NULL, errcode,
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 		(char*)&lpMsgBuf, 0, NULL);
-	printf("[¿À·ù] %s\n", (char*)lpMsgBuf);
+	printf("[ï¿½ï¿½ï¿½ï¿½] %s\n", (char*)lpMsgBuf);
 	LocalFree(lpMsgBuf);
 }
 
@@ -224,10 +217,10 @@ void err_display(int errcode)
 DWORD WINAPI ProcessCollider(LPVOID arg)
 {
 	int m_client_id = (int)arg;
-	//ÀÌ ¾²·¹µå´Â Å¬¶óÀÌ¾ðÆ®°£ Ãæµ¹ÇÏ´ÂÁö È®ÀÎÇÑ´Ù. 
-	// °è¼Ó µ¹¾Æ°¡¸é¼­ Ãæµ¹À» °¨Áö ÇÑ´Ù. 
-	// ³» ¾ÆÀÌµð¿Í ´Ù¸¥ Å¬¶óÀÇ ¾ÆÀÌµð ³» Å¬¶ó ¾ÆÀÌµð´Â ¾î¶»°Ô È®ÀÎ ? 
-	// ¾²·¹µå¸¦ µû·Î »ý¼ºÇÑ ÀÌÀ¯? ÀÌ·¸°Ô ÇÏÁö ¾ÊÀ¸¸é Å°ÀÔ·ÂÀ» ¹Þ°í ³ª¼­¾ß Ãæµ¹Çß´ÂÁö º¸³½´Ù. 
+	//ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ ï¿½æµ¹ï¿½Ï´ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½Ñ´ï¿½. 
+	// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Æ°ï¿½ï¿½é¼­ ï¿½æµ¹ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ´ï¿½. 
+	// ï¿½ï¿½ ï¿½ï¿½ï¿½Ìµï¿½ï¿½ ï¿½Ù¸ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìµï¿½ ï¿½ï¿½ Å¬ï¿½ï¿½ ï¿½ï¿½ï¿½Ìµï¿½ï¿½ ï¿½î¶»ï¿½ï¿½ È®ï¿½ï¿½ ? 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½å¸¦ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½? ï¿½Ì·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å°ï¿½Ô·ï¿½ï¿½ï¿½ ï¿½Þ°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½æµ¹ï¿½ß´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. 
 
 	while (true)
 	{
@@ -239,14 +232,14 @@ DWORD WINAPI ProcessCollider(LPVOID arg)
 
 		for (auto& pl : clients)
 		{
-			if (pl.getID() == m_client_id) continue; // ³ª ÀÚ½Å°úÀÇ Ãæµ¹Àº °Ë»çÇÏÁö ¾ÊÀ½ 
+			if (pl.getID() == m_client_id) continue; // ï¿½ï¿½ ï¿½Ú½Å°ï¿½ï¿½ï¿½ ï¿½æµ¹ï¿½ï¿½ ï¿½Ë»ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 
 			if (clients[m_client_id].m_oobb.Intersects(pl.m_oobb))
 			{
 				cout << " Collide " << m_client_id << " and  " << pl.getID() << " !! " << endl;
 				if (pl.getPos().z > clients[m_client_id].getPos().z)
 				{
 					XMFLOAT3 prevpos = clients[m_client_id].getPos();
-					// »ó´ë¹æ °´Ã¼°¡ ³ªº¸´Ù ¾Õ¿¡ ÀÖ´Ù´Â ¶æ,
+					// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Õ¿ï¿½ ï¿½Ö´Ù´ï¿½ ï¿½ï¿½,
 					EnterCriticalSection(&clients[m_client_id].m_cs);
 					clients[m_client_id].forwardcol = true;
 					LeaveCriticalSection(&clients[m_client_id].m_cs);
@@ -254,7 +247,7 @@ DWORD WINAPI ProcessCollider(LPVOID arg)
 				}
 				if (pl.getPos().z < clients[m_client_id].getPos().z)
 				{
-					// »ó´ë¹æ °´Ã¼°¡ ³ªº¸´Ù µÚ¿¡ ÀÖ´Ù´Â ¶æ,
+					// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ú¿ï¿½ ï¿½Ö´Ù´ï¿½ ï¿½ï¿½,
 
 					EnterCriticalSection(&clients[m_client_id].m_cs);
 					clients[m_client_id].backcol = true;
@@ -263,7 +256,7 @@ DWORD WINAPI ProcessCollider(LPVOID arg)
 				}
 				if (pl.getPos().x > clients[m_client_id].getPos().x)
 				{
-					// »ó´ë¹æ °´Ã¼°¡ ³ªº¸´Ù ¿ìÃø¿¡ ÀÖ´Ù´Â ¶æ,
+					// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ù´ï¿½ ï¿½ï¿½,
 
 					EnterCriticalSection(&clients[m_client_id].m_cs);
 					clients[m_client_id].rightcol = true;
@@ -273,7 +266,7 @@ DWORD WINAPI ProcessCollider(LPVOID arg)
 
 				if (pl.getPos().x < clients[m_client_id].getPos().x)
 				{
-					// »ó´ë¹æ °´Ã¼°¡ ³ªº¸´Ù ÁÂÃø¿¡ ÀÖ´Ù´Â ¶æ,
+					// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ù´ï¿½ ï¿½ï¿½,
 
 					EnterCriticalSection(&clients[m_client_id].m_cs);
 					clients[m_client_id].leftcol = true;
@@ -327,7 +320,6 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	clients[client_id].setHp(100);
 	clients[client_id].setSpeed(5.0f);
 	clients[client_id].setLook(clientLook);
-	clients[client_id].setBulletSize(5);
 	clients[client_id].setRight(clientRight);
 
 	LeaveCriticalSection(&clients[client_id].m_cs);
@@ -340,7 +332,6 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	packet.speed = clients[client_id].getSpeed();
 	packet.hp = clients[client_id].getHp();
 	packet.Look = clients[client_id].getLookVec();
-	packet.bulletsize = clients[client_id].getBulletSize();
 	packet.Right = clients[client_id].getRight();
 
 	if (client_id == 0)
@@ -352,7 +343,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 
 	clients[client_id].sendLoginPacket(packet);
-	// ÀÏ´Ü ·Î±×ÀÎ µÇ´ÂÁö È®ÀÎºÎÅÍ ok 
+	// ï¿½Ï´ï¿½ ï¿½Î±ï¿½ï¿½ï¿½ ï¿½Ç´ï¿½ï¿½ï¿½ È®ï¿½Îºï¿½ï¿½ï¿½ ok 
 
 	while (true)
 	{
@@ -360,7 +351,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 		{
 			for (auto& pl : clients)
 			{
-				// ³» Á¤º¸¸¦ ´Ù¸¥ Å¬¶óÀÌ¾ðÆ®µéÇÑÅ× º¸³»±â 
+				// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 				if (client_id == pl.getID())continue;
 				SC_ADD_PLAYER_PACKET p;
 				p.size = sizeof(SC_ADD_PLAYER_PACKET);
@@ -372,20 +363,19 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 				p.speed = clients[client_id].getSpeed();
 				p.Look = clients[client_id].getLookVec();
 				p.Right = clients[client_id].getRight();
-				p.bulletsize = clients[client_id].getBulletSize();
 				pl.sendAddPakcet(p);
 			}
 		}
 		if (clients[0].getState() == ST_RUNNING && clients[1].getState() == ST_RUNNING && clients[2].getState() == ST_RUNNING)
 			break;
-		// recv - Å° ÀÔ·Â ¹Þ¾Æº¸¾Æ¿ä
+		// recv - Å° ï¿½Ô·ï¿½ ï¿½Þ¾Æºï¿½ï¿½Æ¿ï¿½
 	}
 
 
 	HANDLE cThread;
 	cThread = CreateThread(NULL, 0, ProcessCollider, (LPVOID)client_id, 0, NULL);
 
-	// ÆÐÅ¶ ¼ö½Å 
+	// ï¿½ï¿½Å¶ ï¿½ï¿½ï¿½ï¿½ 
 	while (1)
 	{
 		char recvbuf[BUF_SIZE];
@@ -398,7 +388,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			CS_EVENT_PACKET* p = reinterpret_cast<CS_EVENT_PACKET*>(&recvbuf);
 			clients[client_id].prevpos = clients[client_id].getPos();
 
-			// Ãæµ¹ Ã³¸®¸¦ À§ÇØ Å¬¶óÀÌ¾ðÆ®ÀÇ »õ·Î¿î À§Ä¡ °è»ê
+			// ï¿½æµ¹ Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½
 			switch (p->direction)
 			{
 			case 0:
@@ -407,7 +397,15 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 					XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
 
-					Move_Vertical_Result = calcMove(clients[client_id].getPos(), clients[client_id].getLookVec(), clients[client_id].getSpeed());
+					XMFLOAT3 xm3look = clients[client_id].getLookVec();
+					
+					XMVECTOR vector = XMLoadFloat3(&xm3look);
+					vector = XMVector3Normalize(vector);
+
+					XMFLOAT3 normalizedVec;
+					XMStoreFloat3(&normalizedVec, vector);
+
+					Move_Vertical_Result = calcMove(clients[client_id].getPos(), normalizedVec, clients[client_id].getSpeed());
 
 					if (clients[client_id].forwardcol == false)
 					{
@@ -441,10 +439,14 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 					XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
 					XMFLOAT3 lookVector = clients[client_id].getLookVec();
+					XMVECTOR vector = XMLoadFloat3(&lookVector);
+					vector = XMVector3Normalize(vector);
 
+					XMFLOAT3 normalizedVec;
+					XMStoreFloat3(&normalizedVec, vector);
 					XMFLOAT3 backVector;
-					XMMATRIX rotationMatrix = XMMatrixRotationY(XM_PI); // 180µµ È¸Àü
-					XMVECTOR backVectorXM = XMVector3Transform(XMLoadFloat3(&lookVector), rotationMatrix);
+					XMMATRIX rotationMatrix = XMMatrixRotationY(XM_PI); // 180ï¿½ï¿½ È¸ï¿½ï¿½
+					XMVECTOR backVectorXM = XMVector3Transform(XMLoadFloat3(&normalizedVec), rotationMatrix);
 					XMStoreFloat3(&backVector, backVectorXM);
 					Move_Vertical_Result = calcMove(clients[client_id].getPos(), backVector, clients[client_id].getSpeed());
 
@@ -479,7 +481,14 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 		
 					XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
 					XMFLOAT3 rightVector = clients[client_id].getRight();
-					XMFLOAT3 leftVector = XMFLOAT3(-rightVector.x, rightVector.y, -rightVector.z);
+
+					XMVECTOR vector = XMLoadFloat3(&rightVector);
+					vector = XMVector3Normalize(vector);
+
+					XMFLOAT3 normalizedVec;
+					XMStoreFloat3(&normalizedVec, vector);
+
+					XMFLOAT3 leftVector = XMFLOAT3(-normalizedVec.x, normalizedVec.y, -normalizedVec.z);
 
 					Move_Vertical_Result = calcMove(clients[client_id].getPos(), leftVector, clients[client_id].getSpeed());
 
@@ -516,7 +525,13 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 					XMFLOAT3 Move_Vertical_Result{ 0, 0, 0 };
 					XMFLOAT3 rightVector = clients[client_id].getRight();
 
-					Move_Vertical_Result = calcMove(clients[client_id].getPos(), rightVector, clients[client_id].getSpeed());
+					XMVECTOR vector = XMLoadFloat3(&rightVector);
+					vector = XMVector3Normalize(vector);
+
+					XMFLOAT3 normalizedVec;
+					XMStoreFloat3(&normalizedVec, vector);
+
+					Move_Vertical_Result = calcMove(clients[client_id].getPos(), normalizedVec, clients[client_id].getSpeed());
 
 					if (clients[client_id].rightcol == false) {
 
@@ -524,7 +539,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 						clients[client_id].setPos(Move_Vertical_Result);
 						LeaveCriticalSection(&clients[client_id].m_cs);
 
-						for (auto& pl : clients) // ¿òÁ÷ÀÎ ³» Á¤º¸¸¦ ¸ðµÎ¿¡°Ô 
+						for (auto& pl : clients) // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ 
 						{
 							SC_UPDATE_PACKET movepacket;
 							movepacket.type = SC_UPDATE_PLAYER;
@@ -546,20 +561,33 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			case 4:
 			{
 
-				cout << "Left" << endl;
+				cout << "Left turn" << endl;
 
-				XMFLOAT3 lookVector = clients[client_id].getLookVec();
 				XMFLOAT3 rightVector = clients[client_id].getRight();
 
+				XMFLOAT3 xm3look = clients[client_id].getLookVec();
+
+				XMVECTOR vector = XMLoadFloat3(&xm3look);
+				vector = XMVector3Normalize(vector);
+
+				XMFLOAT3 lookVector;
+				XMStoreFloat3(&lookVector, vector);
+
+				vector = XMLoadFloat3(&rightVector);
+				vector = XMVector3Normalize(vector);
+
+				XMFLOAT3 NormalizedrightVector;
+				XMStoreFloat3(&NormalizedrightVector, vector);
+
 				lookVector = RotateLook(lookVector, -10.0f);
-				rightVector = Rotateright(lookVector, rightVector);
+				NormalizedrightVector = Rotateright(lookVector, NormalizedrightVector);
 
 				EnterCriticalSection(&clients[client_id].m_cs);
 				clients[client_id].setLook(lookVector);
-				clients[client_id].setRight(rightVector);
+				clients[client_id].setRight(NormalizedrightVector);
 				LeaveCriticalSection(&clients[client_id].m_cs);
 
-				for (auto& pl : clients) // ¿òÁ÷ÀÎ ³» Á¤º¸¸¦ ¸ðµÎ¿¡°Ô 
+				for (auto& pl : clients) // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ 
 				{
 					SC_UPDATE_PACKET rotpacket;
 					rotpacket.type = SC_UPDATE_PLAYER;
@@ -575,20 +603,30 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 			}
 			case 5:
 			{
-				cout << " Right " << endl;
-				XMFLOAT3 lookVector = clients[client_id].getLookVec();
+				cout << " Right turn" << endl;
 				XMFLOAT3 rightVector = clients[client_id].getRight();
+				XMFLOAT3 xm3look = clients[client_id].getLookVec();
+				XMVECTOR vector = XMLoadFloat3(&xm3look);
+				vector = XMVector3Normalize(vector);
+
+				XMFLOAT3 lookVector;
+				XMStoreFloat3(&lookVector, vector);
+				//
+				vector = XMLoadFloat3(&rightVector);
+				vector = XMVector3Normalize(vector);
+
+				XMFLOAT3 NormalizedrightVector;
+				XMStoreFloat3(&NormalizedrightVector, vector);
 
 				lookVector = RotateLook(lookVector, 10.0f);
-				rightVector = Rotateright(lookVector, rightVector);
-
+				NormalizedrightVector = Rotateright(lookVector, NormalizedrightVector);
 
 				EnterCriticalSection(&clients[client_id].m_cs);
 				clients[client_id].setLook(lookVector);
-				clients[client_id].setRight(rightVector);
+				clients[client_id].setRight(NormalizedrightVector);
 				LeaveCriticalSection(&clients[client_id].m_cs);
 
-				for (auto& pl : clients) // ¿òÁ÷ÀÎ ³» Á¤º¸¸¦ ¸ðµÎ¿¡°Ô 
+				for (auto& pl : clients) // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ 
 				{
 					SC_UPDATE_PACKET rotpacket;
 					rotpacket.type = SC_UPDATE_PLAYER;
@@ -608,6 +646,14 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 				{
 					for (auto& pl : clients)
 					{
+					SC_FIREBULLET_PACKET shootpacket;
+					shootpacket.type = SC_FIREBULLET_PLAYER;
+					shootpacket.size = sizeof(SC_FIREBULLET_PACKET);
+					shootpacket.m_state = true;
+					shootpacket.bpos = clients[client_id].getPos();
+					shootpacket.bulletsize = clients[client_id].getBulletSize();
+					shootpacket.look = clients[client_id].getLookVec();
+					shootpacket.num = fired_bnum;
 
 						SC_FIREBULLET_PACKET shootpacket;
 						shootpacket.type = SC_FIREBULLET_PLAYER;
@@ -618,6 +664,13 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 						pl.sendShootPacket(shootpacket);
 					}
+					EnterCriticalSection(&clients[client_id].m_cs);
+					fired_bnum++;
+					LeaveCriticalSection(&clients[client_id].m_cs);
+
+					cout << fired_bnum << endl;
+					
+					break;
 				}
 
 			}
@@ -630,7 +683,7 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 
 int main()
 {
-	// À©¼Ó ÃÊ±âÈ­
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
 	WSADATA wsa;
 
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)

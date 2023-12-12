@@ -55,7 +55,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	}
 
 	HANDLE network_th;
-	network_th = CreateThread(NULL, 0, ConnecttoServer, NULL, 0, NULL); // ·Î±×ÀÎ ¾²·¹µå 
+	network_th = CreateThread(NULL, 0, ConnecttoServer, NULL, 0, NULL); // ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 
 	WaitForSingleObject(conevent, INFINITE);
 	cout << " CONNECT " << endl;
@@ -73,14 +73,16 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 		}
 		else
 		{
-			// °ª Àü´ÞÇØÁÖ±â
+			// ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½
 			if (!gGameFramework.is_KeyInput_Empty())
 			{
 				char send_keyvalue = gGameFramework.pop_keyvalue();
+				int bulletnum = gGameFramework.fired_bnum;
 				CS_EVENT_PACKET p;
 				p.type = CS_EVENT;
 				p.direction = send_keyvalue;
 				p.size = sizeof(CS_EVENT_PACKET);
+				p.bnum = bulletnum;
 				send(clientsocket, (char*)&p, sizeof(CS_EVENT_PACKET), 0);
 				//SetEvent(recvevent);
 
@@ -92,7 +94,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 			//	item_pack.num = gGameFramework.GetItemNum();
 			//	item_pack.p_speed = gGameFramework.GetPlayerSpeed();
 			//	item_pack.p_bulletsize = gGameFramework.GetPlayerBulletSize();
-			//	retval = send(clientsocket, (char*)&item_pack, sizeof(CS_ITEM_PACKET), 0);      // ¼­¹ö·Î Àü¼ÛÇÕ´Ï´Ù.
+			//	retval = send(clientsocket, (char*)&item_pack, sizeof(CS_ITEM_PACKET), 0);      // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 			//	// cout << item_pack.p_speed << endl; //test
 			//	break;
 			//}
@@ -101,6 +103,14 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 				for (int i = 0; i < 3; i++) {
 					gGameFramework.myFunc_SetPosition(i, Clients[i].c_id, Clients[i].c_pos);
 					gGameFramework.myFunc_SetLookRight(i, Clients[i].c_id, Clients[i].c_look, Clients[i].c_right);
+				}
+			}
+			// **** ï¿½Ñ¾ï¿½
+			for (int j = 0; j < 150; j++)
+			{
+				if (Bullets[j].m_state == true) {
+					Bullets[j].c_pos = gGameFramework.calcmove(Bullets[j].c_pos, Bullets[j].c_look);
+					gGameFramework.bullet_setposition(Bullets[j].bnum, Bullets[j].c_pos, Bullets[j].c_look, Bullets[j].bullet_size);
 				}
 			}
 
@@ -112,7 +122,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 
 	return((int)msg.wParam);
 }
-//·Î±×ÀÎ ¾²·¹µå 
+//ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 
 DWORD WINAPI ConnecttoServer(LPVOID arg)
 {
@@ -130,7 +140,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 	inet_pton(AF_INET, "127.0.0.1", &clientaddr.sin_addr);
 	connect(clientsocket, (sockaddr*)&clientaddr, sizeof(clientaddr));
 
-	// ·Î±×ÀÎ 
+	// ï¿½Î±ï¿½ï¿½ï¿½ 
 	while (true)
 	{
 		recv(clientsocket, recvbuf, BUF_SIZE, 0);
@@ -152,7 +162,6 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id]._speed = p->speed;
 			Clients[my_id].c_look = p->Look;
 			Clients[my_id].c_right = p->Right;
-			Clients[my_id].bullet_size = p->bulletsize;
 			//SetEvent(conevent);
 			break;
 		}
@@ -168,7 +177,6 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			Clients[my_id].c_pos.z = p->pos.z;
 			Clients[my_id].c_look = p->Look;
 			Clients[my_id].c_right = p->Right;
-			Clients[my_id].bullet_size = p->bulletsize;
 			strcpy_s(Clients[my_id].name, p->name);
 			break;
 		}
@@ -178,7 +186,7 @@ DWORD WINAPI ConnecttoServer(LPVOID arg)
 			SetEvent(conevent);
 
 			HANDLE recv_th;
-			recv_th = CreateThread(NULL, 0, recvtoserver, (LPVOID)(clientsocket), 0, NULL);  // ·Î±×ÀÎ ¿Ï·á½Ã ¼­¹ö¿Í Åë½Å ¾²·¹µå »ý¼º 
+			recv_th = CreateThread(NULL, 0, recvtoserver, (LPVOID)(clientsocket), 0, NULL);  // ï¿½Î±ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 
 			break;
 		}
 
@@ -221,7 +229,11 @@ DWORD WINAPI recvtoserver(LPVOID arg)
 		case SC_FIREBULLET_PLAYER:
 		{
 			SC_FIREBULLET_PACKET* p = reinterpret_cast<SC_FIREBULLET_PACKET*>(&recvbuf);
-			break;
+			Bullets[p->num].m_state = p->m_state;
+			Bullets[p->num].c_pos = p->bpos;
+			Bullets[p->num].bullet_size = p->bulletsize;
+			Bullets[p->num].c_look = p->look;
+			Bullets[p->num].bnum = p->num;
 		}
 		}
 	}

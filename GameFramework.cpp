@@ -5,6 +5,7 @@
 #include "stdafx.h"
 #include "GameFramework.h"
 #include "UILayer.h"
+#include <iostream>
 
 queue<char> q_Down_Key;
 queue<char> q_Up_Key;
@@ -337,11 +338,11 @@ void CGameFramework::OnProcessingKeyboardMessage(HWND hWnd, UINT nMessageID, WPA
 		case 'E':
 			q_Down_Key.push(5);
 			break;
-		case 'M':
-
-			break;
-		case VK_CONTROL:
-
+		case VK_SPACE:
+			if (fired_bnum < 50) {
+				q_Down_Key.push(6);
+				++fired_bnum;
+			}
 			break;
 		default:
 			break;
@@ -415,19 +416,19 @@ void CGameFramework::OnDestroy()
 
 void CGameFramework::BuildObjects()
 {
-	// ¿¹³ª¾ð´Ï
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	m_pUILayer = new UILayer(m_nSwapChainBuffers, 2, m_pd3dDevice, m_pd3dCommandQueue, m_ppd3dSwapChainBackBuffers, m_nWndClientWidth, m_nWndClientHeight);
 
 	ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::White, 1.0f));
-	IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"¸¼Àº °íµñ", m_nWndClientHeight / 25.0f);
+	IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", m_nWndClientHeight / 25.0f);
 	D2D1_RECT_F d2dRect = D2D1::RectF((float)m_nWndClientWidth - 230.0f, m_nWndClientHeight - 75.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
 
 	WCHAR pstrOutputText[256];
-	wcscpy_s(pstrOutputText, 256, L"°ÔÀÓ ½ÃÀÛ\n");
+	wcscpy_s(pstrOutputText, 256, L"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½\n");
 	m_pUILayer->UpdateTextOutputs(0, pstrOutputText, &d2dRect, pdwTextFormat, pd2dBrush);
 
 	// pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Black, 1.0f));
-	// pdwTextFormat = m_pUILayer->CreateTextFormat(L"¸¼Àº °íµñ", m_nWndClientHeight / 25.0f);
+	// pdwTextFormat = m_pUILayer->CreateTextFormat(L"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", m_nWndClientHeight / 25.0f);
 	// d2dRect = D2D1::RectF((float)m_nWndClientWidth - 250.0f, 15.0f, (float)m_nWndClientWidth, (float)m_nWndClientHeight);
 	// 
 	// m_pUILayer->UpdateTextOutputs(1, NULL, &d2dRect, pdwTextFormat, pd2dBrush);
@@ -437,11 +438,11 @@ void CGameFramework::BuildObjects()
 
 	m_pScene = new CScene();
 	if (m_pScene) m_pScene->BuildObjects(m_pd3dDevice, m_pd3dCommandList);
-	// ¼ö½Å¹Þ°í ÇÃ·¹ÀÌ¾î ¹èÄ¡ 
+	// ï¿½ï¿½ï¿½Å¹Þ°ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½Ä¡ 
 
 	CMyTankPlayer* pmyPlayer = new CMyTankPlayer(m_pd3dDevice, m_pd3dCommandList, m_pScene->GetGraphicsRootSignature());
-	// ÇÃ·¹ÀÌ¾î À§Ä¡¸¦ Á¤ÇØÁÖ´Â ÇÔ¼öÀÔ´Ï´Ù. SetPosition¿¡ µé¾î°¡´Â XMFLOAT3°ªÀ» ¼öÁ¤ÇÏ¸é ÇÃ·¹ÀÌ¾î ½ÃÀÛ À§Ä¡°¡ ¹Ù²ò´Ï´Ù.
-	// ¼Â ÇÃ·¹ÀÌ¾î Æ÷½º¸¦ ¿©±â¼­ ÇØºÁ¿©
+	// ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½Ô¼ï¿½ï¿½Ô´Ï´ï¿½. SetPositionï¿½ï¿½ ï¿½ï¿½î°¡ï¿½ï¿½ XMFLOAT3ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Ù²ï¿½Ï´ï¿½.
+	// ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½â¼­ ï¿½Øºï¿½ï¿½ï¿½
 
 	pmyPlayer->SetPlayerUpdatedContext(m_pScene->GetTerrain());
 	m_pScene->m_pPlayer = m_pPlayer = pmyPlayer;
@@ -539,10 +540,10 @@ void CGameFramework::AnimateObjects()
 {
 	float fTimeElapsed = m_GameTimer.GetTimeElapsed();
 
-	//**** Áö¿öµµ ÁöÀå ¾ø±æ·¡ ÀÏ´Ü Áö¿öµÒ
+	//**** ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½æ·¡ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	//if (m_pScene) m_pScene->AnimateObjects(fTimeElapsed);
 
-	// ÃÑ¾Ë ³¯¾Æ°¡´Â ¾Ö´Ï¸ÞÀÌ¼Ç ±×¸®´Â ºÎºÐ
+	// ï¿½Ñ¾ï¿½ ï¿½ï¿½ï¿½Æ°ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½×¸ï¿½ï¿½ï¿½ ï¿½Îºï¿½
 	if (m_pPlayer) m_pPlayer->Animate(fTimeElapsed, NULL);
 }
 
@@ -572,7 +573,7 @@ void CGameFramework::MoveToNextFrame()
 	}
 }
 
-// ¿¹³ª¾ð´Ï ¿©±â´Â UI ¾÷µ¥ÀÌÆ® ÇÏ´Â ÇÔ¼ö¾ç
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ UI ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½
 void CGameFramework::UpdateUI()
 {
 	// Calculate the width of the rectangle based on the percentage
@@ -581,7 +582,7 @@ void CGameFramework::UpdateUI()
 	// Set up the layout rectangle for the rectangle
 	D2D1_RECT_F rect = { 0, 470, 640 / 30 * rectWidth, 450 };
 	ID2D1SolidColorBrush* pd2dBrush = m_pUILayer->CreateBrush(D2D1::ColorF(D2D1::ColorF::Red, 4.0f));
-	//IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"¸¼Àº °íµñ", m_nWndClientHeight / 25.0f);
+	//IDWriteTextFormat* pdwTextFormat = m_pUILayer->CreateTextFormat(L"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", m_nWndClientHeight / 25.0f);
 	//m_pUILayer->DrawRect(2, &rect);
 	m_pUILayer->UpdateTextOutputs(1, NULL, &rect, NULL, pd2dBrush);
 }
@@ -677,7 +678,7 @@ void CGameFramework::myFunc_SetPosition(int n, int id, XMFLOAT3 position) {
 
 	else
 	{
-		// ÀÌ ºÎºÐµé ¼öÁ¤ ÇÊ¿äÇÔ
+		// ï¿½ï¿½ ï¿½ÎºÐµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½ï¿½
 		int others_id = -1;
 		switch (Login_ID) {
 		case 0:
@@ -701,7 +702,6 @@ void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 
 	{
 		m_pPlayer->SetLook(Look);
 		m_pPlayer->SetRight(Right);
-
 	}
 	else
 	{
@@ -721,6 +721,25 @@ void CGameFramework::myFunc_SetLookRight(int n, int id, XMFLOAT3 Look, XMFLOAT3 
 		m_pScene->m_ppGameObjects[others_id + 30]->SetLook(Look.x, Look.y, Look.z);
 		m_pScene->m_ppGameObjects[others_id + 30]->SetRight(Right.x, Right.y, Right.z);
 	}
+
+}
+XMFLOAT3 CGameFramework::calcmove( XMFLOAT3 pos, XMFLOAT3 look)
+{
+	float acc = 10.0f;
+
+	pos.x = pos.x + look.x * acc;
+	pos.y = 30.0f;
+	pos.z = pos.z + look.z * acc;
+
+	return pos;
+}
+void CGameFramework::bullet_setposition(int num, XMFLOAT3 pos, XMFLOAT3 look, float bsize)
+{
+	//cout << num << "," << pos.x << "," << pos.z << "," << bsize << endl;
+	// m_pScene->m_ppGameObjects[num + 32]->SetLook(look.x, look.y, look.z);
+	m_pScene->m_ppGameObjects[num + 32]->draw = true;
+	//m_pScene->m_ppGameObjects[num + 32]->SetScale(bsize, bsize, bsize);
+	m_pScene->m_ppGameObjects[num + 32]->SetPosition(pos.x, pos.y, pos.z);
 
 }
 
